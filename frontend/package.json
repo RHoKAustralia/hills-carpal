@@ -9,6 +9,7 @@
     "react-bootstrap-table-next": "^0.1.12",
     "react-datepicker": "^1.5.0",
     "react-dom": "^16.4.0",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
     "react-select": "^1.2.1"
   },

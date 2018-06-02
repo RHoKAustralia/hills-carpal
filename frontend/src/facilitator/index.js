@@ -3,6 +3,7 @@ import CreateNewRide from './CreateNewRide';
 import Table from '../components/table';
 import moment from 'moment';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const columns = [
   { dataField: 'client', text: 'client' },
@@ -29,9 +30,7 @@ const columns = [
 class Facilitator extends React.Component {
   constructor() {
     super();
-    this.state = {
-      page: 'list', // 'create
-    };
+
     this.handleCreate = this.handleCreate.bind(this);
   }
   handleCreate(data) {
@@ -39,23 +38,13 @@ class Facilitator extends React.Component {
     axios.post('/facilities', data);
   }
   render() {
-    if (this.state.page === 'create') {
-      return (
-        <CreateNewRide
-          onBackBtnClick={() => this.setState({ page: 'list' })}
-          onSubmit={this.handleCreate}
-        />
-      );
-    }
     return (
       <div className="container">
         <h1>Rides</h1>
-        <button
-          className="btn btn-primary"
-          onClick={() => this.setState({ page: 'create' })}
-        >
+
+        <Link className="btn btn-primary" to={'/facilitator/create'}>
           Create new
-        </button>
+        </Link>
         <Table columns={columns} />
       </div>
     );

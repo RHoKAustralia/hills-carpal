@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Link } from 'react-router-dom';
+
 class CreateNewRide extends Component {
   constructor() {
     super();
@@ -73,7 +75,7 @@ class CreateNewRide extends Component {
           </div>
           <div className="form-group">
             <label>Driver Gender</label>
-            <select class="custom-select">
+            <select className="custom-select">
               <option selected>Select from following</option>
               <option value="1">Male</option>
               <option value="2">Female</option>
@@ -92,15 +94,9 @@ class CreateNewRide extends Component {
           <button className="btn btn-primary" type="submit">
             Save
           </button>
-          <button
-            className="btn btn-secondary"
-            onClick={e => {
-              e.preventDefault();
-              this.props.onBackBtnClick();
-            }}
-          >
+          <Link className="btn btn-secondary" to={'/facilitator'}>
             Cancel
-          </button>
+          </Link>
         </form>
       </div>
     );
