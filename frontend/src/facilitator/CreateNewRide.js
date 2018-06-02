@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -83,7 +82,7 @@ class CreateNewRide extends Component {
             <select
               required
               onChange={e => {
-                driverGender: e.currentTarget.value;
+                this.setState({ driverGender: e.currentTarget.value });
               }}
               className="custom-select"
             >
@@ -119,7 +118,7 @@ class CreateNewRide extends Component {
             aria-label="Basic example"
           >
             <Link className="btn btn-secondary" to={'/facilitator'}>
-              Cancel
+              Back
             </Link>
           </div>
         </form>
