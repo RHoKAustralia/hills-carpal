@@ -1,7 +1,7 @@
 const decodeJwt = require('../utils/jwt').decodeJwt;
 module.exports.loggedin = function (event, context, callback) {
     console.log(JSON.stringify(event)); // Contains incoming request data (e.g., query params, headers and more)
-    const decodedJwt = decodeJwt(event.headers.Authorization);
+    const decodedJwt = decodeJwt(event);
     console.log(decodedJwt);
     const email = decodedJwt.email;
     const role = decodedJwt['https://carpal.org.au/role'];

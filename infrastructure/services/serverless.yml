@@ -35,10 +35,10 @@ provider:
 
 functions:
   auth:
-    handler: auth.auth
+    handler: auth/auth.auth
     cors: true
   loggedin:
-    handler: rides/loggedin.loggedin
+    handler: auth/loggedin.loggedin
     events:
       - http:
           path: authcheck
