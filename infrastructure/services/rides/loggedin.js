@@ -1,22 +1,10 @@
-const jwt = require('jsonwebtoken');
-
+const decodeJwt = require('../utils/jwt').decodeJwt;
 module.exports.loggedin = function (event, context, callback) {
-
     console.log(JSON.stringify(event)); // Contains incoming request data (e.g., query params, headers and more)
-
-    const tokenParts = event
-        .headers
-        .Authorization
-        .split(' ');
-    const tokenValue = tokenParts[1];
-    console.log('Token: ' + tokenValue);
-
-    try {
-        console.log(jwt.decode(tokenValue));
-    } catch (err) {
-        console.log('catch error. Invalid token', err);
-        return callback('Unauthorized');
-    }
+    const decodedJwt = decodeJwt(event.headers.Authorization);
+    console.log(decodedJwt);
+    const email = decodedJwt.email;
+    const role = decodedJwt['https://carpal.org.au/role'];
     const response = {
         statusCode: 200,
         headers: {
@@ -25,7 +13,11 @@ module.exports.loggedin = function (event, context, callback) {
             /* Required for cookies, authorization headers with HTTPS */
             'Access-Control-Allow-Credentials': true
         },
-        body: JSON.stringify({"message": "You're logged in"})
+        body: JSON.stringify({
+            "message": email + " is logged in with role " + role,
+            "email": email,
+            "role": role
+        })
     };
 
     callback(null, response);
