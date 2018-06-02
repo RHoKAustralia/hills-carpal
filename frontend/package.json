@@ -4,14 +4,15 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "match-sorter": "^2.2.3",
     "moment": "^2.22.2",
     "react": "^16.4.0",
-    "react-bootstrap-table-next": "^0.1.12",
     "react-datepicker": "^1.5.0",
     "react-dom": "^16.4.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
-    "react-select": "^1.2.1"
+    "react-select": "^1.2.1",
+    "react-table": "^6.8.6"
   },
   "scripts": {
     "start": "react-scripts start",

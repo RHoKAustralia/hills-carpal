@@ -2,26 +2,38 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import axios from 'axios';
 import Table from '../components/table';
+import matchSorter from 'match-sorter';
+
 const columns = [
   {
-    dataField: 'pickupTime',
-    text: 'Pickup Time',
-    formatter: cell => moment(cell).format('YYYY-MM-DD'),
+    Header: 'Pickup Time',
+    id: 'pickupTime',
+    accessor: cell => moment(cell).format('YYYY-MM-DD'),
+    filterMethod: (filter, rows) =>
+      matchSorter(rows, filter.value, { keys: ['pickupTime'] }),
+    filterAll: true,
   },
   {
-    dataField: 'locationFrom',
-    text: 'Location from',
-    formatter: cell => cell.placeName,
+    Header: 'Location from',
+    id: 'locationFrom',
+    accessor: cell => cell.locationFrom.placeName,
+    filterMethod: (filter, rows) => {
+      return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
+    },
+    filterAll: true,
   },
   {
-    dataField: 'locationTo',
-    text: 'Location to',
-    formatter: cell => cell.placeName,
+    id: 'locationTo',
+    Header: 'Location to',
+    accessor: cell => cell.locationTo.placeName,
+    filterMethod: (filter, rows) =>
+      matchSorter(rows, filter.value, { keys: ['locationTo'] }),
+    filterAll: true,
   },
   {
-    dataField: 'fbLink',
-    text: 'Facebook link',
-    formatter: cell => (
+    id: 'fbLink',
+    Header: 'Facebook link',
+    accessor: cell => (
       <a href={cell} target="blank">
         Go to facebook event
       </a>
