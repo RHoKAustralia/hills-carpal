@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import axios from 'axios';
 import Table from '../components/table';
 const columns = [
   {
@@ -21,11 +22,24 @@ const columns = [
 ];
 
 class Driver extends Component {
+  constructor() {
+    super();
+    this.state = { drives: null };
+  }
+  componentDidMount() {
+    // const url = process.env.REACT_APP_API_URL + '/drives'
+    axios.get('sampledata.json').then(res => {
+      this.setState({ drives: res.data });
+    });
+  }
   render() {
+    if (!this.state.drives) {
+      return <img alt="loader" className="loader" src="loader.svg" />;
+    }
     return (
       <div className="container">
         <h1>Find drives</h1>
-        <Table columns={columns} />
+        <Table data={this.state.drives} columns={columns} />
       </div>
     );
   }
