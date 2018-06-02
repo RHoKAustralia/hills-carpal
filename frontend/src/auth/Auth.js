@@ -1,24 +1,28 @@
 import auth0 from 'auth0-js';
 import history from '../history';
 
-const AUTH0_CLIENT_ID = 'KcWs7TkXHZZ41Co5xhpPR1Oq3nfr4HPW';
-const AUTH0_DOMAIN = 'carpal.au.auth0.com';
-const AUTH0_CALLBACK_URL = 'http://localhost:3000/'; // eslint-disable-line
-const PUBLIC_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/public';
-const PRIVATE_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/private';
-const LOGGEDIN_URL = 'https://tn99ubmph1.execute-api.ap-southeast-2.amazonaws.com/dev/authcheck';
+const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID || '';
+const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN || '';
+const AUTH0_CALLBACK_URL = process.env.AUTH0_CALLBACK_URL || '';
+const PUBLIC_ENDPOINT = process.env.PUBLIC_ENDPOINT || '';
+const PRIVATE_ENDPOINT = process.env.PRIVATE_ENDPOINT || '';
+const LOGGEDIN_URL = process.env.LOGGEDIN_URL || '';
 
 export default class Auth {
-  auth0 = new auth0.WebAuth({
-    domain: AUTH0_DOMAIN,
-    clientID: AUTH0_CLIENT_ID,
-    redirectUri: AUTH0_CALLBACK_URL,
-    audience: `https://${AUTH0_DOMAIN}/userinfo`,
-    responseType: 'token id_token',
-    scope: 'openid'
-  });
-
   constructor() {
+    if ('' === AUTH0_DOMAIN || '' === AUTH0_CLIENT_ID) {
+      throw new Error(`Apologies, system is unable to process users log in.`)
+    }
+
+    this.auth0 = new auth0.WebAuth({
+      domain: AUTH0_DOMAIN,
+      clientID: AUTH0_CLIENT_ID,
+      redirectUri: AUTH0_CALLBACK_URL,
+      audience: `https://${AUTH0_DOMAIN}/userinfo`,
+      responseType: 'token id_token',
+      scope: 'openid'
+    });
+
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.handleAuthentication = this.handleAuthentication.bind(this);
