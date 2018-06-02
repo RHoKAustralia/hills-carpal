@@ -1,26 +1,27 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import DatePicker from "react-datepicker";
-import moment from "moment";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
 class CreateNewRide extends Component {
   constructor() {
     super();
     this.state = {
-      client: "",
+      client: '',
       // todo more fields
-      datetime: moment()
+      datetime: moment(),
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.onSubmit(this.state);
+    this.props.onSubmit(this.state);
   }
   render() {
     return (
       <div className="container">
+        <h1>Create new ride</h1>
         <form onSubmit={e => this.handleSubmit(this.state)}>
           <div className="form-group">
             <label>Client</label>
@@ -88,6 +89,18 @@ class CreateNewRide extends Component {
             />
           </div>
           <label />
+          <button className="btn btn-primary" type="submit">
+            Save
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={e => {
+              e.preventDefault();
+              this.props.onBackBtnClick();
+            }}
+          >
+            Cancel
+          </button>
         </form>
       </div>
     );
@@ -95,7 +108,7 @@ class CreateNewRide extends Component {
 }
 
 CreateNewRide.propTypes = {
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default CreateNewRide;
