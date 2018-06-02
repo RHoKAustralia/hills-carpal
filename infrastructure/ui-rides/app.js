@@ -4,24 +4,18 @@
 const AUTH0_CLIENT_ID = 'KcWs7TkXHZZ41Co5xhpPR1Oq3nfr4HPW';
 const AUTH0_DOMAIN = 'carpal.au.auth0.com';
 const AUTH0_CALLBACK_URL = window.location.href; // eslint-disable-line
+const PUBLIC_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/public';
+const PRIVATE_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/private';
 const LOGGEDIN_URL = 'https://tn99ubmph1.execute-api.ap-southeast-2.amazonaws.com/dev/authcheck';
-// const LOGGEDIN_URL =
-// 'https://m62upgxr2k.execute-api.ap-southeast-2.amazonaws.com/dev/authcheck';
+
 // initialize auth0 lock
 const lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, { // eslint-disable-line no-undef
+
   auth: {
     params: {
       scope: 'openid email'
     },
     responseType: 'token id_token'
-  },
-  theme: {
-    logo: 'https://lh3.googleusercontent.com/Ba2CsLxqbgNuHOgejaNbWwmXkQov4yle1NuxMwiItBsAkX' +
-        '47GVKZms1aQbKcbpL9IZl3M8xi7u-O5X_9wFX8a1zhHw1ZG_B06Wwx5-0sJcBR-E4CD3WrzHIEf2R0Wo' +
-        'LR-FG5W9fMeuk=s150-p-k'
-  },
-  languageDictionary: {
-    title: "CarPal"
   }
 });
 
@@ -93,6 +87,42 @@ document
     document
       .getElementById('nick')
       .textContent = '';
+  });
+
+// Handle private api call
+document
+  .getElementById('btn-private')
+  .addEventListener('click', () => {
+    // Call private API with JWT in header
+    const token = localStorage.getItem('id_token');
+    /*
+   // block request from happening if no JWT token present
+   if (!token) {
+    document.getElementById('message').textContent = ''
+    document.getElementById('message').textContent =
+     'You must login to call this protected endpoint!'
+    return false
+  }*/
+    // Do request to private endpoint
+    fetch(PRIVATE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then((data) => {
+        console.log('Token:', data);
+        document
+          .getElementById('message')
+          .textContent = '';
+        document
+          .getElementById('message')
+          .textContent = data.message;
+      })
+      .catch((e) => {
+        console.log('error', e);
+      });
   });
 
 document

@@ -1,7 +1,10 @@
 const jsonwebtoken = require('jsonwebtoken');
 
-module.exports.decodeJwt = (headerAuthToken) => {
-    const tokenValue = headerAuthToken.split(' ')[1];
+module.exports.decodeJwt = (event) => {
+    const tokenValue = event
+        .headers
+        .Authorization
+        .split(' ')[1];
 
     try {
         const decodedToken = jsonwebtoken.decode(tokenValue);
