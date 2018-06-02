@@ -20,62 +20,76 @@ class CreateNewRide extends Component {
   }
   render() {
     return (
-      <form onSubmit={e => this.handleSubmit(this.state)}>
-        <div class="form-group">
-          <label>Client</label>
-          <input
-            onChange={e => this.setState({ client: e.currentTarget.value })}
-            type="text"
-            name="client"
-          />
-        </div>
-        <div class="form-group">
-          <label>Date</label>
-          {/* https://github.com/Hacker0x01/react-datepicker inlcude this one maybe */}
-          {/* Add more fields  */}
-          <DatePicker
-            selected={this.state.datetime}
-            onChange={date => this.setState({ datetime: date })}
-          />;
-        </div>
-        <div class="form-group">
-          <label>Location from</label>
-          <input
-            onChange={e =>
-              this.setState({ locationFrom: e.currentTarget.value })
-            }
-            type="text"
-            name="locationFrom"
-          />
-        </div>
-        <div class="form-group">
-          <label>Location to</label>
-          <input
-            onChange={e => this.setState({ locationTo: e.currentTarget.value })}
-            type="text"
-            name="locationTo"
-          />
-        </div>
-        <div class="form-group">
-          <label>Facebook link</label>
-          <input
-            onChange={e => this.setState({ fbLink: e.currentTarget.value })}
-            type="text"
-            name="fbLink"
-          />
-        </div>
-        <div class="form-group">
-          <label>Driver Gender</label>
-          <input
-            onChange={e =>
-              this.setState({ driverGender: e.currentTarget.value })
-            }
-            type="text"
-            name="driverGender"
-          />
-        </div>
-        <label />
-      </form>
+      <div className="container">
+        <form onSubmit={e => this.handleSubmit(this.state)}>
+          <div className="form-group">
+            <label>Client</label>
+            <input
+              onChange={e => this.setState({ client: e.currentTarget.value })}
+              type="text"
+              name="client"
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label>Date</label>
+            <DatePicker
+              selected={this.state.datetime}
+              onChange={date => this.setState({ datetime: date })}
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label>Location from</label>
+            <input
+              onChange={e =>
+                this.setState({ locationFrom: e.currentTarget.value })
+              }
+              type="text"
+              name="locationFrom"
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label>Location to</label>
+            <input
+              onChange={e =>
+                this.setState({ locationTo: e.currentTarget.value })
+              }
+              type="text"
+              name="locationTo"
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label>Facebook link</label>
+            <input
+              onChange={e => this.setState({ fbLink: e.currentTarget.value })}
+              type="text"
+              name="fbLink"
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label>Driver Gender</label>
+            <select class="custom-select">
+              <option selected>Select from following</option>
+              <option value="1">Male</option>
+              <option value="2">Female</option>
+              <option value="3">From Mars</option>
+            </select>
+            <input
+              onChange={e =>
+                this.setState({ driverGender: e.currentTarget.value })
+              }
+              type="text"
+              name="driverGender"
+              className="form-control"
+            />
+          </div>
+          <label />
+        </form>
+      </div>
     );
   }
 }
