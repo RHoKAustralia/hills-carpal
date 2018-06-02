@@ -1,0 +1,36 @@
+{
+  id: "http://json-schema.org/geo",
+  $schema: "http://json-schema.org/draft-06/schema#",
+  description: "A geographical coordinate",
+  type: "object",
+  properties: {
+    facilitatorEmail: {
+      type: 'string',
+      required: true
+    },
+    clientEmail: {
+      type: 'string',
+      required: true
+    },
+    datetime: {
+      type: 'date-time',
+      required: true
+    },
+    locationFrom: {
+      "description": "Origin location",
+      "$ref": "http://json-schema.org/geo"
+    },
+    locationTo: {
+      "description": "Destination location",
+      "$ref": "http://json-schema.org/geo"
+    },
+    fbLink: {
+      type: 'string',
+      required: true
+    },
+    driverGender: string,
+    carType: string,
+    status: string
+  }
+}
+
