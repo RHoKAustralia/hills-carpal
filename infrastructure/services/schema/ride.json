@@ -21,12 +21,26 @@
       "required": true
     },
     "locationFrom": {
-      "description": "Origin location",
-      "$ref": "http://json-schema.org/geo"
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        }
+      }
     },
     "locationTo": {
-      "description": "Destination location",
-      "$ref": "http://json-schema.org/geo"
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        }
+      }
     },
     "fbLink": {
       "type": "string",
