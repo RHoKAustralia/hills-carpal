@@ -20,6 +20,29 @@ e.g.
 }
 ```
 
+Also 'app_metadata' adds a 'gender' property with one of these values:
+- male
+- female
+- ... other ...
+
+e.g.
+```
+{
+    "gender": "female"
+}
+```
+
+Also 'app_metadata' adds a 'car' property with one of these values:
+- suv
+- passenger
+
+e.g.
+```
+{
+    "car": "suv"
+}
+```
+
 # Custom Rule
 
 A custom rule copies the meta data to a JWT claim:
@@ -29,8 +52,12 @@ function (user, context, callback) {
   const namespace = 'https://carpal.org.au/';
   if (user.app_metadata) {
     context.idToken[namespace + 'role'] = user.app_metadata.role;
+    context.idToken[namespace + 'gender'] = user.app_metadata.gender;
+    context.idToken[namespace + 'car'] = user.app_metadata.car;
   } else {
     context.idToken[namespace + 'role'] = 'none';
+    context.idToken[namespace + 'gender'] = 'none';
+    context.idToken[namespace + 'car'] = 'none';
   }
   callback(null, user, context);
 }
