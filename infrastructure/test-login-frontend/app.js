@@ -6,7 +6,7 @@ const AUTH0_DOMAIN = 'carpal.au.auth0.com';
 const AUTH0_CALLBACK_URL = window.location.href; // eslint-disable-line
 const PUBLIC_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/public';
 const PRIVATE_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/private';
-const LOGGEDIN_URL = 'https://y0g4cgxn8c.execute-api.ap-southeast-2.amazonaws.com/dev/authcheck';
+const LOGGEDIN_URL = 'https://tn99ubmph1.execute-api.ap-southeast-2.amazonaws.com/dev/authcheck';
 
 // initialize auth0 lock
 const lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, { // eslint-disable-line no-undef
