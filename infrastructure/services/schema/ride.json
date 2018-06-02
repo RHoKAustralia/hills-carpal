@@ -1,36 +1,49 @@
 {
-  id: "http://json-schema.org/geo",
-  $schema: "http://json-schema.org/draft-06/schema#",
-  description: "A geographical coordinate",
-  type: "object",
-  properties: {
-    facilitatorEmail: {
-      type: 'string',
-      required: true
+  "id": "http://json-schema.org/geo",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "description": "A geographical coordinate",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "required": true
     },
-    clientEmail: {
-      type: 'string',
-      required: true
+    "facilitatorEmail": {
+      "type": "string",
+      "required": true
     },
-    datetime: {
-      type: 'date-time',
-      required: true
+    "clientEmail": {
+      "type": "string",
+      "required": true
     },
-    locationFrom: {
+    "datetime": {
+      "type": "date-time",
+      "required": true
+    },
+    "locationFrom": {
       "description": "Origin location",
       "$ref": "http://json-schema.org/geo"
     },
-    locationTo: {
+    "locationTo": {
       "description": "Destination location",
       "$ref": "http://json-schema.org/geo"
     },
-    fbLink: {
-      type: 'string',
-      required: true
+    "fbLink": {
+      "type": "string",
+      "required": true
     },
-    driverGender: string,
-    carType: string,
-    status: string
+    "driverGender": {
+      "type": "string",
+      "required": true
+    },
+    "carType": {
+      "type": "string",
+      "required": true
+    },
+    "status": {
+      "type": "string",
+      "required": true
+    }
   }
 }
 
