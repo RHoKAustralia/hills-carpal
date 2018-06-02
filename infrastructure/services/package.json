@@ -1,0 +1,12 @@
+{
+    "name": "carpal",
+    "version": "1.0.0",
+    "dependencies": {
+        "jsonschema": "^1.2.4",
+        "jsonwebtoken": "^8.1.0",
+        "uuid": "^3.2.1"
+    },
+    "devDependencies": {
+        "aws-sdk": "^2.250.1"
+    }
+}
