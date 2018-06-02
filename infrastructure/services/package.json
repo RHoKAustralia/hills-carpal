@@ -1,0 +1,7 @@
+{
+    "name": "carpal",
+    "version": "1.0.0",
+    "dependencies": {
+        "jsonwebtoken": "^8.1.0"
+    }
+}

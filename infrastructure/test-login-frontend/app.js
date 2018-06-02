@@ -6,6 +6,7 @@ const AUTH0_DOMAIN = 'carpal.au.auth0.com';
 const AUTH0_CALLBACK_URL = window.location.href; // eslint-disable-line
 const PUBLIC_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/public';
 const PRIVATE_ENDPOINT = 'https://whg7eifvn6.execute-api.us-west-2.amazonaws.com/dev/api/private';
+const LOGGEDIN_URL = 'https://y0g4cgxn8c.execute-api.ap-southeast-2.amazonaws.com/dev/authcheck';
 
 // initialize auth0 lock
 const lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, { // eslint-disable-line no-undef
@@ -88,30 +89,6 @@ document
       .textContent = '';
   });
 
-// Handle public api call
-document
-  .getElementById('btn-public')
-  .addEventListener('click', () => {
-    // call public API
-    fetch(PUBLIC_ENDPOINT, {
-        cache: 'no-store',
-        method: 'POST'
-      })
-      .then(response => response.json())
-      .then((data) => {
-        console.log('Message:', data);
-        document
-          .getElementById('message')
-          .textContent = '';
-        document
-          .getElementById('message')
-          .textContent = data.message;
-      })
-      .catch((e) => {
-        console.log('error', e);
-      });
-  });
-
 // Handle private api call
 document
   .getElementById('btn-private')
@@ -129,6 +106,41 @@ document
     // Do request to private endpoint
     fetch(PRIVATE_ENDPOINT, {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then((data) => {
+        console.log('Token:', data);
+        document
+          .getElementById('message')
+          .textContent = '';
+        document
+          .getElementById('message')
+          .textContent = data.message;
+      })
+      .catch((e) => {
+        console.log('error', e);
+      });
+  });
+
+document
+  .getElementById('btn-loggedin')
+  .addEventListener('click', () => {
+    // Call private API with JWT in header
+    const token = localStorage.getItem('id_token');
+    /*
+   // block request from happening if no JWT token present
+   if (!token) {
+    document.getElementById('message').textContent = ''
+    document.getElementById('message').textContent =
+     'You must login to call this protected endpoint!'
+    return false
+  }*/
+    // Do request to private endpoint
+    fetch(LOGGEDIN_URL, {
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
         }
