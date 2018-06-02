@@ -23,7 +23,7 @@ provider:
 
 # you can overwrite defaults here
 #  stage: dev
-#  region: us-east-1
+  region: ap-southeast-2
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -57,6 +57,11 @@ provider:
 functions:
   hello:
     handler: handler.hello
+    events:
+      - http:
+          path: greet
+          method: GET
+          # private: true
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
