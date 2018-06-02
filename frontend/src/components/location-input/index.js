@@ -30,7 +30,6 @@ class LocationInput extends Component {
           value: x,
         };
       });
-      console.log(options);
       return { options };
     });
   }

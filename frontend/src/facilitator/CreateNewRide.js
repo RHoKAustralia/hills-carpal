@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
-
+import LocationInput from '../components/location-input';
 class CreateNewRide extends Component {
   constructor() {
     super();
@@ -44,24 +44,18 @@ class CreateNewRide extends Component {
           </div>
           <div className="form-group">
             <label>Location from</label>
-            <input
-              onChange={e =>
-                this.setState({ locationFrom: e.currentTarget.value })
-              }
-              type="text"
-              name="locationFrom"
-              className="form-control"
+            <LocationInput
+              onChange={value => {
+                this.setState({ locationTo: value });
+              }}
             />
           </div>
           <div className="form-group">
             <label>Location to</label>
-            <input
-              onChange={e =>
-                this.setState({ locationTo: e.currentTarget.value })
-              }
-              type="text"
-              name="locationTo"
-              className="form-control"
+            <LocationInput
+              onChange={value => {
+                this.setState({ locationTo: value });
+              }}
             />
           </div>
           <div className="form-group">
