@@ -22,7 +22,7 @@ class CreateNewRide extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const url = process.env.API_URL || '';
+    const url = process.env.REACT_APP_API_URL || '';
     axios.post(url, this.state);
   }
   render() {
