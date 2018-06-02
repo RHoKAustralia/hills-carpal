@@ -18,7 +18,15 @@ const columns = [
     text: 'Location to',
     formatter: cell => cell.placeName,
   },
-  { dataField: 'fbLink', text: 'Facebook link' },
+  {
+    dataField: 'fbLink',
+    text: 'Facebook link',
+    formatter: cell => (
+      <a href={cell} target="blank">
+        Go to facebook event
+      </a>
+    ),
+  },
 ];
 
 class Driver extends Component {
