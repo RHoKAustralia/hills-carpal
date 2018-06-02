@@ -1,53 +1,53 @@
 import React, { Component } from 'react';
 import './App.css';
-import Login from './Login.js';
-import Facilitator from './facilitator/';
-import CreateNewRide from './facilitator/CreateNewRide';
-import Driver from './driver';
-import { HashRouter as Router, Route, Link } from 'react-router-dom';
-import { Switch } from 'react-router';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       userRole: '',
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit({ username, password }) {
-    const URL = process.env.REACT_APP_API_URL || '';
-    axios.post(URL + '/login', { username, password }).then(response => {
-      this.setState({ userRole: response.data.role });
-    });
+  logout() {
+    this.props.auth.logout();
   }
 
   render() {
+    const { isAuthenticated } = this.props.auth;
     return (
-      <Router>
-        <div>
-          This nav is for demo
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/facilitator">Facilitator</Link>
-            </li>
-            <li>
-              <Link to="/driver">Driver</Link>
-            </li>
-          </ul>
-          <hr />
-          <Switch>
-            <Route exact path="/" component={Login} />
-            <Route exact path="/facilitator" component={Facilitator} />
-            <Route exact path="/facilitator/create" component={CreateNewRide} />
-            <Route exact path="/driver" component={Driver} />
-          </Switch>
+      <div>
+        <div className="App-header">
+          <div>Hills CarPal</div>
+          <div>
+            This nav is for demo
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/facilitator">Facilitator</Link>
+              </li>
+              <li>
+                <Link to="/driver">Driver</Link>
+              </li>
+            </ul>
+          </div>
+          <div className="App-header-controls">
+            {
+              isAuthenticated() && (
+                  <button
+                    onClick={this.logout.bind(this)}
+                  >
+                    Log Out
+                  </button>
+                )
+            }
+          </div>
         </div>
-      </Router>
+        {this.props.children}
+      </div>
     );
   }
 }
