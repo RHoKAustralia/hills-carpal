@@ -1,24 +1,17 @@
 import auth0 from 'auth0-js';
 import history from '../history';
 
-const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID || '';
-const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN || '';
-const AUTH0_CALLBACK_URL = process.env.AUTH0_CALLBACK_URL || '';
-const PUBLIC_ENDPOINT = process.env.PUBLIC_ENDPOINT || '';
-const PRIVATE_ENDPOINT = process.env.PRIVATE_ENDPOINT || '';
-const LOGGEDIN_URL = process.env.LOGGEDIN_URL || '';
+const PUBLIC_ENDPOINT = process.env.REACT_APP_PUBLIC_ENDPOINT || '';
+const PRIVATE_ENDPOINT = process.env.REACT_APP_PRIVATE_ENDPOINT || '';
+const LOGGEDIN_URL = process.env.REACT_APP_LOGGEDIN_URL || '';
 
 export default class Auth {
   constructor() {
-    if ('' === AUTH0_DOMAIN || '' === AUTH0_CLIENT_ID) {
-      throw new Error(`Apologies, system is unable to process users log in.`)
-    }
-
     this.auth0 = new auth0.WebAuth({
-      domain: AUTH0_DOMAIN,
-      clientID: AUTH0_CLIENT_ID,
-      redirectUri: AUTH0_CALLBACK_URL,
-      audience: `https://${AUTH0_DOMAIN}/userinfo`,
+      domain: process.env.REACT_APP_AUTH0_DOMAIN,
+      clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
+      redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo`,
       responseType: 'token id_token',
       scope: 'openid'
     });
@@ -52,7 +45,11 @@ export default class Auth {
   }
 
   login() {
-    this.auth0.authorize();
+    try {
+      this.auth0.authorize();
+    } catch (error) {
+      throw new Error(`Apologies, system is unable to process users log in.`);
+    }
   }
 
   logout() {
