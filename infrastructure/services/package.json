@@ -5,7 +5,8 @@
         "jsonschema": "^1.2.4",
         "jsonwebtoken": "^8.1.0",
         "request": "^2.87.0",
-        "uuid": "^3.2.1"
+        "uuid": "^3.2.1",
+        "mysql": "^2.15.0"
     },
     "devDependencies": {
         "aws-sdk": "^2.250.1"

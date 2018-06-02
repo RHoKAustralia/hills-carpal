@@ -1,6 +1,9 @@
 const jsonwebtoken = require('jsonwebtoken');
 
 module.exports.decodeJwt = (event) => {
+    if (!event.headers.Authorization) {
+        return;
+    }
     const tokenValue = event
         .headers
         .Authorization

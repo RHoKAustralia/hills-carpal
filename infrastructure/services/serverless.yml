@@ -22,6 +22,7 @@ provider:
     MAPS_API_KEY: ${file(./props.json):MAPS_API_KEY}
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
+    MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
   iamRoleStatements:
     - Effect: Allow
@@ -68,6 +69,14 @@ functions:
     events:
       - http:
           path: map
+          method: get
+          cors: true
+          
+  getRides:
+    handler: rides/get.get
+    events:
+      - http:
+          path: ridesMysql
           method: get
           cors: true
 
