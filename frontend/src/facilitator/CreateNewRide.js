@@ -2,32 +2,38 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import LocationInput from '../components/location-input';
+import axios from 'axios';
+import 'react-datepicker/dist/react-datepicker.css';
+
 class CreateNewRide extends Component {
   constructor() {
     super();
     this.state = {
       client: '',
-      // todo more fields
       datetime: moment(),
+      driverGender: '',
+      locationTo: '',
+      locationFrom: '',
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state);
+    const url = process.env.API_URL || '';
+    axios.post(url, this.state);
   }
   render() {
     return (
       <div className="container">
         <h1>Create new ride</h1>
-        <form onSubmit={e => this.handleSubmit(this.state)}>
+        <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label>Client</label>
             <input
+              required
               onChange={e => this.setState({ client: e.currentTarget.value })}
               type="text"
               name="client"
@@ -37,6 +43,7 @@ class CreateNewRide extends Component {
           <div className="form-group">
             <label>Date</label>
             <DatePicker
+              required
               selected={this.state.datetime}
               onChange={date => this.setState({ datetime: date })}
               className="form-control"
@@ -45,14 +52,18 @@ class CreateNewRide extends Component {
           <div className="form-group">
             <label>Location from</label>
             <LocationInput
+              required={true}
+              value={this.state.locationFrom}
               onChange={value => {
-                this.setState({ locationTo: value });
+                this.setState({ locationFrom: value });
               }}
             />
           </div>
           <div className="form-group">
             <label>Location to</label>
             <LocationInput
+              required={true}
+              value={this.state.locationTo}
               onChange={value => {
                 this.setState({ locationTo: value });
               }}
@@ -69,36 +80,52 @@ class CreateNewRide extends Component {
           </div>
           <div className="form-group">
             <label>Driver Gender</label>
-            <select className="custom-select">
-              <option selected>Select from following</option>
-              <option value="1">Male</option>
-              <option value="2">Female</option>
-              <option value="3">From Mars</option>
+            <select
+              required
+              onChange={e => {
+                driverGender: e.currentTarget.value;
+              }}
+              className="custom-select"
+            >
+              <option>Select from following</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </select>
+          </div>
+          <div className="form-group">
+            <label>Car type</label>
+
             <input
-              onChange={e =>
-                this.setState({ driverGender: e.currentTarget.value })
-              }
+              required
+              onChange={e => this.setState({ carType: e.currentTarget.value })}
               type="text"
-              name="driverGender"
+              name="carType"
               className="form-control"
             />
           </div>
           <label />
-          <button className="btn btn-primary" type="submit">
-            Save
-          </button>
-          <Link className="btn btn-secondary" to={'/facilitator'}>
-            Cancel
-          </Link>
+          <div
+            className="btn-group mr-2"
+            role="group"
+            aria-label="Basic example"
+          >
+            <button className="btn btn-primary" type="submit">
+              Save
+            </button>
+          </div>
+          <div
+            className="btn-group mr-2"
+            role="group"
+            aria-label="Basic example"
+          >
+            <Link className="btn btn-secondary" to={'/facilitator'}>
+              Cancel
+            </Link>
+          </div>
         </form>
       </div>
     );
   }
 }
-
-CreateNewRide.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
 
 export default CreateNewRide;

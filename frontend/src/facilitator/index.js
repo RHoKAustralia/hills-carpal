@@ -28,15 +28,6 @@ const columns = [
   { dataField: 'status', text: 'Status' },
 ];
 class Facilitator extends React.Component {
-  constructor() {
-    super();
-
-    this.handleCreate = this.handleCreate.bind(this);
-  }
-  handleCreate(data) {
-    const url = process.env.API_URL || '';
-    axios.post('/facilities', data);
-  }
   render() {
     return (
       <div className="container">

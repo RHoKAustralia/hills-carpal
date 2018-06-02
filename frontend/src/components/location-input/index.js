@@ -6,6 +6,7 @@ import 'react-select/dist/react-select.css';
 
 // New south wales coordinates
 const bbox = [143, -38, 154, -28];
+// TODO create a mapbox account to get a token
 const token =
   'pk.eyJ1Ijoic21hbGxtdWx0aXBsZXMiLCJhIjoiRk4xSUp6OCJ9.GilBdBaV0oKMZgBwBqRMWA';
 const baseUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/{text}.json?country=au&bbox=${bbox}&access_token=${token}`;
@@ -45,6 +46,7 @@ class LocationInput extends Component {
       const valueObj = value.context.find(x => {
         return x.id.includes(key);
       });
+      debugger;
       return valueObj ? valueObj.text : null;
     };
     this.props.onChange({
@@ -55,12 +57,19 @@ class LocationInput extends Component {
       suburb: getValueFromContext('suburb'),
     });
   }
+  getValue() {
+    const { value } = this.props;
+    if (!value) return '';
+    return { value, label: value.placeName };
+  }
   render() {
     return (
       <Async
         loadOptions={this.getOptions}
-        value={this.props.value || ''}
+        value={this.getValue()}
         onChange={this.handleChange}
+        required={this.props.required}
+        clearable={false}
         placeholder={'Type your address, suburb or postcode'}
         filterOptions={x => x} // The mapbox api does the filtering for us
       />
