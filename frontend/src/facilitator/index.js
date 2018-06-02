@@ -1,8 +1,6 @@
 import React from 'react';
-import CreateNewRide from './CreateNewRide';
 import Table from '../components/table';
 import moment from 'moment';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const columns = [
