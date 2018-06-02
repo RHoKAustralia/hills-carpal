@@ -14,6 +14,14 @@ const lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, { // eslint-disable-li
       scope: 'openid email'
     },
     responseType: 'token id_token'
+  },
+  theme: {
+    logo: 'https://lh3.googleusercontent.com/Ba2CsLxqbgNuHOgejaNbWwmXkQov4yle1NuxMwiItBsAkX' +
+        '47GVKZms1aQbKcbpL9IZl3M8xi7u-O5X_9wFX8a1zhHw1ZG_B06Wwx5-0sJcBR-E4CD3WrzHIEf2R0Wo' +
+        'LR-FG5W9fMeuk=s150-p-k'
+  },
+  languageDictionary: {
+    title: "CarPal"
   }
 });
 
