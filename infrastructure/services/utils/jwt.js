@@ -15,7 +15,7 @@ module.exports.decodeJwt = (event) => {
         claims.email = decodedToken.email;
         claims.role = decodedToken['https://carpal.org.au/role'];
         if (claims.role === 'driver') {
-            claims.gender = decodedToken['https://carpal.org.au/gender'];
+            claims.driverGender = decodedToken['https://carpal.org.au/gender'];
             claims.car = decodedToken['https://carpal.org.au/car'];
         }
         console.log("Claims: " + claims);

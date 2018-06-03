@@ -16,7 +16,7 @@ module.exports.loggedin = function (event, context, callback) {
             "email": claims.email,
             "role": claims.role,
             "car": claims.car,
-            "gender": claims.gender
+            "driverGender": claims.driverGender
         })
     };
 
