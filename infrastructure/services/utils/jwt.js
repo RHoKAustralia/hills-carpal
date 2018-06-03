@@ -18,7 +18,6 @@ module.exports.decodeJwt = (event) => {
             claims.driverGender = decodedToken['https://carpal.org.au/gender'];
             claims.car = decodedToken['https://carpal.org.au/car'];
         }
-        console.log("Claims: " + claims);
         return claims;
     } catch (err) {
         console.log('catch error. Invalid token', err);
