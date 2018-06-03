@@ -2,7 +2,7 @@ import React from 'react';
 import Table from '../components/table';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../auth/api';
 import matchSorter from 'match-sorter';
 import history from '../history';
 
@@ -10,10 +10,10 @@ const columns = [
   { accessor: 'client', Header: 'Client' },
   {
     Header: 'Pickup Time',
-    id: 'pickupTime',
+    id: 'pickupTimeAndDateInUTC',
     accessor: cell => moment(cell).format('YYYY-MM-DD'),
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['pickupTime'] }),
+      matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
     filterAll: true,
   },
   {
@@ -77,7 +77,7 @@ class Facilitator extends React.Component {
     }
 
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axios.get('sampledata.json').then(res => {
+    axiosInstance.get('/rides').then(res => {
       this.setState({ drives: res.data });
     });
   }
