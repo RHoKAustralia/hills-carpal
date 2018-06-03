@@ -45,9 +45,9 @@ module.exports.create = (event, context, callback) => {
     suburbFrom: `${escape(data.locationFrom.suburb)}`,
     placeNameFrom: `${escape(data.locationFrom.placeName)}`,
     postCodeFrom: `${escape(data.locationFrom.postcode)}`,
-    suburbTo: `${escape(data.locationFrom.suburb)}`,
-    placeNameTo: `${escape(data.locationFrom.placeName)}`,
-    postCodeTo: `${escape(data.locationFrom.postcode)}`
+    suburbTo: `${escape(data.locationTo.suburb)}`,
+    placeNameTo: `${escape(data.locationTo.placeName)}`,
+    postCodeTo: `${escape(data.locationTo.postcode)}`
   };
 
   let values = Reflect
