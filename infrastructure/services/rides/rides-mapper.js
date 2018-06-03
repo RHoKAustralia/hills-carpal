@@ -1,13 +1,5 @@
-module.exports.mapAllToDto = (rides) => {
-  return (rides || []).map(mapOne)
-};
-
-module.exports.mapToDto = (ride) => {
-  return mapOne(ride)
-};
-
-function mapOne(ride){
-  return {
+module.exports.mapToDto = (rides) => {
+  return (rides || []).map(ride => ({
     "client": ride.client,
     "pickupTime": new Date(ride.pickupTimeAndDateInUTC),
     "locationFrom": {
@@ -30,5 +22,5 @@ function mapOne(ride){
     "status": ride.status,
     "facilitatorId": ride.facilitatorEmail,
     "id": ride.id
-  }
-}
+  }))
+};
