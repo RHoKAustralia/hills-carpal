@@ -53,8 +53,8 @@ functions:
           cors: true
           request:
             parameters:
-               paths:
-                 id: true
+              paths:
+                id: true
 
   list:
     handler: rides/list.list
@@ -64,6 +64,18 @@ functions:
           path: rides
           method: get
           cors: true
+
+  findone:
+    handler: rides/findone.findone
+    events:
+      - http:
+          path: rides/{id}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
 
   maps:
     handler: map/maps.maps

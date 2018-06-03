@@ -1,6 +1,7 @@
 'use strict';
 const decodeJwt = require('../utils/jwt').decodeJwt;
 const db = require('../utils/db').connection;
+const mapToDto = require('./rides-mapper').mapToDto;
 
 module.exports.list = (event, context, callback) => {
   console.log('Querying mysql');
@@ -25,7 +26,7 @@ module.exports.list = (event, context, callback) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true
       },
-      body: JSON.stringify(results)
+      body: JSON.stringify(mapToDto(results))
     };
     connection.end(function (err) {
       callback(null, response);
