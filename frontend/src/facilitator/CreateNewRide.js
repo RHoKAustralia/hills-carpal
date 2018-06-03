@@ -27,14 +27,24 @@ class CreateNewRide extends Component {
       history.replace('/');
       return false;
     }
+    if (this.props.match.params) {
+      axiosInstance.get('/rides/' + this.props.match.params.id).then(res => {
+        this.setState(res.data);
+      });
+    }
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const url = process.env.REACT_APP_API_URL || '';
-    axiosInstance.post(url, this.state);
+    if (this.props.match.params) {
+      axiosInstance.put('/rides', this.state);
+    }
+    axiosInstance.post('/rides', this.state);
   }
   render() {
+    if (this.props.match.params && this.state.id === undefined) {
+      return <img alt="loader" className="loader" src="/loader.svg" />;
+    }
     return (
       <div className="container">
         <h1>Create new ride</h1>
