@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import axios from 'axios';
+import axiosInstance from '../auth/api';
 import Table from '../components/table';
 import matchSorter from 'match-sorter';
 import history from '../history';
@@ -55,7 +55,7 @@ class Driver extends Component {
     }
 
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axios.get('sampledata.json').then(res => {
+    axiosInstance.get('/rides').then(res => {
       this.setState({ drives: res.data });
     });
   }
