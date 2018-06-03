@@ -16,10 +16,10 @@
       "type": "object",
       "properties": {
         "latitude": {
-          "type": "string"
+          "type": "number"
         },
         "longitude": {
-          "type": "string"
+          "type": "number"
         },
         "suburb": {
           "type": "string"
@@ -36,10 +36,10 @@
       "type": "object",
       "properties": {
         "latitude": {
-          "type": "string"
+          "type": "number"
         },
         "longitude": {
-          "type": "string"
+          "type": "number"
         },
         "suburb": {
           "type": "string"
