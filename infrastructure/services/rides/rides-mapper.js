@@ -18,7 +18,7 @@ module.exports.mapToDto = (rides) => {
     },
     "fbLink": ride.fbLink,
     "driverGender": ride.driverGender,
-    "carType": ride.cartType,
+    "carType": ride.carType,
     "status": ride.status,
     "facilitatorId": ride.facilitatorEmail,
     "id": ride.id
