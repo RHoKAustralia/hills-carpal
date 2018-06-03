@@ -111,7 +111,7 @@ export default class Auth {
 
   hasFacilitatorPriviledge() {
     const userRole = localStorage.getItem(KEY_USER_ROLE);
-    return userRole === "facilitator" || this.hasAdminPriviledge();
+    return userRole === 'facilitator' || this.hasAdminPriviledge();
   }
 
   hasDriverPriviledge() {
