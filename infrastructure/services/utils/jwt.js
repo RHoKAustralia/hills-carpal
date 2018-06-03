@@ -12,7 +12,7 @@ module.exports.decodeJwt = (event) => {
     try {
         const decodedToken = jsonwebtoken.decode(tokenValue);
         var claims = {};
-        claims.email = decodedToken.email;
+        claims.email = decodedToken['https://carpal.org.au/email'];
         claims.role = decodedToken['https://carpal.org.au/role'];
         if (claims.role === 'driver') {
             claims.driverGender = decodedToken['https://carpal.org.au/gender'];
