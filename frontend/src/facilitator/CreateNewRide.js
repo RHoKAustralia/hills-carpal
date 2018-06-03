@@ -47,18 +47,23 @@ class CreateNewRide extends Component {
     e.preventDefault();
 
     if (this.props.match.params.id) {
-      axiosInstance.put('/rides', {
+      axiosInstance({
+        url: '/rides',
+        method: 'post',
+
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
-        body: this.state,
+        data: this.state,
       });
     }
-    axiosInstance.post('/rides', {
+    axiosInstance({
+      url: '/rides',
+      method: 'post',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
       },
-      body: this.state,
+      data: this.state,
     });
   }
   render() {
