@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import LocationInput from '../components/location-input';
-import axios from 'axios';
+import axiosInstance from '../auth/api';
 import history from '../history';
 import 'react-datepicker/dist/react-datepicker.css';
 import './CreateNewRide.css';
