@@ -22,12 +22,14 @@
           "type": "number"
         },
         "suburb": {
-          "type": "string",
-          "optional": true
+          "type": ["string", "null"],
+          "optional": true,
+          "required": false
         },
         "postcode": {
-          "type": "string",
-          "optional": true
+          "type": ["string", "null"],
+          "optional": true,
+          "required": false
         },
         "placeName": {
           "type": "string"
@@ -44,12 +46,14 @@
           "type": "number"
         },
         "suburb": {
-          "type": "string",
-          "optional": true
+          "type": ["string", "null"],
+          "optional": true,
+          "required": false
         },
         "postcode": {
-          "type": "string",
-          "optional": true
+          "type": ["string", "null"],
+          "optional": true,
+          "required": false
         },
         "placeName": {
           "type": "string"
@@ -65,10 +69,6 @@
       "required": true
     },
     "carType": {
-      "type": "string",
-      "required": true
-    },
-    "status": {
       "type": "string",
       "required": true
     }
