@@ -41,6 +41,11 @@ export const createRoutes = () => {
           />
           <Route
             exact
+            path="/facilitator/:id"
+            render={props => <CreateNewRide auth={auth} {...props} />}
+          />
+          <Route
+            exact
             path="/driver"
             render={props => <Driver auth={auth} {...props} />}
           />

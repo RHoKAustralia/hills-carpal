@@ -2,8 +2,9 @@ import React from "react";
 import Table from "../components/table";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../auth/api";
 import matchSorter from "match-sorter";
+import history from "../history";
 
 const columns = [
   { accessor: "client", Header: "Client" },
@@ -69,8 +70,14 @@ class Facilitator extends React.Component {
     this.state = { drives: null };
   }
   componentDidMount() {
+    const { isAuthenticated, hasFacilitatorPriviledge } = this.props.auth;
+    if (!isAuthenticated() || !hasFacilitatorPriviledge()) {
+      history.replace("/");
+      return false;
+    }
+
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axios.get("sampledata.json").then(res => {
+    axiosInstance.get("/rides").then(res => {
       this.setState({ drives: res.data });
     });
   }
