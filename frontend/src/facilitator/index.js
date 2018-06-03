@@ -78,7 +78,9 @@ class Facilitator extends React.Component {
     }
 
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axiosInstance.get('/rides').then(res => {
+    axiosInstance.get('/rides', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
+    }).then(res => {
       this.setState({ drives: res.data });
     });
   }
