@@ -4,8 +4,10 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import LocationInput from "../components/location-input";
 import axios from "axios";
+import history from '../history';
 import "react-datepicker/dist/react-datepicker.css";
 import "./CreateNewRide.css";
+
 class CreateNewRide extends Component {
   constructor() {
     super();
@@ -17,6 +19,14 @@ class CreateNewRide extends Component {
       locationFrom: ""
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    const { isAuthenticated, hasFacilitatorPriviledge } = this.props.auth;
+    if (!isAuthenticated() || !hasFacilitatorPriviledge()) {
+      history.replace('/');
+      return false;
+    }
   }
 
   handleSubmit(e) {
