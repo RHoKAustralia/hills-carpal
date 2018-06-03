@@ -1,39 +1,13 @@
 'use strict';
+const decodeJwt = require('../utils/jwt').decodeJwt;
+const connection = require('../utils/db').connection;
 
-const geocode = require('../utils/geocode');
 const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
-const dynamoDb = new AWS
-  .DynamoDB
-  .DocumentClient();
 
+module.exports.list = (event, context, callback) => {
+  console.log('Querying mysql');
 
-const params = {
-  TableName: process.env.DYNAMODB_TABLE
-};
-
-module.exports.list = async (event, context, callback) => {
-
-  let queryParams = event.queryStringParameters || {};
-
-  if (queryParams.address) {
-    let coordinates = await geocode(queryParams.address);
-    if (coordinates) {
-      // TEST
-      callback(null, {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'text/plain'
-        },
-        body: JSON.stringify(coordinates)
-      });
-      return;
-    }
-  }
-
-
-  // fetch all todos from the database
-  dynamoDb.scan(params, (error, result) => {
-    // handle potential errors
+  connection.query('SELECT * FROM rides', function (error, results, fields) {
     if (error) {
       console.error(error);
       callback(null, {
@@ -45,13 +19,19 @@ module.exports.list = async (event, context, callback) => {
       });
       return;
     }
-
+    console.log(results);
     // create a response
     const response = {
       statusCode: 200,
-      body: JSON.stringify(result.Items)
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify(results)
     };
-
-    callback(null, response);
+    connection.end(function (err) {
+      callback(null, response);
+    });
   });
+
 };
