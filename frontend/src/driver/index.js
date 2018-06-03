@@ -8,10 +8,10 @@ import history from '../history';
 const columns = [
   {
     Header: 'Pickup Time',
-    id: 'pickupTime',
+    id: 'pickupTimeAndDateInUTC',
     accessor: cell => moment(cell).format('YYYY-MM-DD'),
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['pickupTime'] }),
+      matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
     filterAll: true,
   },
   {
