@@ -52,7 +52,12 @@ module.exports.auth = (event, context, callback) => {
             }
             // is custom authorizer function
             console.log('valid from customAuthorizer', decoded);
-            return callback(null, generatePolicy(decoded.sub, 'Allow', event.methodArn));
+            const role = decoded['https://carpal.org.au/role'];
+            if (['driver', 'facilitator', 'admin'].indexOf(role) >= 0) {
+                return callback(null, generatePolicy(decoded.sub, 'Allow', event.methodArn));
+            } else {
+                return callback('Unauthorized');
+            }
         });
     } catch (err) {
         console.log('catch error. Invalid token', err);
