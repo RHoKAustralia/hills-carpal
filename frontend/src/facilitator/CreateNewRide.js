@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import LocationInput from '../components/location-input';
-import axios from 'axios';
-import 'react-datepicker/dist/react-datepicker.css';
-
+import React, { Component } from "react";
+import DatePicker from "react-datepicker";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import LocationInput from "../components/location-input";
+import axios from "axios";
+import "react-datepicker/dist/react-datepicker.css";
+import "./CreateNewRide.css";
 class CreateNewRide extends Component {
   constructor() {
     super();
     this.state = {
-      client: '',
+      client: "",
       datetime: moment(),
-      driverGender: '',
-      locationTo: '',
-      locationFrom: '',
+      driverGender: "",
+      locationTo: "",
+      locationFrom: ""
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const url = process.env.REACT_APP_API_URL || '';
+    const url = process.env.REACT_APP_API_URL || "";
     axios.post(url, this.state);
   }
   render() {
@@ -45,6 +45,11 @@ class CreateNewRide extends Component {
               required
               selected={this.state.datetime}
               onChange={date => this.setState({ datetime: date })}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              dateFormat="LLL"
+              timeCaption="time"
               className="form-control"
             />
           </div>
@@ -117,7 +122,7 @@ class CreateNewRide extends Component {
             role="group"
             aria-label="Basic example"
           >
-            <Link className="btn btn-secondary" to={'/facilitator'}>
+            <Link className="btn btn-secondary" to={"/facilitator"}>
               Back
             </Link>
           </div>
