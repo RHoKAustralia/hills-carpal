@@ -5,7 +5,7 @@ import Table from '../components/table';
 import matchSorter from 'match-sorter';
 import history from '../history';
 import LocationSearch from './LocationSearch';
-import queryString from 'query-string';
+import qs from 'qs';
 const columns = [
   {
     Header: 'Pickup Time',
@@ -68,8 +68,8 @@ class Driver extends Component {
       fromLongitude: locationFrom.longitude,
       fromLatitude: locationFrom.latitude,
     };
-    const qs = queryString.stringify(query);
-    axiosInstance.get('/rides?' + qs).then(res => {
+    const qString = qs.stringify(query);
+    axiosInstance.get('/rides?' + qString).then(res => {
       this.setState({ drives: res.data });
     });
   }
