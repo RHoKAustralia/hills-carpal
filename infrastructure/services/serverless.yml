@@ -19,7 +19,6 @@ provider:
   region: ap-southeast-2
   stage: dev
   environment:
-    MAPS_API_KEY: ${file(./secrets.json):MAPS_API_KEY}
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
     MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
@@ -58,7 +57,6 @@ functions:
 
   list:
     handler: rides/list.list
-    # runtime: nodejs8.10
     events:
       - http:
           path: rides
@@ -76,38 +74,6 @@ functions:
             parameters:
               paths:
                 id: true
-
-  maps:
-    handler: map/maps.maps
-    events:
-      - http:
-          path: map
-          method: get
-          cors: true
-
-  # get:
-  #   handler: todos/get.get
-  #   events:
-  #     - http:
-  #         path: todos/{id}
-  #         method: get
-  #         cors: true
-
-  # update:
-  #   handler: todos/update.update
-  #   events:
-  #     - http:
-  #         path: todos/{id}
-  #         method: put
-  #         cors: true
-
-  # delete:
-  #   handler: todos/delete.delete
-  #   events:
-  #     - http:
-  #         path: todos/{id}
-  #         method: delete
-  #         cors: true
 
 resources:
   Resources:
