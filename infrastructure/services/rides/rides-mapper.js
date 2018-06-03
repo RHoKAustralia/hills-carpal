@@ -1,5 +1,13 @@
-module.exports.mapToDto = (rides) => {
-  return (rides || []).map(ride => ({
+module.exports.mapAllToDto = (rides) => {
+  return (rides || []).map(mapOne)
+};
+
+module.exports.mapToDto = (ride) => {
+  return mapOne(ride)
+};
+
+function mapOne(ride){
+  return {
     "client": ride.client,
     "pickupTime": new Date(ride.pickupTimeAndDateInUTC),
     "locationFrom": {
@@ -20,6 +28,7 @@ module.exports.mapToDto = (rides) => {
     "driverGender": ride.driverGender,
     "carType": ride.cartType,
     "status": ride.status,
-    "facilitatorId": ride.facilitatorEmail
-  }))
-};
+    "facilitatorId": ride.facilitatorEmail,
+    "id": ride.id
+  }
+}

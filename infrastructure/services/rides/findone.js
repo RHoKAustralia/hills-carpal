@@ -37,7 +37,7 @@ module.exports.findone = (event, context, callback) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true
       },
-      body: JSON.stringify(mapToDto(result))
+      body: JSON.stringify(mapToDto((result || [])[0]))
     };
     callback(null, response);
   });
