@@ -57,7 +57,9 @@ class Driver extends Component {
     }
 
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axiosInstance.get('/rides').then(res => {
+    axiosInstance.get('/rides', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
+    }).then(res => {
       this.setState({ drives: res.data });
     });
   }
@@ -69,7 +71,9 @@ class Driver extends Component {
       fromLatitude: locationFrom.latitude,
     };
     const qString = qs.stringify(query);
-    axiosInstance.get('/rides?' + qString).then(res => {
+    axiosInstance.get('/rides?' + qString, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
+    }).then(res => {
       this.setState({ drives: res.data });
     });
   }
