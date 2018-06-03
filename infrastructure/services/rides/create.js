@@ -36,7 +36,7 @@ module.exports.create = (event, context, callback) => {
     facilitatorEmail: `${escape(facilitatorEmail)}`,
     pickupTimeAndDateInUTC: `"${new Date(data.pickupTimeAndDateInUTC).toISOString()}"`,
     locationFrom: `POINT(${data.locationFrom.latitude}, ${data.locationFrom.longitude})`,
-    locationTo: `POINT(${data.locationFrom.latitude}, ${data.locationFrom.longitude})`,
+    locationTo: `POINT(${data.locationTo.latitude}, ${data.locationTo.longitude})`,
     fbLink: `${escape(data.fbLink)}`,
     driverGender: `${escape(data.driverGender)}`,
     carType: `${escape(data.carType)}`,
@@ -50,7 +50,10 @@ module.exports.create = (event, context, callback) => {
     postCodeTo: `${escape(data.locationFrom.postcode)}`
   };
 
-  let values = Reflect.ownKeys(payload).map(key => payload[key]).join(',');
+  let values = Reflect
+    .ownKeys(payload)
+    .map(key => payload[key])
+    .join(',');
   let query = `INSERT INTO rides(${Reflect.ownKeys(payload)}) VALUES (${values})`;
   console.log(query);
 
@@ -79,8 +82,9 @@ module.exports.create = (event, context, callback) => {
 
 function queryDatabase(connection, query, callback) {
   connection.query(query, (error, results, fields) => {
-    connection.end(function (err) {
-      callback(error, results);
-    });
+    connection
+      .end(function (err) {
+        callback(error, results);
+      });
   });
 }
