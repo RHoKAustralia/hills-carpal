@@ -59,6 +59,11 @@ function (user, context, callback) {
     context.idToken[namespace + 'gender'] = 'none';
     context.idToken[namespace + 'car'] = 'none';
   }
+  
+  if (user.email) {
+    context.idToken[namespace + 'email'] = user.email;
+  }
+  
   callback(null, user, context);
 }
 ```
