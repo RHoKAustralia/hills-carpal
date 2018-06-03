@@ -41,6 +41,7 @@ functions:
       - http:
           path: rides
           method: post
+          authorizer: auth
           cors: true
 
   update:
@@ -49,6 +50,7 @@ functions:
       - http:
           path: rides/{id}
           method: put
+          authorizer: auth
           cors: true
           request:
             parameters:
@@ -61,6 +63,7 @@ functions:
       - http:
           path: rides
           method: get
+          authorizer: auth
           cors: true
 
   findone:
@@ -69,6 +72,7 @@ functions:
       - http:
           path: rides/{id}
           method: get
+          authorizer: auth
           cors: true
           request:
             parameters:
