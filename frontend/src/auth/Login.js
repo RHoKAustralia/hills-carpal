@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import './login.css'
 import { Link } from 'react-router-dom';
 
 class Login extends Component {
@@ -32,18 +33,38 @@ class Login extends Component {
   render() {
     const { isAuthenticated, hasAdminPriviledge } = this.props.auth;
     return (
+
+
+
+      //header
       <div>
         <div className="Login-header">
-          <div>Welcome to CarPal</div>
+  
         </div>
         <div>
+
+
+
+      
           {
             !isAuthenticated() && (
+          
+            <div class="row">
+              <div class="col-md-12 text-center">
+             <div className="outerForm">
+              <div className="quote">Share the ride, share the life</div>
+              
                 <button
+                  className="btn btn-success btn-block"
+                  id="loginButton"
                   onClick={this.login.bind(this)}
                 >
                   Log In
                 </button>
+                </div>
+              </div>
+                </div>
+           
               )
           }
           {
@@ -57,6 +78,8 @@ class Login extends Component {
               </div>
             )
           }
+
+
         </div>
       </div>
     );
