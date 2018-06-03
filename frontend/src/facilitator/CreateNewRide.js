@@ -27,7 +27,7 @@ class CreateNewRide extends Component {
       history.replace('/');
       return false;
     }
-    if (this.props.match.params) {
+    if (this.props.match.params.id) {
       axiosInstance.get('/rides/' + this.props.match.params.id).then(res => {
         this.setState(res.data);
       });
@@ -42,7 +42,7 @@ class CreateNewRide extends Component {
     axiosInstance.post('/rides', this.state);
   }
   render() {
-    if (this.props.match.params && this.state.id === undefined) {
+    if (this.props.match.params.id && this.state.id === undefined) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
     }
     return (
