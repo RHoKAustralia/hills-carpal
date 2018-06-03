@@ -20,21 +20,10 @@ provider:
   stage: dev
   environment:
     MAPS_API_KEY: ${file(./secrets.json):MAPS_API_KEY}
-    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
     MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-
+  
 functions:
   auth:
     handler: auth/auth.auth
@@ -57,7 +46,7 @@ functions:
 
   list:
     handler: rides/list.list
-    runtime: nodejs8.10
+    # runtime: nodejs8.10
     events:
       - http:
           path: rides
@@ -69,14 +58,6 @@ functions:
     events:
       - http:
           path: map
-          method: get
-          cors: true
-
-  getRides:
-    handler: rides/get.get
-    events:
-      - http:
-          path: ridesMysql
           method: get
           cors: true
 
@@ -106,22 +87,6 @@ functions:
 
 resources:
   Resources:
-    TodosDynamoDbTable:
-      Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: Retain
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: id
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
