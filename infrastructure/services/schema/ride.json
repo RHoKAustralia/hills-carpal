@@ -8,7 +8,7 @@
       "type": "string",
       "required": true
     },
-    "pickupTime": {
+    "pickupTimeAndDateInUTC": {
       "type": "date-time",
       "required": true
     },

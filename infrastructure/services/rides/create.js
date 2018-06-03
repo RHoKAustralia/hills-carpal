@@ -12,7 +12,9 @@ module.exports.create = (event, context, callback) => {
 
   const data = JSON.parse(event.body);
   data.datetime = timestamp;
-  let facilitatorEmail = decodeJwt(event);
+
+  let loginData = decodeJwt(event);
+  let facilitatorEmail = loginData && loginData.email;
   const validationResult = validate(data, rideSchema);
 
   if (validationResult.errors && validationResult.errors.length) {
@@ -30,22 +32,22 @@ module.exports.create = (event, context, callback) => {
     return connection.escape(data)
   };
   let payload = {
-    client: `"${escape(data.client)}"`,
-    facilitatorEmail: `"${escape(facilitatorEmail)}"`,
-    pickupTimeAndDateInUTC: `"${new Date(data.pickupTime).toISOString()}"`,
+    client: `${escape(data.client)}`,
+    facilitatorEmail: `${escape(facilitatorEmail)}`,
+    pickupTimeAndDateInUTC: `"${new Date(data.pickupTimeAndDateInUTC).toISOString()}"`,
     locationFrom: `POINT(${data.locationFrom.latitude}, ${data.locationFrom.longitude})`,
     locationTo: `POINT(${data.locationFrom.latitude}, ${data.locationFrom.longitude})`,
-    fbLink: `"${escape(data.fbLink)}"`,
-    driverGender: `"${escape(data.driverGender)}"`,
-    carType: `"${escape(data.carType)}"`,
+    fbLink: `${escape(data.fbLink)}`,
+    driverGender: `${escape(data.driverGender)}`,
+    carType: `${escape(data.carType)}`,
     status: `"${rideStatus.open}"`,
     deleted: `0`,
-    suburbFrom: `"${escape(data.locationFrom.suburb)}"`,
-    placeNameFrom: `"${escape(data.locationFrom.placeName)}"`,
-    postCodeFrom: `"${escape(data.locationFrom.postcode)}"`,
-    suburbTo: `"${escape(data.locationFrom.suburb)}"`,
-    placeNameTo: `"${escape(data.locationFrom.placeName)}"`,
-    postCodeTo: `"${escape(data.locationFrom.postcode)}"`
+    suburbFrom: `${escape(data.locationFrom.suburb)}`,
+    placeNameFrom: `${escape(data.locationFrom.placeName)}`,
+    postCodeFrom: `${escape(data.locationFrom.postcode)}`,
+    suburbTo: `${escape(data.locationFrom.suburb)}`,
+    placeNameTo: `${escape(data.locationFrom.placeName)}`,
+    postCodeTo: `${escape(data.locationFrom.postcode)}`
   };
 
   let values = Reflect.ownKeys(payload).map(key => payload[key]).join(',');
