@@ -3,6 +3,7 @@ import moment from 'moment';
 import axios from 'axios';
 import Table from '../components/table';
 import matchSorter from 'match-sorter';
+import history from '../history';
 
 const columns = [
   {
@@ -47,6 +48,12 @@ class Driver extends Component {
     this.state = { drives: null };
   }
   componentDidMount() {
+    const { isAuthenticated, hasDriverPriviledge } = this.props.auth;
+    if (!isAuthenticated() || !hasDriverPriviledge()) {
+      history.replace('/');
+      return false;
+    }
+
     // const url = process.env.REACT_APP_API_URL + '/drives'
     axios.get('sampledata.json').then(res => {
       this.setState({ drives: res.data });

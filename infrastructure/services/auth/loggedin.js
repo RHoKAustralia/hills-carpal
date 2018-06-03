@@ -1,10 +1,8 @@
 const decodeJwt = require('../utils/jwt').decodeJwt;
 module.exports.loggedin = function (event, context, callback) {
     console.log(JSON.stringify(event)); // Contains incoming request data (e.g., query params, headers and more)
-    const decodedJwt = decodeJwt(event);
-    console.log(decodedJwt);
-    const email = decodedJwt.email;
-    const role = decodedJwt['https://carpal.org.au/role'];
+    const claims = decodeJwt(event);
+    console.log(claims);
     const response = {
         statusCode: 200,
         headers: {
@@ -14,9 +12,11 @@ module.exports.loggedin = function (event, context, callback) {
             'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify({
-            "message": email + " is logged in with role " + role,
-            "email": email,
-            "role": role
+            "message": claims.email + " is logged in with role " + claims.role,
+            "email": claims.email,
+            "role": claims.role,
+            "car": claims.car,
+            "gender": claims.gender
         })
     };
 
