@@ -4,19 +4,11 @@
   "description": "A geographical coordinate",
   "type": "object",
   "properties": {
-    "id": {
+    "client": {
       "type": "string",
       "required": true
     },
-    "facilitatorEmail": {
-      "type": "string",
-      "required": true
-    },
-    "clientEmail": {
-      "type": "string",
-      "required": true
-    },
-    "datetime": {
+    "pickupTime": {
       "type": "date-time",
       "required": true
     },
@@ -24,10 +16,19 @@
       "type": "object",
       "properties": {
         "latitude": {
-          "type": "number"
+          "type": "string"
         },
         "longitude": {
-          "type": "number"
+          "type": "string"
+        },
+        "suburb": {
+          "type": "string"
+        },
+        "postcode": {
+          "type": "string"
+        },
+        "placeName": {
+          "type": "string"
         }
       }
     },
@@ -35,10 +36,19 @@
       "type": "object",
       "properties": {
         "latitude": {
-          "type": "number"
+          "type": "string"
         },
         "longitude": {
-          "type": "number"
+          "type": "string"
+        },
+        "suburb": {
+          "type": "string"
+        },
+        "postcode": {
+          "type": "string"
+        },
+        "placeName": {
+          "type": "string"
         }
       }
     },

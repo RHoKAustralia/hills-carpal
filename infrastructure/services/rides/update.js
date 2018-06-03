@@ -1,29 +1,26 @@
 'use strict';
 
-const validate = require('jsonschema').validate; // eslint-disable-line import/no-extraneous-dependencies
-const rideSchema = require('../schema/ride.json'); // eslint-disable-line import/no-extraneous-dependencies
 const db = require('../utils/db').connection;
 const rideStatus = require('./ride-status');
 const decodeJwt = require('../utils/jwt').decodeJwt;
 
-module.exports.create = (event, context, callback) => {
+module.exports.update = (event, context, callback) => {
   const timestamp = new Date().getTime();
   const connection = db();
 
   const data = JSON.parse(event.body);
   data.datetime = timestamp;
   let facilitatorEmail = decodeJwt(event);
-  const validationResult = validate(data, rideSchema);
 
-  if (validationResult.errors && validationResult.errors.length) {
-    callback(null, {
+  let id = event.pathParameters.id;
+  if(!id){
+    return callback(null, {
       statusCode: 400,
       headers: {
         'Content-Type': 'text/plain'
       },
-      body: JSON.stringify({"error": validationResult.errors})
+      body: 'Invalid id'
     });
-    return;
   }
 
   let escape = function (data) {
@@ -48,8 +45,8 @@ module.exports.create = (event, context, callback) => {
     postCodeTo: `"${escape(data.locationFrom.postcode)}"`
   };
 
-  let values = Reflect.ownKeys(payload).map(key => payload[key]).join(',');
-  let query = `INSERT INTO rides(${Reflect.ownKeys(payload)}) VALUES (${values})`;
+  let values = Reflect.ownKeys(payload).map(key => `${key} = ${payload[key]}`).join(',');
+  let query = `UPDATE rides SET ${values} WHERE id = ${id}`;
   console.log(query);
 
   queryDatabase(connection, query, (err, result) => {

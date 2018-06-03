@@ -1,12 +1,10 @@
 'use strict';
 const decodeJwt = require('../utils/jwt').decodeJwt;
-const connection = require('../utils/db').connection;
-
-const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
+const db = require('../utils/db').connection;
 
 module.exports.list = (event, context, callback) => {
   console.log('Querying mysql');
-
+  const connection = db();
   connection.query('SELECT * FROM rides', function (error, results, fields) {
     if (error) {
       console.error(error);
@@ -15,7 +13,7 @@ module.exports.list = (event, context, callback) => {
         headers: {
           'Content-Type': 'text/plain'
         },
-        body: 'Couldn\'t fetch the todos.'
+        body: 'Couldn\'t fetch rides.'
       });
       return;
     }
