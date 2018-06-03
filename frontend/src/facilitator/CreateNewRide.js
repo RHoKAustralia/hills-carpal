@@ -67,6 +67,12 @@ class CreateNewRide extends Component {
       data: this.state,
     });
   }
+  getHeadline() {
+    if (this.props.match.params.id) {
+      return <h1>Edit ride</h1>;
+    }
+    return <h1>Create new ride</h1>;
+  }
   render() {
     if (this.props.match.params.id && this.state.id === undefined) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
@@ -74,7 +80,7 @@ class CreateNewRide extends Component {
 
     return (
       <div className="container">
-        <h1>Create new ride</h1>
+        {this.getHeadline()}
         <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label>Client</label>
@@ -145,7 +151,7 @@ class CreateNewRide extends Component {
               className="custom-select"
             >
               <option>Select from following</option>
-              <option value="a">Any</option>
+              <option value="any">Any</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
