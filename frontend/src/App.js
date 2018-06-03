@@ -13,15 +13,9 @@ class App extends Component {
         <div className="App-header">
           <div>Hills CarPal</div>
           <div className="App-header-controls">
-            {
-              isAuthenticated() && (
-                  <button
-                    onClick={this.logout.bind(this)}
-                  >
-                    Log Out
-                  </button>
-                )
-            }
+            {isAuthenticated() && (
+              <button onClick={this.logout.bind(this)}>Log Out</button>
+            )}
           </div>
         </div>
         {this.props.children}

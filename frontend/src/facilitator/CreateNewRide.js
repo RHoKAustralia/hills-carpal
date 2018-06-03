@@ -47,6 +47,7 @@ class CreateNewRide extends Component {
               type="text"
               name="client"
               className="form-control"
+              placeholder="Type your name"
             />
           </div>
           <div className="form-group">
@@ -90,6 +91,7 @@ class CreateNewRide extends Component {
               type="text"
               name="fbLink"
               className="form-control"
+              placeholder="Type your Facebook link here"
             />
           </div>
           <div className="form-group">
@@ -102,6 +104,7 @@ class CreateNewRide extends Component {
               className="custom-select"
             >
               <option>Select from following</option>
+              <option value="any">Any</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
@@ -109,13 +112,17 @@ class CreateNewRide extends Component {
           <div className="form-group">
             <label>Car type</label>
 
-            <input
+            <select
               required
-              onChange={e => this.setState({ carType: e.currentTarget.value })}
-              type="text"
-              name="carType"
-              className="form-control"
-            />
+              onChange={e => {
+                this.setState({ carType: e.currentTarget.value });
+              }}
+              className="custom-select"
+            >
+              <option>Select from following</option>
+              <option value="noSUV">No SUV</option>
+              <option value="All">All</option>
+            </select>
           </div>
           <label />
           <div
