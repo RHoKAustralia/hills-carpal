@@ -31,7 +31,7 @@ ORDER BY pickupTimeAndDateInUTC ASC;
   `
   } else if (claims.role === 'admin') {
     query = `
-SELECT * FROM carpal.rides' 
+SELECT * FROM carpal.rides
 ORDER BY pickupTimeAndDateInUTC ASC;
   `
   }
