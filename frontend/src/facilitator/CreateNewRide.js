@@ -145,7 +145,7 @@ class CreateNewRide extends Component {
               className="custom-select"
             >
               <option>Select from following</option>
-              <option value="a">Any</option>
+              <option value="any">Any</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
