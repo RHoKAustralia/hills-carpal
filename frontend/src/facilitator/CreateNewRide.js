@@ -17,6 +17,7 @@ class CreateNewRide extends Component {
       driverGender: '',
       locationTo: '',
       locationFrom: '',
+      carType: '',
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -48,14 +49,14 @@ class CreateNewRide extends Component {
 
     if (this.props.match.params.id) {
       axiosInstance({
-        url: '/rides',
-        method: 'post',
-
+        url: '/rides/' + this.props.match.params.id,
+        method: 'put',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
         data: this.state,
       });
+      return;
     }
     axiosInstance({
       url: '/rides',
@@ -70,6 +71,7 @@ class CreateNewRide extends Component {
     if (this.props.match.params.id && this.state.id === undefined) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
     }
+
     return (
       <div className="container">
         <h1>Create new ride</h1>
@@ -77,6 +79,7 @@ class CreateNewRide extends Component {
           <div className="form-group">
             <label>Client</label>
             <input
+              value={this.state.client}
               required
               onChange={e => this.setState({ client: e.currentTarget.value })}
               type="text"
@@ -89,6 +92,7 @@ class CreateNewRide extends Component {
             <label>Date</label>
             <DatePicker
               required
+              value={this.state.pickupTimeAndDateInUTC}
               selected={this.state.pickupTimeAndDateInUTC}
               onChange={date => this.setState({ pickupTimeAndDateInUTC: date })}
               showTimeSelect
@@ -122,6 +126,7 @@ class CreateNewRide extends Component {
           <div className="form-group">
             <label>Facebook link</label>
             <input
+              value={this.state.fbLink}
               onChange={e => this.setState({ fbLink: e.currentTarget.value })}
               type="text"
               name="fbLink"
@@ -136,6 +141,7 @@ class CreateNewRide extends Component {
               onChange={e => {
                 this.setState({ driverGender: e.currentTarget.value });
               }}
+              value={this.state.driverGender}
               className="custom-select"
             >
               <option>Select from following</option>
@@ -152,6 +158,7 @@ class CreateNewRide extends Component {
               onChange={e => {
                 this.setState({ carType: e.currentTarget.value });
               }}
+              value={this.state.carType}
               className="custom-select"
             >
               <option>Select from following</option>
