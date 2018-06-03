@@ -1,7 +1,7 @@
 'use strict';
 const decodeJwt = require('../utils/jwt').decodeJwt;
 const db = require('../utils/db').connection;
-const mapToDto = require('./rides-mapper').mapToDto;
+const mapToDto = require('./rides-mapper').mapAllToDto;
 
 module.exports.list = (event, context, callback) => {
   let queryParams = event.queryStringParameters || {};
