@@ -36,8 +36,9 @@ class CreateNewRide extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    if (this.props.match.params) {
+    if (this.props.match.params.id) {
       axiosInstance.put('/rides', this.state);
+      return;
     }
     axiosInstance.post('/rides', this.state);
   }
