@@ -27,8 +27,11 @@ class CreateNewRide extends Component {
       history.replace('/');
       return false;
     }
+
     if (this.props.match.params.id) {
-      axiosInstance.get('/rides/' + this.props.match.params.id).then(res => {
+          axiosInstance.get('/rides/' + this.props.match.params.id, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
+      }).then(res => {
         this.setState(res.data);
       });
     }
@@ -36,11 +39,15 @@ class CreateNewRide extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    
     if (this.props.match.params.id) {
-      axiosInstance.put('/rides', this.state);
-      return;
+      axiosInstance.put('/rides', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
+      }, this.state);
     }
-    axiosInstance.post('/rides', this.state);
+    axiosInstance.post('/rides', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
+    }, this.state);
   }
   render() {
     if (this.props.match.params.id && this.state.id === undefined) {
