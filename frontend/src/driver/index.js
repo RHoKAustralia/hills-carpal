@@ -36,7 +36,7 @@ const columns = [
     id: 'fbLink',
     Header: 'Facebook link',
     accessor: cell => (
-      <a href={cell} target="blank">
+      <a href={cell.fbLink} target="blank">
         Go to facebook event
       </a>
     ),
@@ -57,11 +57,15 @@ class Driver extends Component {
     }
 
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axiosInstance.get('/rides', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
-    }).then(res => {
-      this.setState({ drives: res.data });
-    });
+    axiosInstance
+      .get('/rides', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+      })
+      .then(res => {
+        this.setState({ drives: res.data });
+      });
   }
   handleSearch({ locationTo, locationFrom }) {
     const query = {
@@ -71,11 +75,15 @@ class Driver extends Component {
       fromLatitude: locationFrom.latitude,
     };
     const qString = qs.stringify(query);
-    axiosInstance.get('/rides?' + qString, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
-    }).then(res => {
-      this.setState({ drives: res.data });
-    });
+    axiosInstance
+      .get('/rides?' + qString, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+      })
+      .then(res => {
+        this.setState({ drives: res.data });
+      });
   }
   render() {
     if (!this.state.drives) {

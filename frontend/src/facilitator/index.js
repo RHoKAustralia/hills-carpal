@@ -37,7 +37,7 @@ const columns = [
     id: 'fbLink',
     Header: 'Facebook link',
     accessor: cell => (
-      <a href={cell} target="blank">
+      <a href={cell.fbLink} target="blank">
         Go to facebook event
       </a>
     ),
@@ -78,11 +78,15 @@ class Facilitator extends React.Component {
     }
 
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axiosInstance.get('/rides', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
-    }).then(res => {
-      this.setState({ drives: res.data });
-    });
+    axiosInstance
+      .get('/rides', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+      })
+      .then(res => {
+        this.setState({ drives: res.data });
+      });
   }
   handleRowClick(row) {
     this.props.history.push('/facilitator/' + row._original.id);
