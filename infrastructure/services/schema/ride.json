@@ -22,10 +22,12 @@
           "type": "number"
         },
         "suburb": {
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         "postcode": {
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         "placeName": {
           "type": "string"
@@ -42,10 +44,12 @@
           "type": "number"
         },
         "suburb": {
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         "postcode": {
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         "placeName": {
           "type": "string"
