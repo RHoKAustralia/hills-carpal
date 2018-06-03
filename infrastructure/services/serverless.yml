@@ -44,6 +44,18 @@ functions:
           method: post
           cors: true
 
+  update:
+    handler: rides/update.update
+    events:
+      - http:
+          path: rides/{id}
+          method: put
+          cors: true
+          request:
+            parameters:
+               paths:
+                 id: true
+
   list:
     handler: rides/list.list
     # runtime: nodejs8.10
