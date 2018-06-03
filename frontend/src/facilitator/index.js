@@ -1,67 +1,67 @@
-import React from 'react';
-import Table from '../components/table';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import matchSorter from 'match-sorter';
+import React from "react";
+import Table from "../components/table";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import matchSorter from "match-sorter";
 
 const columns = [
-  { accessor: 'client', Header: 'Client' },
+  { accessor: "client", Header: "Client" },
   {
-    Header: 'Pickup Time',
-    id: 'pickupTime',
-    accessor: cell => moment(cell).format('YYYY-MM-DD'),
+    Header: "Pickup Time",
+    id: "pickupTime",
+    accessor: cell => moment(cell).format("YYYY-MM-DD"),
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['pickupTime'] }),
-    filterAll: true,
+      matchSorter(rows, filter.value, { keys: ["pickupTime"] }),
+    filterAll: true
   },
   {
-    Header: 'Location from',
-    id: 'locationFrom',
+    Header: "Location from",
+    id: "locationFrom",
     accessor: cell => cell.locationFrom.placeName,
     filterMethod: (filter, rows) => {
-      return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
+      return matchSorter(rows, filter.value, { keys: ["locationFrom"] });
     },
-    filterAll: true,
+    filterAll: true
   },
   {
-    id: 'locationTo',
-    Header: 'Location to',
+    id: "locationTo",
+    Header: "Location to",
     accessor: cell => cell.locationTo.placeName,
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['locationTo'] }),
-    filterAll: true,
+      matchSorter(rows, filter.value, { keys: ["locationTo"] }),
+    filterAll: true
   },
   {
-    id: 'fbLink',
-    Header: 'Facebook link',
+    id: "fbLink",
+    Header: "Facebook link",
     accessor: cell => (
       <a href={cell} target="blank">
         Go to facebook event
       </a>
-    ),
+    )
   },
   {
-    accessor: 'driverGender',
-    Header: 'Gender',
+    accessor: "driverGender",
+    Header: "Gender",
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['driverGender'] }),
-    filterAll: true,
+      matchSorter(rows, filter.value, { keys: ["driverGender"] }),
+    filterAll: true
   },
   {
-    accessor: 'carType',
-    Header: 'Car',
+    accessor: "carType",
+    Header: "Car",
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['carType'] }),
-    filterAll: true,
+      matchSorter(rows, filter.value, { keys: ["carType"] }),
+    filterAll: true
   },
   {
-    accessor: 'status',
-    Header: 'Status',
+    accessor: "status",
+    Header: "Status",
     filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['status'] }),
-    filterAll: true,
-  },
+      matchSorter(rows, filter.value, { keys: ["status"] }),
+    filterAll: true
+  }
 ];
 class Facilitator extends React.Component {
   constructor() {
@@ -70,7 +70,7 @@ class Facilitator extends React.Component {
   }
   componentDidMount() {
     // const url = process.env.REACT_APP_API_URL + '/drives'
-    axios.get('sampledata.json').then(res => {
+    axios.get("sampledata.json").then(res => {
       this.setState({ drives: res.data });
     });
   }
@@ -82,9 +82,14 @@ class Facilitator extends React.Component {
     return (
       <div className="container">
         <h1>Rides</h1>
-        <Link className="btn btn-primary" to={'/facilitator/create'}>
+        <Link
+          className="btn btn-primary float-right"
+          to={"/facilitator/create"}
+        >
           Create new
         </Link>
+        <h1>Search for rides</h1>
+
         <Table data={this.state.drives} columns={columns} />
       </div>
     );
