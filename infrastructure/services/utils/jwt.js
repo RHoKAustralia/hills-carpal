@@ -11,7 +11,15 @@ module.exports.decodeJwt = (event) => {
 
     try {
         const decodedToken = jsonwebtoken.decode(tokenValue);
-        return decodedToken;
+        var claims = {};
+        claims.email = decodedToken.email;
+        claims.role = decodedToken['https://carpal.org.au/role'];
+        if (claims.role === 'driver') {
+            claims.gender = decodedToken['https://carpal.org.au/gender'];
+            claims.car = decodedToken['https://carpal.org.au/car'];
+        }
+        console.log("Claims: " + claims);
+        return claims;
     } catch (err) {
         console.log('catch error. Invalid token', err);
         return;
