@@ -13,7 +13,7 @@ class CreateNewRide extends Component {
     super();
     this.state = {
       client: '',
-      datetime: moment(),
+      pickupTimeAndDateInUTC: moment(),
       driverGender: '',
       locationTo: '',
       locationFrom: '',
@@ -65,8 +65,8 @@ class CreateNewRide extends Component {
             <label>Date</label>
             <DatePicker
               required
-              selected={this.state.datetime}
-              onChange={date => this.setState({ datetime: date })}
+              selected={this.state.pickupTimeAndDateInUTC}
+              onChange={date => this.setState({ pickupTimeAndDateInUTC: date })}
               showTimeSelect
               timeFormat="HH:mm"
               timeIntervals={15}
