@@ -29,25 +29,43 @@ class CreateNewRide extends Component {
     }
 
     if (this.props.match.params.id) {
-          axiosInstance.get('/rides/' + this.props.match.params.id, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
-      }).then(res => {
-        this.setState(res.data);
-      });
+      axiosInstance
+        .get('/rides/' + this.props.match.params.id, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          },
+        })
+        .then(res => {
+          const data = res.data[0];
+
+          this.setState(data);
+        });
     }
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    
+
     if (this.props.match.params.id) {
-      axiosInstance.put('/rides', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
-      }, this.state);
+      axiosInstance.put(
+        '/rides',
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          },
+        },
+        this.state
+      );
     }
-    axiosInstance.post('/rides', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('id_token')}` },
-    }, this.state);
+    axiosInstance.post(
+      '/rides',
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+      },
+      this.state
+    );
   }
   render() {
     if (this.props.match.params.id && this.state.id === undefined) {
