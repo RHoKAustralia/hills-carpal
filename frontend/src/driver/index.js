@@ -92,8 +92,21 @@ class Driver extends Component {
     return (
       <div className="container">
         <h1>Find drives</h1>
+
         <LocationSearch onLocationSearch={this.handleSearch} />
-        <Table data={this.state.drives} columns={columns} />
+
+        <Table
+          style={{ paddingTop: '10px' }}
+          data={this.state.drives}
+          columns={columns}
+        />
+
+        <a
+          style={{ marginTop: '20px', display: 'block' }}
+          href={'https://john3110.polldaddy.com/s/ride-feedback'}
+        >
+          Please fill in the survey
+        </a>
       </div>
     );
   }

@@ -11,7 +11,7 @@ class LocationSearch extends Component {
   }
   render() {
     return (
-      <div className="container">
+      <div>
         <h2> Search location around your route</h2>
         <form
           onSubmit={e => {
