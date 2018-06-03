@@ -4,6 +4,7 @@ BUCKET="s3://carpal-ui-rides-"$ENV"/"
 cd ../frontend/
 npm install
 npm run build
+rm -rf ../infrastructure/ui-rides/*
 mv build/* ../infrastructure/ui-rides
 
 cd ../infrastructure
