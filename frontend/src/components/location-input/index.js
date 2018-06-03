@@ -46,7 +46,6 @@ class LocationInput extends Component {
       const valueObj = value.context.find(x => {
         return x.id.includes(key);
       });
-      debugger;
       return valueObj ? valueObj.text : null;
     };
     this.props.onChange({
