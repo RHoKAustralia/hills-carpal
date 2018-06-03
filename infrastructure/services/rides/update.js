@@ -32,7 +32,7 @@ module.exports.update = (event, context, callback) => {
     facilitatorEmail: `${escape(facilitatorEmail)}`,
     pickupTimeAndDateInUTC: `"${new Date(data.pickupTimeAndDateInUTC).toISOString()}"`,
     locationFrom: `POINT(${data.locationFrom.latitude}, ${data.locationFrom.longitude})`,
-    locationTo: `POINT(${data.locationFrom.latitude}, ${data.locationFrom.longitude})`,
+    locationTo: `POINT(${data.locationTo.latitude}, ${data.locationTo.longitude})`,
     fbLink: `${escape(data.fbLink)}`,
     driverGender: `${escape(data.driverGender)}`,
     carType: `${escape(data.carType)}`,
@@ -41,9 +41,9 @@ module.exports.update = (event, context, callback) => {
     suburbFrom: `${escape(data.locationFrom.suburb)}`,
     placeNameFrom: `${escape(data.locationFrom.placeName)}`,
     postCodeFrom: `${escape(data.locationFrom.postcode)}`,
-    suburbTo: `${escape(data.locationFrom.suburb)}`,
-    placeNameTo: `${escape(data.locationFrom.placeName)}`,
-    postCodeTo: `${escape(data.locationFrom.postcode)}`
+    suburbTo: `${escape(data.locationTo.suburb)}`,
+    placeNameTo: `${escape(data.locationTo.placeName)}`,
+    postCodeTo: `${escape(data.locationTo.postcode)}`
   };
 
   let values = Reflect.ownKeys(payload).map(key => `${key} = ${payload[key]}`).join(',');
