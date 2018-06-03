@@ -1,0 +1,74 @@
+
+
+body{
+    background:url(/styles/background-pic.png) fixed;
+    background-size:cover;
+}
+
+.outerForm{
+    border-radius:2%;
+    width:40%;
+    height:400px;
+    background: rgba(255, 255, 255, 0.63);
+    padding:40px;
+    text-align:center;
+    margin:auto;
+    margin-top:10%;
+    color:white;    
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:115%;
+}
+
+#loginButton{
+    margin-top:7%;
+    padding:20px 0;
+    -webkit-box-shadow: -1px 9px 19px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: -1px 9px 19px 0px rgba(0,0,0,0.75);
+    box-shadow: -1px 9px 19px 0px rgba(0,0,0,0.75);
+    font-size:2em;
+}    
+
+
+
+.quote{
+    margin-top:20px;
+    margin-bottom:0;
+    color:#389659;
+    font-size:2.2em;
+    padding:20px;
+   
+ 
+}
+
+.links{
+
+    color:#3d6570;
+    font-size:1.2em;
+    
+}
+
+.donatelink{
+    color:#228450;
+    font-size:1.2em;
+}
+
+.linkBlock{
+    margin-left:50%;
+    
+}
+
+#icon{
+    padding:0;
+    margin:0;
+
+}
+
+#logOutButton{
+   
+    padding:10px 40px;
+    -webkit-box-shadow: 6px 5px 35px -1px rgba(0,0,0,0.75);
+-moz-box-shadow: 6px 5px 35px -1px rgba(0,0,0,0.75);
+box-shadow: 6px 5px 35px -1px rgba(0,0,0,0.75);
+    font-size:1em;
+}
