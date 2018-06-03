@@ -1,27 +1,37 @@
-import React, { Component } from 'react';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import LocationInput from '../components/location-input';
-import axios from 'axios';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { Component } from "react";
+import DatePicker from "react-datepicker";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import LocationInput from "../components/location-input";
+import axios from "axios";
+import history from '../history';
+import "react-datepicker/dist/react-datepicker.css";
+import "./CreateNewRide.css";
 
 class CreateNewRide extends Component {
   constructor() {
     super();
     this.state = {
-      client: '',
+      client: "",
       datetime: moment(),
-      driverGender: '',
-      locationTo: '',
-      locationFrom: '',
+      driverGender: "",
+      locationTo: "",
+      locationFrom: ""
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidMount() {
+    const { isAuthenticated, hasFacilitatorPriviledge } = this.props.auth;
+    if (!isAuthenticated() || !hasFacilitatorPriviledge()) {
+      history.replace('/');
+      return false;
+    }
+  }
+
   handleSubmit(e) {
     e.preventDefault();
-    const url = process.env.REACT_APP_API_URL || '';
+    const url = process.env.REACT_APP_API_URL || "";
     axios.post(url, this.state);
   }
   render() {
@@ -37,6 +47,7 @@ class CreateNewRide extends Component {
               type="text"
               name="client"
               className="form-control"
+              placeholder="Type your name"
             />
           </div>
           <div className="form-group">
@@ -45,6 +56,11 @@ class CreateNewRide extends Component {
               required
               selected={this.state.datetime}
               onChange={date => this.setState({ datetime: date })}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              dateFormat="LLL"
+              timeCaption="time"
               className="form-control"
             />
           </div>
@@ -75,6 +91,7 @@ class CreateNewRide extends Component {
               type="text"
               name="fbLink"
               className="form-control"
+              placeholder="Type your Facebook link here"
             />
           </div>
           <div className="form-group">
@@ -87,6 +104,7 @@ class CreateNewRide extends Component {
               className="custom-select"
             >
               <option>Select from following</option>
+              <option value="any">Any</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
@@ -94,13 +112,17 @@ class CreateNewRide extends Component {
           <div className="form-group">
             <label>Car type</label>
 
-            <input
+            <select
               required
-              onChange={e => this.setState({ carType: e.currentTarget.value })}
-              type="text"
-              name="carType"
-              className="form-control"
-            />
+              onChange={e => {
+                this.setState({ carType: e.currentTarget.value });
+              }}
+              className="custom-select"
+            >
+              <option>Select from following</option>
+              <option value="noSUV">No SUV</option>
+              <option value="All">All</option>
+            </select>
           </div>
           <label />
           <div
@@ -117,7 +139,7 @@ class CreateNewRide extends Component {
             role="group"
             aria-label="Basic example"
           >
-            <Link className="btn btn-secondary" to={'/facilitator'}>
+            <Link className="btn btn-secondary" to={"/facilitator"}>
               Back
             </Link>
           </div>
