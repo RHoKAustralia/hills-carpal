@@ -7,6 +7,28 @@ class Login extends Component {
     this.props.auth.login();
   }
 
+  facilitatorLink() {
+    const isAuthorised = this.props.auth.hasFacilitatorPriviledge() || this.props.auth.hasAdminPriviledge();
+    if (isAuthorised) {
+      return <li>
+        <Link to="/facilitator">Facilitator</Link>
+      </li>
+    } else {
+      return false;
+    }
+  }
+
+  driverLink() {
+    const isAuthorised = this.props.auth.hasDriverPriviledge() || this.props.auth.hasAdminPriviledge();
+    if (isAuthorised) {
+      return <li>
+        <Link to="/driver">Driver</Link>
+      </li>
+    } else {
+      return false;
+    }
+  }
+
   render() {
     const { isAuthenticated, hasAdminPriviledge } = this.props.auth;
     return (
@@ -29,15 +51,8 @@ class Login extends Component {
               <div>
                 Pick your action:
                 <ul>
-                  <li>
-                    <Link to="/">Home</Link>
-                  </li>
-                  <li>
-                    <Link to="/facilitator">Facilitator</Link>
-                  </li>
-                  <li>
-                    <Link to="/driver">Driver</Link>
-                  </li>
+                  {this.facilitatorLink()}
+                  {this.driverLink()}
                 </ul>
               </div>
             )
