@@ -16,7 +16,7 @@ module.exports.list = (event, context, callback) => {
   if (claims.role === 'driver') {
     let locationQuery = '';
     if (queryParams.toLongitude && queryParams.toLatitude && queryParams.fromLongitude && queryParams.fromLatitude) {
-      locationQuery = `ST_Contains(ST_Envelope(ST_GeomFromText('LINESTRING(${queryParams.toLongitude} ${queryParams.toLatitude}, ${queryParams.fromLongitude} ${queryParams.fromLatitude})')), locationFrom);`;
+      locationQuery = `and ST_Contains(ST_Envelope(ST_GeomFromText('LINESTRING(${queryParams.toLongitude} ${queryParams.toLatitude}, ${queryParams.fromLongitude} ${queryParams.fromLatitude})')), locationFrom)`;
     }
     query = `
 SELECT * FROM rides where pickupTimeAndDateInUTC > NOW() 
