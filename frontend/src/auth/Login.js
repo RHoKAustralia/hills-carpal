@@ -45,8 +45,8 @@ class Login extends Component {
         <div className="Login-header" />
         <div>
           {!isAuthenticated() && (
-            <div class="row">
-              <div class="col-md-12 text-center">
+            <div className="row">
+              <div className="col-md-12 text-center">
                 <div className="outerForm">
                   <div className="quote">Share the ride, share the life</div>
 
