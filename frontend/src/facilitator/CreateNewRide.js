@@ -55,8 +55,9 @@ class CreateNewRide extends Component {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
         data: this.state,
+      }).then(_ => {
+        this.props.history.push('/facilitator/');
       });
-      return;
     }
     axiosInstance({
       url: '/rides',
@@ -65,6 +66,8 @@ class CreateNewRide extends Component {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
       },
       data: this.state,
+    }).then(_ => {
+      this.props.history.push('/facilitator/');
     });
   }
   getHeadline() {
@@ -173,20 +176,12 @@ class CreateNewRide extends Component {
             </select>
           </div>
           <label />
-          <div
-            className="btn-group mr-2"
-            role="group"
-            aria-label="Basic example"
-          >
+          <div className="btn-group mr-2" role="group">
             <button className="btn btn-primary" type="submit">
               Save
             </button>
           </div>
-          <div
-            className="btn-group mr-2"
-            role="group"
-            aria-label="Basic example"
-          >
+          <div className="btn-group mr-2" role="group">
             <Link className="btn btn-secondary" to={'/facilitator'}>
               Back
             </Link>
