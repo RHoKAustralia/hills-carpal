@@ -68,7 +68,7 @@ class LocationInput extends Component {
         value={this.getValue()}
         onChange={this.handleChange}
         required={this.props.required}
-        clearable={false}
+        clearable={this.props.clearable}
         placeholder={'Type your address, suburb or postcode'}
         filterOptions={x => x} // The mapbox api does the filtering for us
       />
