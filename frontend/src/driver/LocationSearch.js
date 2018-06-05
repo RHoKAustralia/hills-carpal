@@ -12,32 +12,39 @@ class LocationSearch extends Component {
   render() {
     return (
       <div>
-        <h2> Search location around your route</h2>
+        <h4 style={{ marginTop: '10px' }}>
+          Put in a trip you're planning to make.
+        </h4>
+        <p>Carpal will then use this trip to find nearby ride requests</p>
         <form
           onSubmit={e => {
             e.preventDefault();
             this.props.onLocationSearch(this.state);
           }}
         >
-          <div className="form-group">
-            <label>Location from</label>
-            <LocationInput
-              required={true}
-              value={this.state.locationFrom}
-              onChange={value => {
-                this.setState({ locationFrom: value });
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>Location to</label>
-            <LocationInput
-              required={true}
-              value={this.state.locationTo}
-              onChange={value => {
-                this.setState({ locationTo: value });
-              }}
-            />
+          <div className="row">
+            <div className="form-group col-6">
+              <label>Driving from:</label>
+              <LocationInput
+                required={true}
+                clearable={this.props.clearable}
+                value={this.state.locationFrom}
+                onChange={value => {
+                  this.setState({ locationFrom: value });
+                }}
+              />
+            </div>
+            <div className="form-group col-6">
+              <label>to:</label>
+              <LocationInput
+                clearable={this.props.clearable}
+                required={true}
+                value={this.state.locationTo}
+                onChange={value => {
+                  this.setState({ locationTo: value });
+                }}
+              />
+            </div>
           </div>
           <button className="btn btn-primary" type="submit">
             Search
@@ -50,6 +57,7 @@ class LocationSearch extends Component {
 
 LocationSearch.propTypes = {
   onLocationSearch: PropTypes.func.isRequired,
+  clearable: PropTypes.bool,
 };
 
 export default LocationSearch;

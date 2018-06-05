@@ -1,52 +1,15 @@
 import React, { Component } from 'react';
-import moment from 'moment';
 import axiosInstance from '../auth/api';
-import Table from '../components/table';
-import matchSorter from 'match-sorter';
 import history from '../history';
 import LocationSearch from './LocationSearch';
 import qs from 'qs';
-const columns = [
-  {
-    Header: 'Pickup Time',
-    id: 'pickupTimeAndDateInUTC',
-    accessor: cell => moment(cell).format('YYYY-MM-DD'),
-    filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
-    filterAll: true,
-  },
-  {
-    Header: 'Location from',
-    id: 'locationFrom',
-    accessor: cell => cell.locationFrom.placeName,
-    filterMethod: (filter, rows) => {
-      return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
-    },
-    filterAll: true,
-  },
-  {
-    id: 'locationTo',
-    Header: 'Location to',
-    accessor: cell => cell.locationTo.placeName,
-    filterMethod: (filter, rows) =>
-      matchSorter(rows, filter.value, { keys: ['locationTo'] }),
-    filterAll: true,
-  },
-  {
-    id: 'fbLink',
-    Header: 'Facebook link',
-    accessor: cell => (
-      <a href={cell.fbLink} target="blank">
-        Go to facebook event
-      </a>
-    ),
-  },
-];
+import DriverTable from './DriverTable';
+import DriverMap from './DriverMap';
 
 class Driver extends Component {
   constructor() {
     super();
-    this.state = { drives: null };
+    this.state = { rides: null, page: 'map', driverCoords: null };
     this.handleSearch = this.handleSearch.bind(this);
   }
   componentDidMount() {
@@ -56,18 +19,18 @@ class Driver extends Component {
       return false;
     }
 
-    // const url = process.env.REACT_APP_API_URL + '/drives'
+    const url = process.env.REACT_APP_API_URL + '/rides';
     axiosInstance
-      .get('/rides', {
+      .get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
       })
       .then(res => {
-        this.setState({ drives: res.data });
+        this.setState({ rides: res.data });
       });
   }
-  handleSearch({ locationTo, locationFrom }) {
+  handleSearch({ locationFrom, locationTo }) {
     const query = {
       toLongitude: locationTo.longitude,
       toLatitude: locationTo.latitude,
@@ -82,25 +45,53 @@ class Driver extends Component {
         },
       })
       .then(res => {
-        this.setState({ drives: res.data });
+        this.setState({
+          rides: res.data,
+          driverCoords: { locationFrom, locationTo },
+        });
       });
   }
+  renderPage() {
+    if (this.state.page === 'table') {
+      return <DriverTable rides={this.state.rides} />;
+    }
+    return (
+      <DriverMap
+        onViewTableClick={() => this.setState({ page: 'table' })}
+        driverCoords={this.state.driverCoords}
+        rides={this.state.rides}
+      />
+    );
+  }
+  renderMapBtn() {
+    if (this.state.page === 'map') return null;
+    return (
+      <button
+        className="btn btn-sm btn-secondary"
+        onClick={() => this.setState({ page: 'map' })}
+      >
+        Use map instead
+      </button>
+    );
+  }
   render() {
-    if (!this.state.drives) {
+    if (!this.state.rides) {
       return <img alt="loader" className="loader" src="loader.svg" />;
     }
     return (
       <div className="container">
-        <h1>Find drives</h1>
-
-        <LocationSearch onLocationSearch={this.handleSearch} />
-
-        <Table
-          style={{ paddingTop: '10px' }}
-          data={this.state.drives}
-          columns={columns}
-        />
-
+        <LocationSearch clearable={true} onLocationSearch={this.handleSearch} />
+        <div
+          style={{
+            display: 'flex',
+            marginTop: '10px',
+            justifyContent: 'flex-end',
+          }}
+          className="btn-group"
+        >
+          {this.renderMapBtn()}
+        </div>
+        {this.renderPage()}
         <a
           style={{ marginTop: '20px', display: 'block' }}
           href={'https://john3110.polldaddy.com/s/ride-feedback'}
