@@ -1,7 +1,7 @@
 module.exports.mapToDto = (rides) => {
   return (rides || []).map(ride => ({
     "client": ride.client,
-    "pickupTime": new Date(ride.pickupTimeAndDateInUTC),
+    "pickupTimeAndDateInUTC": new Date(ride.pickupTimeAndDateInUTC),
     "locationFrom": {
       "latitude": ride.locationFrom.x,
       "longitude": ride.locationFrom.y,
