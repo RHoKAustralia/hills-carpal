@@ -13,7 +13,7 @@ const handleStatusChange = (e, row) => {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('id_token')}`,
     },
-    data: { status: e.currentTarget.value },
+    data: { ...row._original, status: e.currentTarget.value },
   });
 };
 
