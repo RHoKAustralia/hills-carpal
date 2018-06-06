@@ -7,13 +7,20 @@ import matchSorter from 'match-sorter';
 import history from '../history';
 import './index.css';
 const handleStatusChange = (e, row) => {
+  // This is a work around for a backend incinsistency.  It still gives us back pickupTime instead of pickupTimeAndDateInUTC
+  const pickupTimeAndDateInUTC =
+    row._original.pickupTimeAndDateInUTC || row._original.pickupTime;
   axiosInstance({
     url: '/rides/' + row._original.id,
     method: 'put',
     headers: {
       Authorization: `Bearer ${localStorage.getItem('id_token')}`,
     },
-    data: { ...row._original, status: e.currentTarget.value },
+    data: {
+      ...row._original,
+      pickupTimeAndDateInUTC,
+      status: e.currentTarget.value,
+    },
   });
 };
 
