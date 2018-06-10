@@ -5,13 +5,32 @@ import { Link } from 'react-router-dom';
 import axiosInstance from '../auth/api';
 import matchSorter from 'match-sorter';
 import history from '../history';
+import './index.css';
+const handleStatusChange = (e, row) => {
+  // This is a work around for a backend incinsistency.  It still gives us back pickupTime instead of pickupTimeAndDateInUTC
+  const pickupTimeAndDateInUTC =
+    row._original.pickupTimeAndDateInUTC || row._original.pickupTime;
+  axiosInstance({
+    url: '/rides/' + row._original.id,
+    method: 'put',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+    },
+    data: {
+      ...row._original,
+      pickupTimeAndDateInUTC,
+      status: e.currentTarget.value,
+    },
+  });
+};
 
 const columns = [
   { accessor: 'client', Header: 'Client' },
   {
     Header: 'Pickup Time',
     id: 'pickupTimeAndDateInUTC',
-    accessor: cell => moment(cell).format('YYYY-MM-DD'),
+    accessor: cell =>
+      moment(cell.pickupTimeAndDateInUTC).format('dddd hh:mma DD/MM/YYYY'),
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
     filterAll: true,
@@ -63,6 +82,22 @@ const columns = [
       matchSorter(rows, filter.value, { keys: ['status'] }),
     filterAll: true,
   },
+  {
+    Header: 'Change status',
+    id: 'statusChanger',
+    Cell: ({ row }) => (
+      <div onClick={e => e.stopPropagation()} className="form-group">
+        <select
+          onChange={e => handleStatusChange(e, row)}
+          value={row['status']}
+          className="custom-select"
+        >
+          <option value="OPEN">Open</option>
+          <option value="CLOSED">Closed</option>
+        </select>
+      </div>
+    ),
+  },
 ];
 class Facilitator extends React.Component {
   constructor() {
@@ -76,8 +111,6 @@ class Facilitator extends React.Component {
       history.replace('/');
       return false;
     }
-
-    // const url = process.env.REACT_APP_API_URL + '/drives'
     axiosInstance
       .get('/rides', {
         headers: {
@@ -99,12 +132,14 @@ class Facilitator extends React.Component {
     return (
       <div className="container">
         <h1>Rides</h1>
-        <Link
-          className="btn btn-primary float-right"
-          to={'/facilitator/create'}
-        >
-          Create new
-        </Link>
+        <div className="create-button-row">
+          <Link
+            className="btn btn-primary create-button"
+            to={'/facilitator/create'}
+          >
+            Create new
+          </Link>
+        </div>
         <Table
           getTrProps={function(state, rowInfo, column) {
             return {

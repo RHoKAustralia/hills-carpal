@@ -8,7 +8,8 @@ const columns = [
   {
     Header: 'Pickup Time',
     id: 'pickupTimeAndDateInUTC',
-    accessor: cell => moment(cell).format('dddd hh:mma DD/MM/YYYY'),
+    accessor: cell =>
+      moment(cell.pickupTimeAndDateInUTC).format('dddd hh:mma DD/MM/YYYY'),
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
     filterAll: true,

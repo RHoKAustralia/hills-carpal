@@ -58,17 +58,18 @@ class CreateNewRide extends Component {
       }).then(_ => {
         this.props.history.push('/facilitator/');
       });
+    } else {
+      axiosInstance({
+        url: '/rides',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+        data: this.state,
+      }).then(_ => {
+        this.props.history.push('/facilitator/');
+      });
     }
-    axiosInstance({
-      url: '/rides',
-      method: 'post',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-      },
-      data: this.state,
-    }).then(_ => {
-      this.props.history.push('/facilitator/');
-    });
   }
   getHeadline() {
     if (this.props.match.params.id) {
