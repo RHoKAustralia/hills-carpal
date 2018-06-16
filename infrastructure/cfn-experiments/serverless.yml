@@ -1,0 +1,124 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: luke-test
+subdomain: rides2
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: ap-southeast-2
+  stage: dev
+  timeout: 30
+  endpointType: regional
+  memorySize: 128
+  environment:
+    AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
+    MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
+    AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
+
+functions:
+  auth:
+    handler: auth/auth.auth
+    cors: true
+  loggedin:
+    handler: auth/loggedin.loggedin
+    events:
+      - http:
+          path: authcheck
+          method: get
+          authorizer: auth
+          cors: true
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-plugin-additional-stacks
+
+custom:
+  additionalStacks:
+    cloudfront:
+      Deploy: After
+      Resources:
+        S3BucketData:
+          Type: AWS::S3::Bucket
+          Properties:
+            BucketName: ${self:service}-${self:provider.stage}-ui
+            AccessControl: PublicRead
+              WebsiteConfiguration:
+                IndexDocument: index.html
+                ErrorDocument: error.html
+        CarPalDistro:
+            Type: 'AWS::CloudFront::Distribution'
+            Properties:
+              DistributionConfig:
+                Origins:
+                  - DomainName: 
+                    Id: UI
+                    CustomOriginConfig:
+                      HTTPSPort: '443'
+                      OriginProtocolPolicy: http-only
+                Enabled: 'true'
+                DefaultRootObject: index.html
+                Aliases: 
+                  - ${self:subdomain}.carpal.org.au
+                DefaultCacheBehavior:
+                  ForwardedValues:
+                    QueryString: 'true'
+                  TargetOriginId: only-origin
+                  ViewerProtocolPolicy: allow-all
+                DefaultRootObject: index.html
+                CacheBehaviors:
+                - AllowedMethods:
+                  - DELETE
+                  - GET
+                  - HEAD
+                  - OPTIONS
+                  - PATCH
+                  - POST
+                  - PUT
+                  TargetOriginId: !Ref Subdomain
+                  ForwardedValues:
+                    QueryString: 'true'
+                    Cookies:
+                      Forward: none
+                    Headers:
+                      - Host
+                  PathPattern: '*.swf'
+                  ViewerProtocolPolicy: redirect-to-https
+                ViewerCertificate:
+                  AcmCertificateArn: arn:aws:acm:us-east-1:413205719122:certificate/a060eb98-9d4e-4a61-9ef5-dd3ff35049f5
+        Outputs:
+          CloudFrontDNS:
+            Value: !GetAtt CloudFrontDistribution.DomainName
+
+resources:
+  Resources:
+    GatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: EXPIRED_TOKEN
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+    AuthFailureGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
