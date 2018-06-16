@@ -67,3 +67,6 @@ function (user, context, callback) {
   callback(null, user, context);
 }
 ```
+
+# Further identity support
+Initially Auth0 has been configured only to allow Facebook authentication, as this allows identities to be checked by facilitators. However in future other authentication options will be considered. This should not require any change to the application code, only configuration within Auth0, for example to allow Google as an identity provider.
