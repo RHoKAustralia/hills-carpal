@@ -29,6 +29,12 @@ functions:
   auth:
     handler: auth/auth.auth
     cors: true
+  currentTime:
+    handler: utils/ping.endpoint
+    events:
+      - http:
+          path: ping
+          method: get
   loggedin:
     handler: auth/loggedin.loggedin
     events:
@@ -78,38 +84,13 @@ functions:
               paths:
                 id: true
 
-  maps:
+                maps:
     handler: map/maps.maps
     events:
       - http:
           path: map
           method: get
           cors: true
-
-  # get:
-  #   handler: todos/get.get
-  #   events:
-  #     - http:
-  #         path: todos/{id}
-  #         method: get
-  #         cors: true
-
-  # update:
-  #   handler: todos/update.update
-  #   events:
-  #     - http:
-  #         path: todos/{id}
-  #         method: put
-  #         cors: true
-
-  # delete:
-  #   handler: todos/delete.delete
-  #   events:
-  #     - http:
-  #         path: todos/{id}
-  #         method: delete
-  #         cors: true
-
 resources:
   Resources:
     GatewayResponse:
