@@ -5,6 +5,7 @@ cd ../frontend/
 npm install
 npm run build
 rm -rf ../infrastructure/ui-rides/*
+md -p ../infrastructure/ui-rides
 mv build/* ../infrastructure/ui-rides
 
 cd ../infrastructure
