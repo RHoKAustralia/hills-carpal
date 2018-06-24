@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: carpal
 
 provider:
@@ -23,6 +10,7 @@ provider:
   environment:
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
     MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
+    MYSQL_PORT: ${file(./secrets.json):MYSQL_PORT}
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
 
 functions:
@@ -83,8 +71,7 @@ functions:
             parameters:
               paths:
                 id: true
-
-                maps:
+  maps:
     handler: map/maps.maps
     events:
       - http:
