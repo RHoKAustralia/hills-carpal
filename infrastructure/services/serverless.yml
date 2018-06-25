@@ -13,6 +13,14 @@ provider:
     MYSQL_PORT: ${file(./secrets.json):MYSQL_PORT}
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
 
+  vpc:
+    securityGroupIds:
+      - sg-d35dabab
+    subnetIds:
+      - subnet-fcbd0fa5
+      - subnet-49bccb2d
+      - subnet-93960fe5
+
 functions:
   auth:
     handler: auth/auth.auth

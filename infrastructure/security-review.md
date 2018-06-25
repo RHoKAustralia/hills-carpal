@@ -46,7 +46,7 @@ The Lambda backing the API runs within the private VPC network.
 
 Because the API Lambda executes within the private network, it is able to communicate with the database via its private IP address.
 
-The Serverless configuration dynamically sets a range of subnets in which the Lambda container can run (one in each availability zone), and a security group that allows inbound 443 only and outbound any.
+The Serverless configuration dynamically sets a range of subnets in which the Lambda container can run (one in each availability zone), and a security group that allows outbound traffic to anywhere, with no inbound rule being applicable.
 
 ```
 provider:
