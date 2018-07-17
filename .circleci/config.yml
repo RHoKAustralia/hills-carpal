@@ -49,7 +49,7 @@ jobs:
           command: sudo pip install awscli
       - run:
           name: Deploy to S3
-          command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-test/ --delete
+          command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-dev/ --delete
 workflows:
   version: 2
   build-deploy:
