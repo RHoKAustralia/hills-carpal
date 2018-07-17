@@ -31,17 +31,28 @@ jobs:
 
       - store_artifacts:
           path: build/
+
+      - persist_to_workspace:
+          root: build
+          paths:
+            - '*'
+
+  downstream:
+    <<: *defaults
+    steps:
   deploy:
     docker:
       - image: circleci/python:2.7-jessie
     working_directory: ~/carpal/frontend
     steps:
+      - attach_workspace:
+          at: /tmp/build
       - run:
           name: Install awscli
           command: sudo pip install awscli
       - run:
           name: Deploy to S3
-          command: aws s3 sync build/ s3://carpal-ui-rides-test/ --delete
+          command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-test/ --delete
 workflows:
   version: 2
   build-deploy:
