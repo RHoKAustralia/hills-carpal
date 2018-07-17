@@ -28,8 +28,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       
       - run: npm run build
-      
-      - run: aws s3 sync build/ s3://carpal-ui-rides-dev/ --delete
 
       - store_artifacts:
           path: build/
