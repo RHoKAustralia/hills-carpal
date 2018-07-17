@@ -1,10 +1,6 @@
 import auth0 from "auth0-js";
 import history from "../history";
 
-const PUBLIC_ENDPOINT = process.env.REACT_APP_PUBLIC_ENDPOINT || "";
-const PRIVATE_ENDPOINT = process.env.REACT_APP_PRIVATE_ENDPOINT || "";
-const LOGGEDIN_URL = process.env.REACT_APP_LOGGEDIN_URL || "";
-
 export const KEY_USER_ROLE = "user_role";
 
 export default class Auth {

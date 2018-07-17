@@ -1,5 +1,4 @@
 import matchSorter from 'match-sorter';
-import history from '../history';
 import moment from 'moment';
 import Table from '../components/table';
 
