@@ -13,5 +13,6 @@ jobs:
     steps:
       - checkout
       
-      - cd infrastructure
-      - ./publish-ui.sh
+      - run: | 
+           cd infrastructure
+           ./publish-ui.sh
