@@ -8,10 +8,11 @@ jobs:
     docker:
       - image: circleci/node:7.10
 
-    working_directory: ~/carpal
+    working_directory: ~/carpal/frontend
 
     steps:
-      - checkout
+      - checkout:
+        path: ~/carpal
       
       - run: cd frontend
       
@@ -29,3 +30,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       
       - run: npm run build
+
+      - store_artifacts:
+          path: build/
