@@ -14,8 +14,6 @@ jobs:
       - checkout:
           path: ~/carpal
       
-      - run: cd frontend
-      
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
