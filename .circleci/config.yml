@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - checkout:
-        path: ~/carpal
+          path: ~/carpal
       
       - run: cd frontend
       
