@@ -37,9 +37,6 @@ jobs:
           paths:
             - '*'
 
-  downstream:
-    <<: *defaults
-    steps:
   deploy:
     docker:
       - image: circleci/python:2.7-jessie
