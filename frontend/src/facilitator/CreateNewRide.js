@@ -176,7 +176,19 @@ class CreateNewRide extends Component {
               <option value="All">All</option>
             </select>
           </div>
-          <label />
+          <div className="form-group">
+            <label>Description</label>
+
+            <textarea
+              onChange={e => {
+                this.setState({ description: e.target.value });
+              }}
+              rows={5}
+              maxLength={1024}
+              className="form-control"
+              value={this.state.description}
+            />
+          </div>
           <div className="btn-group mr-2" role="group">
             <button className="btn btn-primary" type="submit">
               Save
