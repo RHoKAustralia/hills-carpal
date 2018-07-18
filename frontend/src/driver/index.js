@@ -9,7 +9,7 @@ import DriverMap from './DriverMap';
 class Driver extends Component {
   constructor() {
     super();
-    this.state = { rides: null, page: 'map', driverCoords: null };
+    this.state = { rides: null, page: 'table', driverCoords: null };
     this.handleSearch = this.handleSearch.bind(this);
   }
   componentDidMount() {
