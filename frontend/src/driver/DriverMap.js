@@ -138,6 +138,12 @@ class DriverMap extends Component {
       })
       .reduce((acc, val) => acc.concat(val), []);
 
+    // If no lnglats, defaults to Sydney Area
+    if (lnglats.length === 0) {
+      lnglats.push([151.09901, -33.7049])
+      lnglats.push([151.058, -34.0331])
+    }
+
     return getBoundsFromLngLatArray(lnglats);
   }
 
