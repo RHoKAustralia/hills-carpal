@@ -31,6 +31,14 @@ const columns = [
     filterAll: true,
   },
   {
+    id: 'description',
+    Header: 'Description',
+    accessor: cell => cell.description,
+    filterMethod: (filter, rows) =>
+      matchSorter(rows, filter.value, { keys: ['description'] }),
+    filterAll: true
+  },
+  {
     id: 'fbLink',
     Header: 'Facebook link',
     accessor: cell => (
@@ -38,7 +46,7 @@ const columns = [
         Go to facebook event
       </a>
     ),
-  },
+  }
 ];
 
 class DriverTable extends Component {
