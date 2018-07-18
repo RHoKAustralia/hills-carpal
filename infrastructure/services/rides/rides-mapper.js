@@ -21,6 +21,7 @@ module.exports.mapToDto = (rides) => {
     "carType": ride.carType,
     "status": ride.status,
     "facilitatorId": ride.facilitatorEmail,
-    "id": ride.id
+    "id": ride.id,
+    "description": ride.description
   }))
 };
