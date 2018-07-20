@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  ui-build:
     docker:
       - image: circleci/node:7.10
 
@@ -36,8 +36,7 @@ jobs:
           root: build
           paths:
             - '*'
-
-  deploy:
+  ui-deploy:
     docker:
       - image: circleci/python:2.7-jessie
     working_directory: ~/carpal/frontend
@@ -54,10 +53,10 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
-      - deploy:
+      - ui-build
+      - ui-deploy:
           requires:
-            - build
+            - ui-build
           filters:
             branches:
               only: master
