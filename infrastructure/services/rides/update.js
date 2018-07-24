@@ -36,7 +36,7 @@ module.exports.update = (event, context, callback) => {
     fbLink: `${escape(data.fbLink)}`,
     driverGender: `${escape(data.driverGender)}`,
     carType: `${escape(data.carType)}`,
-    status: `${data.status}`,
+    status: `${escape(data.status)}`,
     deleted: `0`,
     suburbFrom: `${escape(data.locationFrom.suburb)}`,
     placeNameFrom: `${escape(data.locationFrom.placeName)}`,
