@@ -93,7 +93,9 @@ const columns = [
           className="custom-select"
         >
           <option value="OPEN">Open</option>
-          <option value="CLOSED">Closed</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="ENDED">Ended</option>
+          <option value="CANCELED">Canceled</option>
         </select>
       </div>
     ),

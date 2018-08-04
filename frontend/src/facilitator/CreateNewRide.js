@@ -37,7 +37,7 @@ class CreateNewRide extends Component {
           },
         })
         .then(res => {
-          const data = res.data[0];
+          const data = res.data;
 
           this.setState(data);
         });
@@ -102,8 +102,8 @@ class CreateNewRide extends Component {
             <label>Date</label>
             <DatePicker
               required
-              value={this.state.pickupTimeAndDateInUTC}
-              selected={this.state.pickupTimeAndDateInUTC}
+              value={moment(this.state.pickupTimeAndDateInUTC || Date.now())}
+              selected={moment(this.state.pickupTimeAndDateInUTC || Date.now())}
               onChange={date => this.setState({ pickupTimeAndDateInUTC: date })}
               showTimeSelect
               timeFormat="HH:mm"

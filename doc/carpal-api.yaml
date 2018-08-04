@@ -162,7 +162,7 @@ components:
           type: string
         status:
           type: string
-          description: Can be Open / Closed
+          description: Can be Open / Confirmed / Canceled / Ended
     Location:
       properties:
         latitude:

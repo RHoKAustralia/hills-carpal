@@ -6,4 +6,3 @@ The CarPal infrastructure is based on the following Amazon Web Services (AWS):
 - MySQL relational database service (RDS)
 
 In addition authentication is based on Auth0 and JSON Web Tokens (JWTs).
-
