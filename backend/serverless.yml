@@ -9,8 +9,11 @@ provider:
   timeout: 30
   environment:
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
+    MYSQL_HOST: carpal.cttgjqpjknhf.ap-southeast-2.rds.amazonaws.com
     MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
     MYSQL_PORT: ${file(./secrets.json):MYSQL_PORT}
+    MYSQL_USER: carpaladmin
+    DOMAIN: carpal.org.au
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
 
   vpc:
@@ -86,6 +89,11 @@ functions:
           path: map
           method: get
           cors: true
+  notify:
+    handler: notify
+      events:
+        - schedule: rate(2 hours)
+        - schedule: cron(0 12 * * ? *)
 resources:
   Resources:
     GatewayResponse:

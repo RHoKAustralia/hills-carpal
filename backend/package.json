@@ -1,0 +1,27 @@
+{
+  "name": "carpal",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "mocha './src/test/**/*.test.js'",
+    "start": "node src/test/expressApis.js",
+    "refresh-db": "node ./src/main/database/index.js",
+    "refresh-test-db": "node ./src/test/database/refreshDatabase.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "jsonschema": "^1.2.4",
+    "jsonwebtoken": "^8.1.0",
+    "moment": "^2.22.2",
+    "mysql": "^2.15.0",
+    "randomstring": "^1.1.5",
+    "request": "^2.87.0",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.250.1",
+    "chai": "^4.1.2",
+    "chai-exclude": "^1.0.9",
+    "mocha": "^5.2.0"
+  }
+}
