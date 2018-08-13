@@ -71,7 +71,7 @@ export default class Auth {
   }
 
   setProfile(error, profile) {
-    const userRole = profile[this.metadataKeyUserRole];
+    const userRole = profile[this.metadataKeyUserRole][0];
     localStorage.setItem(KEY_USER_ROLE, (userRole || "").trim().toLowerCase());
 
     if (userRole === "facilitator") {
