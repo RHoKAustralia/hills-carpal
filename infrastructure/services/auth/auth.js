@@ -52,8 +52,8 @@ module.exports.auth = (event, context, callback) => {
             }
             // is custom authorizer function
             console.log('valid from customAuthorizer', decoded);
-            const role = decoded['https://carpal.org.au/roles'][0];
-            if (['driver', 'facilitator', 'admin'].indexOf(role) >= 0) {
+            const roles = decoded['https://carpal.org.au/roles'];
+            if (roles && roles.length > 0 && ['driver', 'facilitator', 'admin'].indexOf(roles[0]) >= 0) {
                 return callback(null, generatePolicy(decoded.sub, 'Allow', event.methodArn));
             } else {
                 return callback('Unauthorized');
