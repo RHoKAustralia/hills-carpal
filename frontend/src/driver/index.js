@@ -19,7 +19,7 @@ class Driver extends Component {
       return false;
     }
 
-    const url = process.env.REACT_APP_API_URL + '/rides';
+    const url = process.env.REACT_APP_API_URL + '/rides?listType=driver';
     axiosInstance
       .get(url, {
         headers: {
@@ -32,6 +32,7 @@ class Driver extends Component {
   }
   handleSearch({ locationFrom, locationTo }) {
     const query = {
+      listType: 'driver',
       toLongitude: locationTo.longitude,
       toLatitude: locationTo.latitude,
       fromLongitude: locationFrom.longitude,
