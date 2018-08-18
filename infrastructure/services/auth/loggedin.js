@@ -12,9 +12,9 @@ module.exports.loggedin = function (event, context, callback) {
             'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify({
-            "message": claims.email + " is logged in with role " + claims.role,
+            "message": claims.email + " is logged in with roles " + claims.roles,
             "email": claims.email,
-            "role": claims.role,
+            "roles": claims.roles,
             "car": claims.car,
             "driverGender": claims.driverGender
         })
