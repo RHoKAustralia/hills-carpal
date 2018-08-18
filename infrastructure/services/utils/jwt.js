@@ -13,8 +13,8 @@ module.exports.decodeJwt = (event) => {
         const decodedToken = jsonwebtoken.decode(tokenValue);
         var claims = {};
         claims.email = decodedToken['https://carpal.org.au/email'];
-        claims.role = decodedToken['https://carpal.org.au/roles'][0];
-        if (claims.role === 'driver') {
+        claims.roles = decodedToken['https://carpal.org.au/roles'];
+        if (claims.roles.indexOf('driver') > -1) {
             claims.driverGender = decodedToken['https://carpal.org.au/gender'];
             claims.car = decodedToken['https://carpal.org.au/car'];
         }
