@@ -1,0 +1,1 @@
+echo "{\"MYSQL_PW\": \""$SERVICE_MYSQL_PWD"\",\"MYSQL_PORT\": \""$SERVICE_MYSQL_PORT"\"}" > secrets.json
