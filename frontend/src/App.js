@@ -11,7 +11,7 @@ class App extends Component {
     return (
       <div>
         <nav className="navbar navbar-light bg-light">
-          <a className="navbar-brand" href="http://www.hillscarpal.org.au/">
+          <a className="navbar-brand" href="https://rides.hillscarpal.org.au/">
             <img
               src="/styles/carpal.png"
               width="200"
