@@ -49,8 +49,6 @@ jobs:
       - run:
           name: Deploy to S3
           command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-dev/ --delete
-
-
   services-deploy:
     docker:
       - image: circleci/node:7.10
@@ -76,8 +74,7 @@ jobs:
       
       - run: echo "{\"MYSQL_PW\": \""$SERVICE_MYSQL_PWD"\",\"MYSQL_PORT\": \""$SERVICE_MYSQL_PORT"\"}" > secrets.json
 
-      - run: npm run build
-          
+      - run: npm run build      
 workflows:
   version: 2
   ui-build-deploy:
