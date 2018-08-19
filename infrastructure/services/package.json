@@ -1,6 +1,9 @@
 {
     "name": "carpal",
     "version": "1.0.0",
+    "scripts": {
+        "deploy-sls": "sls deploy"
+    },
     "dependencies": {
         "jsonschema": "^1.2.4",
         "jsonwebtoken": "^8.1.0",
@@ -9,6 +12,7 @@
         "mysql": "^2.15.0"
     },
     "devDependencies": {
-        "aws-sdk": "^2.250.1"
+        "aws-sdk": "^2.250.1",
+        "serverless": "^1.30.1"
     }
 }
