@@ -52,28 +52,21 @@ jobs:
   services-deploy:
     docker:
       - image: circleci/node:7.10
-
     working_directory: ~/carpal/infrastructure/services
-
     steps:
       - checkout:
           path: ~/carpal
-      
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
       - run: npm install
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      
-      - run: echo "{\"MYSQL_PW\": \""$SERVICE_MYSQL_PWD"\",\"MYSQL_PORT\": \""$SERVICE_MYSQL_PORT"\"}" > secrets.json
-
+      # - run: echo "{\"MYSQL_PW\": \""$SERVICE_MYSQL_PWD"\",\"MYSQL_PORT\": \""$SERVICE_MYSQL_PORT"\"}" > secrets.json
       - run: npm run build      
 workflows:
   version: 2
@@ -86,8 +79,6 @@ workflows:
           filters:
             branches:
               only: master
-  services-build-deploy:
-    jobs:
       - services-deploy:
           filters:
             branches:
