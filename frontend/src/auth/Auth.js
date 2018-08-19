@@ -71,12 +71,13 @@ export default class Auth {
   }
 
   setProfile(error, profile) {
-    const userRole = profile[this.metadataKeyUserRole][0];
-    localStorage.setItem(KEY_USER_ROLE, (userRole || "").trim().toLowerCase());
+    const userRoles = profile[this.metadataKeyUserRole];
+    localStorage.setItem(KEY_USER_ROLE, (userRoles || [""]));
 
-    if (userRole === "facilitator") {
+    const firstUserRole = userRoles[0];
+    if (firstUserRole === "facilitator") {
       history.replace("/facilitator");
-    } else if (userRole === "driver") {
+    } else if (firstUserRole === "driver") {
       history.replace("/driver");
     } else {
       history.replace("/");
@@ -106,17 +107,17 @@ export default class Auth {
   }
 
   hasFacilitatorPriviledge() {
-    const userRole = localStorage.getItem(KEY_USER_ROLE);
-    return userRole === 'facilitator' || this.hasAdminPriviledge();
+    const userRoles = localStorage.getItem(KEY_USER_ROLE);
+    return userRoles.indexOf('facilitator') > -1 || this.hasAdminPriviledge();
   }
 
   hasDriverPriviledge() {
-    const userRole = localStorage.getItem(KEY_USER_ROLE);
-    return userRole === "driver" || this.hasAdminPriviledge();
+    const userRoles = localStorage.getItem(KEY_USER_ROLE);
+    return userRoles.indexOf("driver") > -1 || this.hasAdminPriviledge();
   }
 
   hasAdminPriviledge() {
-    const userRole = localStorage.getItem(KEY_USER_ROLE);
-    return userRole === "admin";
+    const userRoles = localStorage.getItem(KEY_USER_ROLE);
+    return userRoles.indexOf("admin") > -1;
   }
 }
