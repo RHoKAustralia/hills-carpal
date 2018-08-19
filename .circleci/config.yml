@@ -67,7 +67,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # - run: echo "{\"MYSQL_PW\": \""$SERVICE_MYSQL_PWD"\",\"MYSQL_PORT\": \""$SERVICE_MYSQL_PORT"\"}" > secrets.json
-      - run: npm run build      
+      - run: npm run deploy-sls      
 workflows:
   version: 2
   ui-build-deploy:
