@@ -6,12 +6,26 @@ class App extends Component {
     this.props.auth.logout();
   }
 
+  getLogoHref = () => {
+    const auth = this.props.auth;
+    if (!auth || !auth.isAuthenticated()) {
+      return '/';
+    } else if (auth.hasFacilitatorPriviledge()) {
+      return '/facilitator';
+    } else if (auth.hasDriverPriviledge()) {
+      return '/driver';
+    } else {
+      return '/';
+    }
+  };
+
   render() {
     const { isAuthenticated } = this.props.auth;
+
     return (
       <div>
         <nav className="navbar navbar-light bg-light">
-          <a className="navbar-brand" href="https://rides.carpal.org.au/">
+          <a className="navbar-brand" href={this.getLogoHref()}>
             <img
               src="/styles/carpal.png"
               width="200"
