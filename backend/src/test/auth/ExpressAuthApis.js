@@ -17,7 +17,6 @@ class ExpressAuthApis {
   }
 
   wellKnown(req, res) {
-    let expiry = moment().add(100, 'd');
     console.log(req.query);
     let jwks = fs.readFileSync(path.resolve(__dirname, '../config/express/certs/jwks.json'));
     res.status(200).send(JSON.parse(jwks));
@@ -61,7 +60,7 @@ class ExpressAuthApis {
   _authAs(queryParams, host, userInfo, expiry) {
     let payload = this._completeJWT(userInfo, host, expiry.toDate(), queryParams.nonce);
 
-    let accessToken = userInfo.role;
+    let accessToken = userInfo.roles[0];
     let cert = fs.readFileSync(path.resolve(__dirname, '../config/express/certs/private.key'));
     let jwtToken = jwt.sign(payload, cert, {algorithm: 'RS256'});
     return {accessToken, jwtToken};

@@ -4,6 +4,7 @@ const jsonValidator = require('jsonschema');
 const rideSchema = require('../schema/ride.json');
 const RideRepository = require('./RideRepository');
 const RideMapper = require('./RideMapper');
+const PromiseUtils = require('../utils/PromiseUtils');
 
 class UpdateRideService {
 
@@ -14,9 +15,9 @@ class UpdateRideService {
 
   updateRide(id, ride, loginData) {
     const connection = this._databaseManager.createConnection();
-
     let updatePromise = this._updateRide(id, ride, loginData, connection);
-    return updatePromise.finally(() => this._databaseManager.closeConnection(connection));
+    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
   _updateRide(id, rideObject, loginData, connection) {

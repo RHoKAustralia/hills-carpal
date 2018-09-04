@@ -5,7 +5,7 @@
     "test": "mocha './src/test/**/*.test.js'",
     "start": "node src/test/expressApis.js",
     "refresh-db": "node ./src/main/database/index.js",
-    "refresh-test-db": "node ./src/test/database/refreshDatabase.js"
+    "deploy-sls": "sls deploy"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -22,6 +22,7 @@
     "aws-sdk": "^2.250.1",
     "chai": "^4.1.2",
     "chai-exclude": "^1.0.9",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "serverless": "^1.30.1"
   }
 }

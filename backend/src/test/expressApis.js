@@ -52,6 +52,7 @@ const options = {
 http.createServer(app).listen(8080, () => {
   console.log("HTTP Server started and listening on port 8080")
 });
+
 https.createServer(options, app).listen(8081, () => {
   console.log("HTTPS Server started and listening on port 8081")
 });

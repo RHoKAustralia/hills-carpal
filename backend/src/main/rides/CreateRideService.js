@@ -5,6 +5,7 @@ const rideSchema = require('../schema/ride.json');
 const RideStatus = require('./RideStatus');
 const RideRepository = require('./RideRepository');
 const RideMapper = require('./RideMapper');
+const PromiseUtils = require('../utils/PromiseUtils');
 
 class CreateRideService {
 
@@ -16,8 +17,9 @@ class CreateRideService {
   createRide(body, loginData) {
     const connection = this._databaseManager.createConnection();
 
-    return this._createRide(body, loginData, connection)
-      .finally(() => this._databaseManager.closeConnection(connection));
+    const createRidePromise = this._createRide(body, loginData, connection);
+    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    return PromiseUtils.promiseFinally(createRidePromise, closeConnection);
   }
 
   _createRide(rideObject, loginData, connection) {

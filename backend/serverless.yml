@@ -2,7 +2,7 @@ service: carpal
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   region: ap-southeast-2
   stage: dev
   memorySize: 128
@@ -26,16 +26,16 @@ provider:
 
 functions:
   auth:
-    handler: auth/auth.auth
+    handler: src/main/auth/auth.auth
     cors: true
   currentTime:
-    handler: utils/ping.endpoint
+    handler: src/main/utils/ping.endpoint
     events:
       - http:
           path: ping
           method: get
   loggedin:
-    handler: auth/loggedin.loggedin
+    handler: src/main/auth/loggedin.loggedin
     events:
       - http:
           path: authcheck
@@ -43,7 +43,7 @@ functions:
           authorizer: auth
           cors: true
   create:
-    handler: rides/create.create
+    handler: src/main/rides/awsLambdaRidesApis.create
     events:
       - http:
           path: rides
@@ -51,7 +51,7 @@ functions:
           cors: true
 
   update:
-    handler: rides/update.update
+    handler: src/main/rides/awsLambdaRidesApis.update
     events:
       - http:
           path: rides/{id}
@@ -63,7 +63,7 @@ functions:
                 id: true
 
   list:
-    handler: rides/list.list
+    handler: src/main/rides/awsLambdaRidesApis.list
     # runtime: nodejs8.10
     events:
       - http:
@@ -72,7 +72,7 @@ functions:
           cors: true
 
   findone:
-    handler: rides/findone.findone
+    handler: src/main/rides/awsLambdaRidesApis.findOne
     events:
       - http:
           path: rides/{id}
@@ -82,18 +82,11 @@ functions:
             parameters:
               paths:
                 id: true
-  maps:
-    handler: map/maps.maps
-    events:
-      - http:
-          path: map
-          method: get
-          cors: true
-  notify:
-    handler: notify
-      events:
-        - schedule: rate(2 hours)
-        - schedule: cron(0 12 * * ? *)
+#  notify:
+#    handler: notify
+#      events:
+#        - schedule: rate(2 hours)
+#        - schedule: cron(0 12 * * ? *)
 resources:
   Resources:
     GatewayResponse:
