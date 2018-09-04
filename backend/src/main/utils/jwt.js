@@ -14,8 +14,8 @@ module.exports.decodeJwt = (event) => {
     const decodedToken = jsonwebtoken.decode(tokenValue);
     const claims = {};
     claims.email = decodedToken[`https://${domain}/email`];
-    claims.role = decodedToken[`https://${domain}/role`];
-    if (claims.role === 'driver') {
+    claims.roles = decodedToken[`https://${domain}/roles`];
+    if (claims.roles.indexOf('driver') >= 0) {
       claims.driverGender = decodedToken[`https://${domain}/gender`];
       claims.car = decodedToken[`https://${domain}/car`];
     }

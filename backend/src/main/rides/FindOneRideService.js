@@ -2,6 +2,7 @@
 
 const RideRepository = require('./RideRepository');
 const RidesMapper = require('./RideMapper');
+const PromiseUtils = require('../utils/PromiseUtils');
 
 class FindOneRideService {
 
@@ -16,8 +17,9 @@ class FindOneRideService {
     }
 
     const connection = this._databaseManager.createConnection();
-    return this._findOne(id, loginData, connection)
-      .finally(() => this._databaseManager.closeConnection(connection));
+    const findOnePromise = this._findOne(id, loginData, connection);
+    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    return PromiseUtils.promiseFinally(findOnePromise, closeConnection);
   }
 
   _findOne(id, loginData, connection) {

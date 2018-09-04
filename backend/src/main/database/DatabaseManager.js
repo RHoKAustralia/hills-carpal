@@ -28,12 +28,13 @@ class DatabaseManager {
       connection.query(queryString, (error, results, fields) => {
         if (closeConnection) {
           let closePromise = this.closeConnection(connection);
-          return closePromise.finally(() => {
-            if (error) {
-              return reject(error);
-            }
-            resolve(results);
-          });
+          return closePromise
+            .then(() => {
+              resolve(results);
+            })
+            .catch(error1 => {
+              reject(error1 || error);
+            });
         }
         if (error) {
           console.log("Error executing", queryString, error);

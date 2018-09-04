@@ -20,10 +20,10 @@ let pickupTimeAndDateInUTC;
 
 before(async () => {
   databaseManager = new DatabaseManager();
-  mockDatabaseManager = new DatabaseManager();
   connection = databaseManager.createConnection() ;
+  mockDatabaseManager = new DatabaseManager();
   mockDatabaseManager.createConnection = () => connection;
-  mockDatabaseManager.closeConnection = () => null;
+  mockDatabaseManager.closeConnection = () => Promise.resolve();
 });
 
 after(async () => {
@@ -42,7 +42,7 @@ afterEach(async () => {
 });
 
 beforeEach(function setupData() {
-  loginData = {email: RandomUtils.randomEmail()}
+  loginData = {email: RandomUtils.randomEmail()};
   pickupTimeAndDateInUTC = moment();
   const clientEmail = `client.test.${Date.now()}@carpal.com`;
   rideRequest = {

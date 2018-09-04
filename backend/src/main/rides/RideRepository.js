@@ -5,13 +5,14 @@ const moment = require('moment');
 class RideRepository {
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
+    this._dbName = this._databaseManager.databaseConfig.database;
   }
 
   create(ride, connection) {
     const escape = (data) => connection.escape(data);
     const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
     const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
-    let query = `INSERT INTO rides(client,
+    let query = `INSERT INTO ${this._dbName}.rides(client,
                                   facilitatorEmail,
                                   pickupTimeAndDateInUTC,
                                   locationFrom,
@@ -60,7 +61,7 @@ class RideRepository {
     const escape = (data) => connection.escape(data);
     const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
     const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
-    let query = `UPDATE rides SET client = ${escape(ride.client)},
+    let query = `UPDATE ${this._dbName}.rides SET client = ${escape(ride.client)},
                                   facilitatorEmail = ${escape(ride.facilitatorId)},
                                   pickupTimeAndDateInUTC = ${escape(moment(ride.pickupTimeAndDateInUTC).format('YYYY-MM-DD HH:mm:ss'))},
                                   locationFrom = ${locationFrom},
@@ -120,7 +121,7 @@ class RideRepository {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`)
     }
 
-    let query = `SELECT * FROM rides ${where.length ? ' WHERE ' + where.join(' AND ') : ''} ORDER BY pickupTimeAndDateInUTC ASC;`;
+    let query = `SELECT * FROM ${this._dbName}.rides ${where.length ? ' WHERE ' + where.join(' AND ') : ''} ORDER BY pickupTimeAndDateInUTC ASC;`;
     console.log(query);
     return this._databaseManager.query(query, connection)
       .then(rides =>

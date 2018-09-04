@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const DatabaseManager = require('./DatabaseManager');
 
+const createDB = '2018-08-04-1-create-database.sql';
 const changeSet = [
-  '2018-08-04-1-create-database.sql',
   '2018-08-04-2-create-location-table.sql',
   '2018-08-04-3-create-rides-table.sql',
   '2018-08-04-4-create-driver-table.sql',
@@ -12,18 +13,27 @@ const changeSet = [
 
 class RefreshDatabase {
   constructor(databaseManager) {
+    const dbConfig = Object.assign({}, databaseManager.databaseConfig);
+
+    delete dbConfig.database;
+    this.databaseManagerNoDb = new DatabaseManager(dbConfig);
     this.databaseManager = databaseManager;
   }
 
   async executeAll() {
-    for (let fileName of changeSet) {
-      await this.execute(fileName);
-    }
+    this.execute(createDB, this.databaseManagerNoDb)
+      .then(() => {
+        let result = Promise.resolve();
+        changeSet.forEach(fileName => {
+          result = result.then(() => this.execute(fileName, this.databaseManager))
+        });
+        return result;
+      })
   }
 
-  async execute(fileName) {
+  execute(fileName, databaseManager) {
     let sql = fs.readFileSync(path.resolve(__dirname, './changes/' + fileName)).toString().trim();
-    return this.databaseManager.query(sql);
+    return databaseManager.query(sql);
   }
 }
 

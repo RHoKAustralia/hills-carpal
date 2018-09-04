@@ -44,21 +44,21 @@ afterEach(async () => {
 describe('When listing rides', async () => {
   it('should show rides for facilitator', async function () {
     // given
-    const loginData = {email: RandomUtils.randomEmail(), role: 'facilitator'};
+    const loginData = {email: RandomUtils.randomEmail(), roles: ['facilitator']};
     const email = loginData.email;
     const ride1 = randomRideWithFacilitator(email);
     const ride2 = randomRideWithFacilitator(email);
     await databaseContainsRides(ride1, ride2);
 
     // when
-    const rides = await listRideController.listRides({}, loginData);
+    const rides = await listRideController.listRides({listType: 'facilitator'}, loginData);
 
     assert.deepEqualExcluding(rides, [ride1, ride2], 'id');
   });
 
   it('should show all rides for admin', async function () {
     // given
-    const loginData = {email: RandomUtils.randomEmail(), role: 'admin'};
+    const loginData = {email: RandomUtils.randomEmail(), roles: ['admin']};
     const ride1 = RideEntityBuilder.randomRideEntity();
     const ride2 = RideEntityBuilder.randomRideEntity();
     await databaseContainsRides(ride1, ride2);
@@ -72,7 +72,7 @@ describe('When listing rides', async () => {
 
   it('should show all rides for driver', async function () {
     // given
-    const loginData = {email: RandomUtils.randomEmail(), role: 'driver', driverGender: 'male'};
+    const loginData = {email: RandomUtils.randomEmail(), roles: ['driver'], driverGender: 'male'};
     const ride1 = randomRideWithGender('male');
     const ride2 = randomRideWithGender('female');
     const ride3 = randomRideWithGender('any');

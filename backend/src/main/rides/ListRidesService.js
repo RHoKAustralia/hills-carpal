@@ -2,6 +2,7 @@
 
 const RideRepository = require('./RideRepository');
 const RidesMapper = require('./RideMapper');
+const PromiseUtils = require('../utils/PromiseUtils');
 
 class ListRidesService {
 
@@ -10,30 +11,49 @@ class ListRidesService {
     this._rideRepository = new RideRepository(databaseManager);
   }
 
-  listRides(queryParams, loginData) {
+  listRides(query, loginData) {
     const connection = this._databaseManager.createConnection();
 
-    return this._listRides(queryParams, loginData, connection)
-      .then(rides => rides.map(RidesMapper.entityToDto))
-      .finally(() => this._databaseManager.closeConnection(connection));
+    const listRidesPromise = this._listRides(query, loginData, connection)
+      .then(rides => rides.map(RidesMapper.entityToDto));
+    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    return PromiseUtils.promiseFinally(listRidesPromise, closeConnection);
   }
 
-  _listRides(queryParams, loginData, connection) {
-    let jsonQuery = this._parseParams(queryParams, loginData);
+  _listRides(query, loginData, connection) {
+    let jsonQuery = this._parseParams(query, loginData);
+    if (!jsonQuery) {
+      return Promise.resolve([]);
+    }
     return this._rideRepository.list(jsonQuery, connection);
   }
 
-  _parseParams(queryParams, loginData) {
+  _parseParams(query, loginData) {
+    const listType = query.listType || 'driver';
+    const isAdmin = this._hasRole('admin', loginData);
+    const isDriver = this._hasRole('driver', loginData);
+    const isFacilitator = this._hasRole('facilitator', loginData);
+    const notAdminAndListTypeDoesNotMatchRole = !this._hasRole(listType, loginData) && !isAdmin;
+    if (notAdminAndListTypeDoesNotMatchRole) {
+      console.log("WARNING: unauthorised attempt to query data", loginData);
+      return null;
+    }
+
     return {
-      toLongitude: queryParams.toLongitude,
-      toLatitude: queryParams.toLatitude,
-      fromLongitude: queryParams.fromLongitude,
-      fromLatitude: queryParams.fromLatitude,
-      driverGenders: loginData.role === 'driver' ? ['any', loginData.driverGender] : undefined,
-      includePickupTimeInPast: loginData.role !== 'driver',
-      facilitatorId: loginData.role === 'facilitator' ? loginData.email : undefined,
+      toLongitude: query.toLongitude,
+      toLatitude: query.toLatitude,
+      fromLongitude: query.fromLongitude,
+      fromLatitude: query.fromLatitude,
+      driverGenders: isDriver ? ['any', loginData.driverGender] : undefined,
+      includePickupTimeInPast: !isDriver,
+      facilitatorId: isFacilitator ? loginData.email : undefined,
     };
   }
+
+  _hasRole(role, loginData) {
+    return loginData.roles.indexOf(role) >= 0;
+  }
 }
+
 
 module.exports = ListRidesService;
