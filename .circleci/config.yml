@@ -6,7 +6,7 @@ version: 2
 jobs:
   ui-build:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:8.10
 
     working_directory: ~/carpal/frontend
 
@@ -49,10 +49,13 @@ jobs:
       - run:
           name: Deploy to S3
           command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-dev/ --delete
-  services-deploy:
+  services-build:
     docker:
-      - image: circleci/node:7.10
-    working_directory: ~/carpal/infrastructure/services
+      - image: circleci/node:8.10
+      - image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: admin
+    working_directory: ~/carpal/backend
     steps:
       - checkout:
           path: ~/carpal
@@ -61,17 +64,40 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run: npm install
+      - run: npm run refresh-db
+      - run: npm test
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+  services-deploy:
+    docker:
+      - image: circleci/node:8.10
+    working_directory: ~/carpal/backend
+    steps:
+      - checkout:
+          path: ~/carpal
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
       - run: ./writeSecrets.sh
-      - run: npm run deploy-sls      
+      - run: npm run deploy-sls
 workflows:
   version: 2
-  ui-build-deploy:
+  application-build-deploy:
     jobs:
+      - services-build
       - ui-build
       - ui-deploy:
           requires:
