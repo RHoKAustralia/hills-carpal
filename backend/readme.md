@@ -12,6 +12,8 @@ By default it will try to connect to a local mysql database with username `root`
 MYSQL_USER=myuser MYSQL_PW=myPassword MYSQL_HOST=myHost MYSQL_PORT=3316 MYSQL_DB=myDB npm run refresh-db
 ```
 
+You might end up with an error "Client does not support authentication protocol" - to fix refer to https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server.
+
 ### Running the application locally
 
 The application was designed to work with AWS lambdas. Although an *expressJs* layer was added to be able to run the application locally. To start it:
