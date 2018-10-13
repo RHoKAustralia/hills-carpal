@@ -12,6 +12,7 @@ class LocationSearch extends Component {
   render() {
     return (
       <div>
+        <h4 style=
         <h4 style={{ marginTop: '10px' }}>
           Put in a trip you're planning to make.
         </h4>

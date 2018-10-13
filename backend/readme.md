@@ -28,6 +28,8 @@ node ./backend/src/test/expressApis.js
 
 **Attention**: The application and tests make use of the database, therefore make sure that you have your environment variables set to configure them to run against the right mysql instance. 
 
+#### Bypassing login locally
+Run with environment variables `UNSAFE_GOD_MODE=true` locally to make yourself an admin, driver and facilitator.
 
 ### Running the tests
 In the `backend/` directory run:
