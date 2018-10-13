@@ -97,6 +97,7 @@ class RideRepository {
    *    fromLongitude {number}
    *    fromLatitude {number}
    *    driverGenders {string[]}
+   *    driverCar {string}
    *    facilitatorId {string}
    *    includePickupTimeInPast {boolean}
    * @param connection
@@ -117,6 +118,10 @@ class RideRepository {
       let genders = jsonQuery.driverGenders.map(g => ` driverGender = '${g}'`).join(' or ');
       where.push(genders.length === 1 ? genders : `(${genders})`)
     }
+    if (jsonQuery.driverCars) {
+      let carTypes = jsonQuery.driverCars.map(g => ` carType = '${g}'`).join(' or ');
+      where.push(carTypes.length === 1 ? carTypes : `(${carTypes})`)
+    }  
     if (jsonQuery.facilitatorId) {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`)
     }

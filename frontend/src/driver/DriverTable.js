@@ -56,6 +56,8 @@ class DriverTable extends Component {
         style={{ paddingTop: '10px' }}
         data={this.props.rides}
         columns={columns}
+        filterable={false}
+        defaultPageSize={5}
       />
     );
   }
