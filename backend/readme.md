@@ -26,6 +26,15 @@ npm start
 node ./backend/src/test/expressApis.js
 ```
 
+#### Using Docker for the local db
+
+To make this easier if you've got docker installed you can use that for the local db:
+
+```
+docker run --name some-mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:5.7
+yarn run refresh-db
+```
+
 **Attention**: The application and tests make use of the database, therefore make sure that you have your environment variables set to configure them to run against the right mysql instance. 
 
 #### Bypassing login locally

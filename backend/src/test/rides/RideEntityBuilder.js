@@ -8,7 +8,7 @@ class RideEntityBuilder {
     const client = `client.${Date.now()}`;
     const facilitator = `facilitator.${Date.now()}`;
     return {
-      carType: "suv",
+      carType: "all",
       client: `${client}@${RandomUtils.randomString(5)}.com`,
       deleted: 0,
       driverGender: (Math.random() * 1000) % 2 ? "male" : "female",
