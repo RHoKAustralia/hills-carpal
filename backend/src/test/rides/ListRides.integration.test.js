@@ -55,37 +55,51 @@ describe('When listing rides', async () => {
 
     assert.deepEqualExcluding(rides, [ride1, ride2], 'id');
   });
+	
+	describe("when user is admin", () => {
+		it('should show all rides when listType is admin', async function () {
+			// given
+			const loginData = {email: RandomUtils.randomEmail(), roles: ['admin']};
+			const ride1 = RideEntityBuilder.randomRideEntity();
+			const ride2 = RideEntityBuilder.randomRideEntity();
+			await databaseContainsRides(ride1, ride2);
+	
+			// when
+			const rides = (await listRideController.listRides({listType: "admin"}, loginData)).map(removeId);
+	
+			assert.deepInclude(rides, ride1);
+			assert.deepInclude(rides, ride2);
+		});
 
-  it('should show all rides for admin', async function () {
-    // given
-    const loginData = {email: RandomUtils.randomEmail(), roles: ['admin']};
-    const ride1 = RideEntityBuilder.randomRideEntity();
-    const ride2 = RideEntityBuilder.randomRideEntity();
-    await databaseContainsRides(ride1, ride2);
-
-    // when
-    const rides = (await listRideController.listRides({}, loginData)).map(removeId);
-
-    assert.deepInclude(rides, ride1);
-    assert.deepInclude(rides, ride2);
-  });
+		it('should only show rides that admin could take as a driver, if listType is driver', async function () {
+			// given
+			const loginData = {email: RandomUtils.randomEmail(), roles: ['admin', 'driver'], driverGender: 'male'};
+			
+			await checkShowsDriverRides(loginData);
+		});
+	});
 
   it('should show all rides for driver', async function () {
     // given
-    const loginData = {email: RandomUtils.randomEmail(), roles: ['driver'], driverGender: 'male'};
+		const loginData = {email: RandomUtils.randomEmail(), roles: ['driver'], driverGender: 'male'};
+		
+		await checkShowsDriverRides(loginData);
+	});
+	
+	async function checkShowsDriverRides(loginData) {
     const ride1 = randomRideWithGender('male');
     const ride2 = randomRideWithGender('female');
     const ride3 = randomRideWithGender('any');
     await databaseContainsRides(ride1, ride2, ride3);
 
     // when
-    const rides = (await listRideController.listRides({}, loginData)).map(removeId);
+    const rides = (await listRideController.listRides({listType: "driver"}, loginData)).map(removeId);
 
     assert.deepInclude(rides, ride1);
     assert.deepInclude(rides, ride3);
     assert.notDeepInclude(rides, ride2);
     // assert.deepEqualExcluding(rides, [ride1, ride3], 'id');
-  });
+	}
 
   async function databaseContainsRides(...rides) {
     for (let ride of rides) {

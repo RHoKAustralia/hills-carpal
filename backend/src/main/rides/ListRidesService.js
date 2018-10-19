@@ -39,14 +39,17 @@ class ListRidesService {
       return null;
     }
 
+    const driverRoutesOnly = listType === 'driver';
+
     return {
       toLongitude: query.toLongitude,
       toLatitude: query.toLatitude,
       fromLongitude: query.fromLongitude,
       fromLatitude: query.fromLatitude,
-      driverGenders: isDriver ? ['any', loginData.driverGender] : undefined,
-      includePickupTimeInPast: !isDriver,
-      facilitatorId: isFacilitator ? loginData.email : undefined,
+      driverGenders: driverRoutesOnly ? ['any', loginData.driverGender] : undefined,
+      driverCars: driverRoutesOnly ? ['All', loginData.car] : undefined,
+      includePickupTimeInPast: !driverRoutesOnly,
+      facilitatorId: (isFacilitator && !driverRoutesOnly) ? loginData.email : undefined,
     };
   }
 

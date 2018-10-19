@@ -26,7 +26,12 @@ class DatabaseManager {
 
     return new Promise((resolve, reject) => {
       connection.query(queryString, (error, results, fields) => {
-        if (closeConnection) {
+        if (error) {
+          console.log("Error executing", queryString, error);
+          return reject(error);
+        } else if (closeConnection) {
+          // Only close the connection if there's no error - otherwise we
+          // get "Cannot enqueue Quit after fatal error"
           let closePromise = this.closeConnection(connection);
           return closePromise
             .then(() => {
@@ -35,10 +40,6 @@ class DatabaseManager {
             .catch(error1 => {
               reject(error1 || error);
             });
-        }
-        if (error) {
-          console.log("Error executing", queryString, error);
-          return reject(error);
         }
         return resolve(results);
       });

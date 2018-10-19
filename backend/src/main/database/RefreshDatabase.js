@@ -20,8 +20,8 @@ class RefreshDatabase {
     this.databaseManager = databaseManager;
   }
 
-  async executeAll() {
-    this.execute(createDB, this.databaseManagerNoDb)
+  executeAll() {
+    return this.execute(createDB, this.databaseManagerNoDb)
       .then(() => {
         let result = Promise.resolve();
         changeSet.forEach(fileName => {

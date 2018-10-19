@@ -13,7 +13,7 @@ class LocationSearch extends Component {
     return (
       <div>
         <h4 style={{ marginTop: '10px' }}>
-          Put in a trip you're planning to make.
+          Search Trips
         </h4>
         <p>Carpal will then use this trip to find nearby ride requests</p>
         <form
