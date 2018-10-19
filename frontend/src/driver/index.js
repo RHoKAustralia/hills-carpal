@@ -9,7 +9,12 @@ import DriverMap from './DriverMap';
 class Driver extends Component {
   constructor() {
     super();
-    this.state = { rides: null, page: 'table', driverCoords: null };
+    this.state = {
+      rides: null,
+      page: 'table',
+      driverCoords: null,
+      showLocationSearch: false
+    };
     this.handleSearch = this.handleSearch.bind(this);
   }
   componentDidMount() {
@@ -19,36 +24,41 @@ class Driver extends Component {
       return false;
     }
 
+    this.searchAllRides();
+  }
+
+  searchAllRides() {
     const url = process.env.REACT_APP_API_URL + '/rides?listType=driver';
     axiosInstance
       .get(url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+        }
       })
       .then(res => {
         this.setState({ rides: res.data });
       });
   }
+
   handleSearch({ locationFrom, locationTo }) {
     const query = {
       listType: 'driver',
       toLongitude: locationTo.longitude,
       toLatitude: locationTo.latitude,
       fromLongitude: locationFrom.longitude,
-      fromLatitude: locationFrom.latitude,
+      fromLatitude: locationFrom.latitude
     };
     const qString = qs.stringify(query);
     axiosInstance
       .get('/rides?' + qString, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+        }
       })
       .then(res => {
         this.setState({
           rides: res.data,
-          driverCoords: { locationFrom, locationTo },
+          driverCoords: { locationFrom, locationTo }
         });
       });
   }
@@ -68,30 +78,72 @@ class Driver extends Component {
     if (this.state.page === 'map') return null;
     return (
       <button
-        className="btn btn-sm btn-secondary"
+        className="btn btn-sm btn-outline-secondary"
         onClick={() => this.setState({ page: 'map' })}
       >
         Use map instead
       </button>
     );
   }
+
+  toggleLocationSearchVisible = () => {
+    this.setState(state => {
+      if (state.showLocationSearch) {
+        // We've just hidden the location search, so make sure the search results don't include it
+        this.searchAllRides();
+      }
+
+      return {
+        showLocationSearch: !state.showLocationSearch
+      };
+    });
+  };
+
+  renderLocationSearchBtn() {
+    return (
+      <button
+        className={`btn btn-sm btn-outline-secondary ${
+          this.state.showLocationSearch ? 'active' : ''
+        }`}
+        onClick={this.toggleLocationSearchVisible}
+      >
+        Filter by location
+      </button>
+    );
+  }
+
   render() {
     if (!this.state.rides) {
       return <img alt="loader" className="loader" src="loader.svg" />;
     }
     return (
       <div className="container">
-        <LocationSearch clearable={true} onLocationSearch={this.handleSearch} />
         <div
           style={{
             display: 'flex',
-            marginTop: '10px',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between'
           }}
-          className="btn-group"
         >
-          {this.renderMapBtn()}
+          <h4 style={{ marginTop: '10px' }}>Upcoming Trips</h4>
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '10px',
+              justifyContent: 'flex-end',
+              flex: '0'
+            }}
+            className="btn-group"
+          >
+            {this.renderLocationSearchBtn()}
+            {this.renderMapBtn()}
+          </div>
         </div>
+        {this.state.showLocationSearch && (
+          <LocationSearch
+            clearable={true}
+            onLocationSearch={this.handleSearch}
+          />
+        )}
         {this.renderPage()}
         <a
           style={{ marginTop: '20px', display: 'block' }}

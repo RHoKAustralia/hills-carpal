@@ -184,7 +184,7 @@ class DriverMap extends Component {
             </div>
           </div>
           <button
-            className="btn btn-sm btn-secondary"
+            className="btn btn-sm btn-outline-secondary"
             onClick={this.props.onViewTableClick}
           >
             View list instead
