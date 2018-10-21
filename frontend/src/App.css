@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
 }
 
 .App-logo {
@@ -25,11 +25,36 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Login */
 .Login-header {
   display: flex;
+}
+
+.hcp-nav-item {
+  position: relative;
+  padding-right: 0.6em;
+  padding-left: 0.6em;
+}
+
+@media only screen and (min-width: 768px) {
+  .hcp-nav-item:after {
+    position: absolute;
+    left: 0;
+    top: 0.4em;
+    height: 2em;
+    content: '';
+    border-right: 2px solid rgba(0, 0, 0, 0.4);
+  }
+
+  .hcp-nav-item:first-child:after {
+    display: none;
+  }
 }

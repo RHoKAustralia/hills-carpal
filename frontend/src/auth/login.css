@@ -1,18 +1,22 @@
-.login-container {
+.hcp-background {
   background: url(/styles/background-pic.png) fixed;
   background-size: cover;
-  min-height: 800px;
+  background-position: top;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
 }
 
 .outerForm {
   border-radius: 2%;
-  width: 40%;
-  height: 400px;
   background: rgba(255, 255, 255, 0.63);
   padding: 40px;
   text-align: center;
   margin: auto;
-  margin-top: 10%;
+  margin-top: 3em;
   color: white;
   position: relative;
   font-family: Arial, Helvetica, sans-serif;

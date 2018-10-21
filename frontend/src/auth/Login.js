@@ -40,35 +40,33 @@ class Login extends Component {
   render() {
     const { isAuthenticated } = this.props.auth;
     return (
-      <div className="login-container">
-        <div className="Login-header" />
-        <div>
-          {!isAuthenticated() && (
-            <div className="row">
-              <div className="col-md-12 text-center">
-                <div className="outerForm">
-                  <div className="quote">Share the ride, share the life</div>
+      <div className="container">
+        <div className="hcp-background" />
+        <div className="row justify-content-center">
+          <div className="col-xs-12 col-sm-9 col-md-8 text-center">
+            {!isAuthenticated() && (
+              <div className="outerForm">
+                <div className="quote">Share the ride, share the life</div>
 
-                  <button
-                    className="btn btn-success btn-block"
-                    id="loginButton"
-                    onClick={this.login.bind(this)}
-                  >
-                    Log In
-                  </button>
-                </div>
+                <button
+                  className="btn btn-success btn-block"
+                  id="loginButton"
+                  onClick={this.login.bind(this)}
+                >
+                  Log In
+                </button>
               </div>
-            </div>
-          )}
-          {isAuthenticated() && (
-            <div>
-              Pick your action:
-              <ul>
-                {this.facilitatorLink()}
-                {this.driverLink()}
-              </ul>
-            </div>
-          )}
+            )}
+            {isAuthenticated() && (
+              <div>
+                Pick your action:
+                <ul>
+                  {this.facilitatorLink()}
+                  {this.driverLink()}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
