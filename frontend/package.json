@@ -1,7 +1,15 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "private": true,
+	"private": true,
+	"proxy": {
+    "/api": {
+			"target": "http://localhost:8080",
+			"pathRewrite": {
+				"^/api": ""
+			}
+    }
+  },
   "dependencies": {
     "@turf/bbox": "^6.0.1",
     "auth0-js": "^9.6.0",
@@ -25,6 +33,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "local": "UNSAFE_GOD_MODE=true REACT_APP_API_URL='http://localhost:3000/api' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' npm start"
   }
 }
