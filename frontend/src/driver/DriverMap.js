@@ -26,7 +26,7 @@ class DriverMap extends Component {
     super();
     this.state = {
       directionsById: null,
-      driverRoute: null,
+      driverRoute: null
     };
   }
   componentDidMount() {
@@ -52,7 +52,7 @@ class DriverMap extends Component {
         .then(res => {
           this.setState({
             driverRoute: res.data.routes[0].geometry,
-            driverRouteKey: res.data.uuid,
+            driverRouteKey: res.data.uuid
           });
         });
     }
@@ -76,7 +76,7 @@ class DriverMap extends Component {
           icon={L.icon({
             iconUrl: '/marker-start.svg',
             iconSize: [18, 23.5], // size of the icon
-            iconAnchor: [9, 23.5],
+            iconAnchor: [9, 23.5]
           })}
           position={[ride.locationFrom.latitude, ride.locationFrom.longitude]}
         >
@@ -87,12 +87,12 @@ class DriverMap extends Component {
           icon={L.icon({
             iconUrl: '/marker-end.svg',
             iconSize: [18, 23.5], // size of the icon
-            iconAnchor: [9, 23.5],
+            iconAnchor: [9, 23.5]
           })}
           position={[ride.locationTo.latitude, ride.locationTo.longitude]}
         >
           {popup}
-        </Marker>,
+        </Marker>
       ];
     });
     return markers.reduce((acc, val) => acc.concat(val), []);
@@ -133,15 +133,15 @@ class DriverMap extends Component {
       .map(ride => {
         return [
           [ride.locationFrom.longitude, ride.locationFrom.latitude],
-          [ride.locationTo.longitude, ride.locationTo.latitude],
+          [ride.locationTo.longitude, ride.locationTo.latitude]
         ];
       })
       .reduce((acc, val) => acc.concat(val), []);
 
     // If no lnglats, defaults to Sydney Area
     if (lnglats.length === 0) {
-      lnglats.push([151.09901, -33.7049])
-      lnglats.push([151.058, -34.0331])
+      lnglats.push([151.09901, -33.7049]);
+      lnglats.push([151.058, -34.0331]);
     }
 
     return getBoundsFromLngLatArray(lnglats);
@@ -183,12 +183,6 @@ class DriverMap extends Component {
               End <img src="/marker-end.svg" alt="" />
             </div>
           </div>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={this.props.onViewTableClick}
-          >
-            View list instead
-          </button>
         </div>
         <Map
           style={{ height: '500px' }}

@@ -31,7 +31,7 @@ node ./backend/src/test/expressApis.js
 To make this easier if you've got docker installed you can use that for the local db:
 
 ```
-docker run --name some-mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:5.7
+docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d mysql:5.7
 yarn run refresh-db
 ```
 
