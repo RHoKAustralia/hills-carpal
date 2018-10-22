@@ -16,7 +16,6 @@ const LoggedOutLinks = (
     </button>
 
     <div className="collapse navbar-collapse" id="navbarSupportedContent">
-      {/* <div className="linkBlock"> */}
       <ul className="navbar-nav ml-auto">
         <li className="nav-item hcp-nav-item">
           <a
@@ -55,7 +54,6 @@ const LoggedOutLinks = (
           </a>
         </li>
       </ul>
-      {/* </div> */}
     </div>
   </React.Fragment>
 );
@@ -83,7 +81,7 @@ class App extends Component {
 
     return (
       <div className="hcp-app">
-        <nav className="navbar navbar-light bg-light navbar-expand-md">
+        <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
           <a className="navbar-brand" href={this.getLogoHref()}>
             <img
               src="/styles/carpal.png"
@@ -95,7 +93,7 @@ class App extends Component {
           </a>
           {!isAuthenticated() && LoggedOutLinks}
           {isAuthenticated() && (
-            <div className="App-header-controls">
+            <div>
               <button
                 className="btn btn-success"
                 id="logOutButton"
