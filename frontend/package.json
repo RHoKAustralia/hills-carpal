@@ -34,6 +34,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "local": "UNSAFE_GOD_MODE=true REACT_APP_API_URL='http://localhost:3000/api' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' npm start"
+    "local": "REACT_APP_API_URL='http://localhost:3000/api' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' npm start"
   }
 }
