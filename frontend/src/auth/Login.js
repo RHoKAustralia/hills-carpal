@@ -13,9 +13,9 @@ class Login extends Component {
       this.props.auth.hasAdminPriviledge();
     if (isAuthorised) {
       return (
-        <li>
-          <Link to="/facilitator">Facilitator</Link>
-        </li>
+        <Link className="btn btn-success" to="/facilitator">
+          Facilitator
+        </Link>
       );
     } else {
       return false;
@@ -28,9 +28,9 @@ class Login extends Component {
       this.props.auth.hasAdminPriviledge();
     if (isAuthorised) {
       return (
-        <li>
-          <Link to="/driver">Driver</Link>
-        </li>
+        <Link className="btn btn-success" to="/driver">
+          Driver
+        </Link>
       );
     } else {
       return false;
@@ -44,28 +44,30 @@ class Login extends Component {
         <div className="hcp-background" />
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-9 col-md-8 text-center">
-            {!isAuthenticated() && (
-              <div className="outerForm">
-                <div className="quote">Share the ride, share the life</div>
+            <div className="outerForm">
+              {!isAuthenticated() && (
+                <React.Fragment>
+                  <div className="quote">Share the ride, share the life</div>
 
-                <button
-                  className="btn btn-success btn-block"
-                  id="loginButton"
-                  onClick={this.login.bind(this)}
-                >
-                  Log In
-                </button>
-              </div>
-            )}
-            {isAuthenticated() && (
-              <div>
-                Pick your action:
-                <ul>
-                  {this.facilitatorLink()}
-                  {this.driverLink()}
-                </ul>
-              </div>
-            )}
+                  <button
+                    className="btn btn-success btn-block"
+                    id="loginButton"
+                    onClick={this.login.bind(this)}
+                  >
+                    Log In
+                  </button>
+                </React.Fragment>
+              )}
+              {isAuthenticated() && (
+                <React.Fragment>
+                  Pick your action:{' '}
+                  <div class="btn-group" role="group">
+                    {this.facilitatorLink()}
+                    {this.driverLink()}
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
           </div>
         </div>
       </div>

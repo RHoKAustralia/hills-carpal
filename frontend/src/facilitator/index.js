@@ -14,13 +14,13 @@ const handleStatusChange = (e, row) => {
     url: '/rides/' + row._original.id,
     method: 'put',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+      Authorization: `Bearer ${localStorage.getItem('id_token')}`
     },
     data: {
       ...row._original,
       pickupTimeAndDateInUTC,
-      status: e.currentTarget.value,
-    },
+      status: e.currentTarget.value
+    }
   });
 };
 
@@ -33,7 +33,7 @@ const columns = [
       moment(cell.pickupTimeAndDateInUTC).format('dddd hh:mma DD/MM/YYYY'),
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     Header: 'Location from',
@@ -42,7 +42,7 @@ const columns = [
     filterMethod: (filter, rows) => {
       return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
     },
-    filterAll: true,
+    filterAll: true
   },
   {
     id: 'locationTo',
@@ -50,7 +50,7 @@ const columns = [
     accessor: cell => cell.locationTo.placeName,
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['locationTo'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     id: 'fbLink',
@@ -59,28 +59,28 @@ const columns = [
       <a href={cell.fbLink} target="blank">
         Go to facebook event
       </a>
-    ),
+    )
   },
   {
     accessor: 'driverGender',
     Header: 'Gender',
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['driverGender'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     accessor: 'carType',
     Header: 'Car',
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['carType'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     accessor: 'status',
     Header: 'Status',
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['status'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     Header: 'Change status',
@@ -98,8 +98,8 @@ const columns = [
           <option value="CANCELED">Canceled</option>
         </select>
       </div>
-    ),
-  },
+    )
+  }
 ];
 class Facilitator extends React.Component {
   constructor() {
@@ -116,8 +116,8 @@ class Facilitator extends React.Component {
     axiosInstance
       .get('/rides?listType=facilitator', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+        }
       })
       .then(res => {
         this.setState({ drives: res.data });
@@ -132,27 +132,35 @@ class Facilitator extends React.Component {
     }
     const handleRowClick = this.handleRowClick;
     return (
-      <div className="container">
-        <h1>Rides</h1>
-        <div className="create-button-row">
-          <Link
-            className="btn btn-primary create-button"
-            to={'/facilitator/create'}
-          >
-            Create new
-          </Link>
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-6">
+            <h4>Rides</h4>
+          </div>
+          <div className="col-6 create-button-row">
+            <Link
+              className="btn btn-primary create-button"
+              to={'/facilitator/create'}
+            >
+              Create new
+            </Link>
+          </div>
         </div>
-        <Table
-          getTrProps={function(state, rowInfo, column) {
-            return {
-              onClick() {
-                handleRowClick(rowInfo.row);
-              },
-            };
-          }}
-          data={this.state.drives}
-          columns={columns}
-        />
+        <div className="row">
+          <div className="col-12">
+            <Table
+              getTrProps={function(state, rowInfo, column) {
+                return {
+                  onClick() {
+                    handleRowClick(rowInfo.row);
+                  }
+                };
+              }}
+              data={this.state.drives}
+              columns={columns}
+            />
+          </div>
+        </div>
       </div>
     );
   }
