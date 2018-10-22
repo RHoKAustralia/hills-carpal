@@ -1,13 +1,13 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-	"private": true,
-	"proxy": {
+  "private": true,
+  "proxy": {
     "/api": {
-			"target": "http://localhost:8080",
-			"pathRewrite": {
-				"^/api": ""
-			}
+      "target": "http://localhost:8080",
+      "pathRewrite": {
+        "^/api": ""
+      }
     }
   },
   "dependencies": {
