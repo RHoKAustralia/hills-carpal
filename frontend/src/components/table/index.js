@@ -10,7 +10,9 @@ const Table = props => {
       data={props.data}
       defaultPageSize={10}
       columns={props.columns}
+      width="100%"
       {...props}
+      
     />
   );
 };

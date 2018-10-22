@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import axiosInstance from '../auth/api';
-import history from '../history';
-import LocationSearch from './LocationSearch';
-import qs from 'qs';
-import DriverTable from './DriverTable';
-import DriverMap from './DriverMap';
+import React, { Component } from "react";
+import axiosInstance from "../auth/api";
+import history from "../history";
+import LocationSearch from "./LocationSearch";
+import qs from "qs";
+import DriverTable from "./DriverTable";
+import DriverMap from "./DriverMap";
 
 class Driver extends Component {
   constructor() {
     super();
     this.state = {
       rides: null,
-      page: 'table',
+      page: "table",
       driverCoords: null,
       showLocationSearch: false
     };
@@ -20,7 +20,7 @@ class Driver extends Component {
   componentDidMount() {
     const { isAuthenticated, hasDriverPriviledge } = this.props.auth;
     if (!isAuthenticated() || !hasDriverPriviledge()) {
-      history.replace('/');
+      history.replace("/");
       return false;
     }
 
@@ -28,11 +28,11 @@ class Driver extends Component {
   }
 
   searchAllRides() {
-    const url = process.env.REACT_APP_API_URL + '/rides?listType=driver';
+    const url = process.env.REACT_APP_API_URL + "/rides?listType=driver";
     axiosInstance
       .get(url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+          Authorization: `Bearer ${localStorage.getItem("id_token")}`
         }
       })
       .then(res => {
@@ -42,7 +42,7 @@ class Driver extends Component {
 
   handleSearch({ locationFrom, locationTo }) {
     const query = {
-      listType: 'driver',
+      listType: "driver",
       toLongitude: locationTo.longitude,
       toLatitude: locationTo.latitude,
       fromLongitude: locationFrom.longitude,
@@ -50,9 +50,9 @@ class Driver extends Component {
     };
     const qString = qs.stringify(query);
     axiosInstance
-      .get('/rides?' + qString, {
+      .get("/rides?" + qString, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+          Authorization: `Bearer ${localStorage.getItem("id_token")}`
         }
       })
       .then(res => {
@@ -63,25 +63,27 @@ class Driver extends Component {
       });
   }
   renderPage() {
-    if (this.state.page === 'table') {
+    if (this.state.page === "table") {
       return <DriverTable rides={this.state.rides} />;
     }
     return (
       <DriverMap
-        onViewTableClick={() => this.setState({ page: 'table' })}
+        onViewTableClick={() => this.setState({ page: "table" })}
         driverCoords={this.state.driverCoords}
         rides={this.state.rides}
       />
     );
   }
+
   renderMapBtn() {
-    if (this.state.page === 'map') return null;
+    const isMap = this.state.page === "map";
+
     return (
       <button
         className="btn btn-sm btn-outline-secondary"
-        onClick={() => this.setState({ page: 'map' })}
+        onClick={() => this.setState({ page: isMap ? "table" : "map" })}
       >
-        Use map instead
+        {isMap ? "Use table instead" : "Use map instead"}
       </button>
     );
   }
@@ -103,7 +105,7 @@ class Driver extends Component {
     return (
       <button
         className={`btn btn-sm btn-outline-secondary ${
-          this.state.showLocationSearch ? 'active' : ''
+          this.state.showLocationSearch ? "active" : ""
         }`}
         onClick={this.toggleLocationSearchVisible}
       >
@@ -117,25 +119,16 @@ class Driver extends Component {
       return <img alt="loader" className="loader" src="loader.svg" />;
     }
     return (
-      <div className="container">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between'
-          }}
-        >
-          <h4 style={{ marginTop: '10px' }}>Upcoming Trips</h4>
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '10px',
-              justifyContent: 'flex-end',
-              flex: '0'
-            }}
-            className="btn-group"
-          >
-            {this.renderLocationSearchBtn()}
-            {this.renderMapBtn()}
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-12 col-sm-6">
+            <h4>Upcoming Trips</h4>
+          </div>
+          <div className="col-12 col-sm-6 text-left text-sm-right">
+            <div className="btn-group">
+              {this.renderLocationSearchBtn()}
+              {this.renderMapBtn()}
+            </div>
           </div>
         </div>
         {this.state.showLocationSearch && (
@@ -146,8 +139,8 @@ class Driver extends Component {
         )}
         {this.renderPage()}
         <a
-          style={{ marginTop: '20px', display: 'block' }}
-          href={'https://john3110.polldaddy.com/s/ride-feedback'}
+          style={{ marginTop: "20px", display: "block" }}
+          href={"https://john3110.polldaddy.com/s/ride-feedback"}
         >
           Please fill in the survey
         </a>

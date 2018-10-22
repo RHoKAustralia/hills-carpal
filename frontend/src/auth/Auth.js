@@ -71,8 +71,12 @@ export default class Auth {
   }
 
   setProfile(error, profile) {
-    const userRoles = profile[this.metadataKeyUserRole];
-    localStorage.setItem(KEY_USER_ROLE, (userRoles || [""]));
+    let userRoles = profile[this.metadataKeyUserRole];
+    if (process.env.REACT_APP_UNSAFE_GOD_MODE) {
+      userRoles = ["driver", "facilitator", "admin"];
+    }
+
+    localStorage.setItem(KEY_USER_ROLE, userRoles || [""]);
 
     const firstUserRole = userRoles[0];
     if (firstUserRole === "facilitator") {
@@ -108,7 +112,7 @@ export default class Auth {
 
   hasFacilitatorPriviledge() {
     const userRoles = localStorage.getItem(KEY_USER_ROLE);
-    return userRoles.indexOf('facilitator') > -1 || this.hasAdminPriviledge();
+    return userRoles.indexOf("facilitator") > -1 || this.hasAdminPriviledge();
   }
 
   hasDriverPriviledge() {
