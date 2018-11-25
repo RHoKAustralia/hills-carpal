@@ -14,14 +14,14 @@ const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOne
 module.exports = {
   list: (event, context, callback) => {
     console.log(JSON.stringify(event));
-    rides.list(event, context, ()=>{
+    rides.list(event, context, (error, result)=>{
       const currentTime = new Date().toTimeString();
       console.log('Called at ' + currentTime);
           
       const response = {
               statusCode: 200,
               body: JSON.stringify({
-                  message: `Goodbye, the current time is ${currentTime}.`,
+                  message: result
               })
       };
       callback(null, response);
