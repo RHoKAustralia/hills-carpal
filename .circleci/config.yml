@@ -6,7 +6,7 @@ version: 2
 jobs:
   ui-build:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:8
 
     working_directory: ~/carpal/frontend
 
@@ -51,7 +51,7 @@ jobs:
           command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-dev/ --delete
   services-build:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:8
       - image: mysql:5.7
         environment:
           MYSQL_ROOT_PASSWORD: admin
@@ -87,7 +87,7 @@ jobs:
 
   services-deploy:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:8
     working_directory: ~/carpal
     steps:
       - attach_workspace:
