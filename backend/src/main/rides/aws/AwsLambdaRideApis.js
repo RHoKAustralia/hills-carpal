@@ -38,7 +38,7 @@ class AwsLambdaRideApis {
           headers: {
              "Content-Type" : "application/json"
           },
-          body: []
+          body: "[]"
         };
         console.log(JSON.stringify(result));
         callback(null, result);
