@@ -12,8 +12,8 @@ const findOneRideService = new FindOneRideService(databaseManager);
 const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOneRideService);
 
 module.exports = {
-  list: rides.list,
-  create: rides.create,
-  findOne: rides.findOne,
-  update: rides.update
+  list: (event, context, callback) => rides.list(event, context, callback),
+  create: (event, context, callback) => rides.create(event, context, callback),
+  findOne: (event, context, callback) => rides.findOne(event, context, callback),
+  update: (event, context, callback) => rides.update(event, context, callback)
 };
