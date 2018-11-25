@@ -38,7 +38,7 @@ jobs:
             - '*'
   ui-deploy:
     docker:
-      - image: circleci/python:2.7-jessie
+      - image: circleci/python:3.6.4
     working_directory: ~/carpal/frontend
     steps:
       - attach_workspace:
