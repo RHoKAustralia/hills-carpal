@@ -21,7 +21,7 @@ module.exports = {
       const response = {
               statusCode: 200,
               body: JSON.stringify({
-                  message: `Hello, the current time is ${currentTime}.`,
+                  message: `Goodbye, the current time is ${currentTime}.`,
               })
       };
       callback(null, response);
