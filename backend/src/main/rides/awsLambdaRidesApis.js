@@ -11,29 +11,23 @@ const findOneRideService = new FindOneRideService(databaseManager);
 
 const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOneRideService);
 
-module.exports = {
-  list: (event, context, callback) => {
-    console.log(JSON.stringify(event));
-    rides.list(event, context, (error, result)=>{
-      const currentTime = new Date().toTimeString();
-      console.log('Called at ' + currentTime);
-          
+let wrappedCallback = (callback) => {
+  return (error, result) => {
+    if (!error) {
       const response = {
-              statusCode: 200,
-              body: JSON.stringify({
-                  message: result
-              })
+        statusCode: 200,
+        body: JSON.stringify(result)
       };
       callback(null, response);
-    });
-  },
-  create: (event, context, callback) => {
-    rides.create(event, context, callback)
-  },
-  findOne: (event, context, callback) => {
-    rides.findOne(event, context, callback)
-  },
-  update: (event, context, callback) => {
-    rides.update(event, context, callback)
-  }
+    } else {
+      callback(error);
+    }
+  };
+};
+
+module.exports = {
+  list: (event, context, callback) => rides.list(event, context, wrappedCallback(callback)),
+  create: (event, context, callback) => rides.create(event, context, wrappedCallback(callback)),
+  findOne: (event, context, callback) => rides.findOne(event, context, wrappedCallback(callback)),
+  update: (event, context, callback) => rides.update(event, context, wrappedCallback(callback))
 };
