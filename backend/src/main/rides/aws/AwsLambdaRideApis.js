@@ -31,8 +31,16 @@ class AwsLambdaRideApis {
     let loginData = decodeJwt(event);
     let queryParams = event.queryStringParameters || {};
     return this.listRidesService.listRides(queryParams, loginData)
-      .then(result => callback(null, result))
-      .catch(result => callback(result));
+      .then(result => {
+        console.log('Success. Result: ');
+        console.log(JSON.stringify(result));
+        callback(null, result);
+      })
+      .catch(result => {
+        console.log('Failure. Result: ');
+        console.log(JSON.stringify(result));
+        callback(result);
+      });
   }
 
   findOne(event, context, callback) {
