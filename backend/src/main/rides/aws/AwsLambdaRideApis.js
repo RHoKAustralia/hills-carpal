@@ -33,7 +33,13 @@ class AwsLambdaRideApis {
     this.listRidesService.listRides(queryParams, loginData)
       .then(result => {
         console.log('Success. Result: ');
-        result = result || [];
+        result = result || {
+          statusCode: 200,
+          headers: {
+             "Content-Type" : "application/json"
+          },
+          body: []
+        };
         console.log(JSON.stringify(result));
         callback(null, result);
       })
