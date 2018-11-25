@@ -13,6 +13,7 @@ const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOne
 
 module.exports = {
   list: (event, context, callback) => {
+    console.log(JSON.stringify(event));
     rides.list(event, context, callback);
   },
   create: (event, context, callback) => {
