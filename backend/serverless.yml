@@ -63,7 +63,7 @@ functions:
                 id: true
 
   list:
-    handler: src/main/rides/awsLambdaRidesApis.list
+    handler: src/main/rides/awsLambdaRidesApis.listRidesService
     # runtime: nodejs8.10
     events:
       - http:
