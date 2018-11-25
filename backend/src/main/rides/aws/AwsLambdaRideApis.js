@@ -13,7 +13,7 @@ class AwsLambdaRideApis {
 
   create(event, context, callback) {
     let loginData = decodeJwt(event);
-    return this.createRideService.createRide(JSON.parse(event.body), loginData)
+    this.createRideService.createRide(JSON.parse(event.body), loginData)
       .then(result => callback(null, result))
       .catch(result => callback(result));
   }
@@ -22,7 +22,7 @@ class AwsLambdaRideApis {
     const loginData = decodeJwt(event);
     const ride = JSON.parse(event.body);
     const id = event.pathParameters.id;
-    return this.updateRideService.updateRide(id, ride, loginData)
+    this.updateRideService.updateRide(id, ride, loginData)
       .then(result => callback(null, result))
       .catch(result => callback(result));
   }
@@ -30,7 +30,7 @@ class AwsLambdaRideApis {
   list(event, context, callback) {
     let loginData = decodeJwt(event);
     let queryParams = event.queryStringParameters || {};
-    return this.listRidesService.listRides(queryParams, loginData)
+    this.listRidesService.listRides(queryParams, loginData)
       .then(result => {
         console.log('Success. Result: ');
         result = result || [];
@@ -47,7 +47,7 @@ class AwsLambdaRideApis {
   findOne(event, context, callback) {
     let loginData = decodeJwt(event);
     let pathParams = event.pathParameters || {};
-    return this.findOneRideService.findOne(pathParams.id, loginData)
+    this.findOneRideService.findOne(pathParams.id, loginData)
       .then(result => callback(null, result))
       .catch(result => callback(result));
   }
