@@ -79,18 +79,23 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      
+      - persist_to_workspace:
+          root: ~/carpal/backend
+          paths:
+            - '*'
+
   services-deploy:
     docker:
       - image: circleci/node:8.10
-    working_directory: ~/carpal/backend
+    working_directory: ~/carpal
     steps:
-      - checkout:
-          path: ~/carpal
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+      - attach_workspace:
+          at: /tmp/carpal
+      - run:
+          name: Move code from attached workspace to working directory
+          command: mv /tmp/carpal/* .
+      - run: ls -lah
       - run: ./writeSecrets.sh
       - run: npm run deploy-sls
 workflows:
