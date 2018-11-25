@@ -111,6 +111,8 @@ workflows:
             branches:
               only: master
       - services-deploy:
+          requires:
+            - services-build
           filters:
             branches:
               only: master
