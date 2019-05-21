@@ -9,7 +9,7 @@ provider:
   timeout: 30
   environment:
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
-    MYSQL_HOST: carpal.cttgjqpjknhf.ap-southeast-2.rds.amazonaws.com
+    MYSQL_HOST: carpal.cluster-cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com
     MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
     MYSQL_PORT: ${file(./secrets.json):MYSQL_PORT}
     MYSQL_USER: carpaladmin
@@ -18,11 +18,11 @@ provider:
 
   vpc:
     securityGroupIds:
-      - sg-d35dabab
+      - subnet-f8cf74a0
     subnetIds:
-      - subnet-fcbd0fa5
-      - subnet-49bccb2d
-      - subnet-93960fe5
+      - subnet-67e8d22e
+      - subnet-a0959cc7
+      - subnet-f8cf74a0
 
 functions:
   auth:
