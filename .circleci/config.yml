@@ -48,7 +48,7 @@ jobs:
           command: sudo pip install awscli
       - run:
           name: Deploy to S3
-          command: aws s3 sync /tmp/build/ s3://carpal-ui-rides-dev/ --delete
+          command: aws s3 sync /tmp/build/ s3://hills-carpal-dev/ --delete
   services-build:
     docker:
       - image: circleci/node:8

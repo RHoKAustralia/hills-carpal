@@ -18,7 +18,7 @@ provider:
 
   vpc:
     securityGroupIds:
-      - subnet-f8cf74a0
+      - sg-accecad1
     subnetIds:
       - subnet-67e8d22e
       - subnet-a0959cc7
