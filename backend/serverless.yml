@@ -18,11 +18,11 @@ provider:
 
   vpc:
     securityGroupIds:
-      - sg-accecad1
+      - sg-080b105495ba231ea
     subnetIds:
-      - subnet-67e8d22e
-      - subnet-a0959cc7
-      - subnet-f8cf74a0
+      - subnet-00031e7d539e35ea0
+      - subnet-051ce2d18d2309f65
+      - subnet-09de08cb31b9151a8
 
 functions:
   auth:
