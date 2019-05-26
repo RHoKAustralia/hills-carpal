@@ -9,10 +9,10 @@ provider:
   timeout: 30
   environment:
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
-    MYSQL_HOST: carpal.cluster-cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com
+    MYSQL_HOST: carpal-dev.cluster-cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com
     MYSQL_PW: ${file(./secrets.json):MYSQL_PW}
     MYSQL_PORT: ${file(./secrets.json):MYSQL_PORT}
-    MYSQL_USER: carpaladmin
+    MYSQL_USER: admin
     DOMAIN: carpal.org.au
     AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
 
