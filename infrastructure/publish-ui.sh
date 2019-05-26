@@ -1,9 +1,9 @@
 ENV=${1:-dev}
 
-BUCKET="s3://carpal-ui-rides-"$ENV"/"
+BUCKET="s3://hills-carpal-"$ENV"/"
 cd ../frontend/
-npm install
-npm run build
+yarn install
+yarn run build
 rm -rf ../infrastructure/ui-rides/*
 md -p ../infrastructure/ui-rides
 mv build/* ../infrastructure/ui-rides

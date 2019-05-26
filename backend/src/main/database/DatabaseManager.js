@@ -1,7 +1,6 @@
 const mysql = require('mysql');
 
 class DatabaseManager {
-
   constructor(databaseConfig) {
     this.databaseConfig = databaseConfig || {
       host: process.env.MYSQL_HOST || 'localhost',
@@ -10,6 +9,8 @@ class DatabaseManager {
       password: process.env.MYSQL_PW || 'admin',
       database: process.env.MYSQL_DB || 'carpal',
       multipleStatements: true
+      // connectTimeout: 60000,
+      // debug: true
     };
   }
 
@@ -27,7 +28,7 @@ class DatabaseManager {
     return new Promise((resolve, reject) => {
       connection.query(queryString, (error, results, fields) => {
         if (error) {
-          console.log("Error executing", queryString, error);
+          console.log('Error executing', queryString, error);
           return reject(error);
         } else if (closeConnection) {
           // Only close the connection if there's no error - otherwise we
@@ -48,7 +49,7 @@ class DatabaseManager {
 
   closeConnection(connection) {
     return new Promise((resolve, reject) => {
-      connection.end(function (error) {
+      connection.end(function(error) {
         if (error) {
           return reject(error);
         }
@@ -59,7 +60,7 @@ class DatabaseManager {
 
   beginTransaction(connection) {
     return new Promise((resolve, reject) => {
-      connection.beginTransaction(function (error) {
+      connection.beginTransaction(function(error) {
         if (error) {
           return reject(error);
         }
@@ -70,7 +71,7 @@ class DatabaseManager {
 
   rollback(connection) {
     return new Promise((resolve, reject) => {
-      connection.rollback(function (error) {
+      connection.rollback(function(error) {
         if (error) {
           return reject(error);
         }
@@ -81,7 +82,7 @@ class DatabaseManager {
 
   commit(connection) {
     return new Promise((resolve, reject) => {
-      connection.commit(function (error) {
+      connection.commit(function(error) {
         if (error) {
           return reject(error);
         }
