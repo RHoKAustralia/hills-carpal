@@ -1,6 +1,7 @@
 const CreateRideService = require('./CreateRideService');
 const ListRidesService = require('./ListRidesService');
 const FindOneRideService = require('./FindOneRideService');
+const UpdateRideService = require('./UpdateRideService');
 const DatabaseManager = require('../database/DatabaseManager');
 const AwsLambdaRideApis = require('./aws/AwsLambdaRideApis');
 const databaseManager = new DatabaseManager();
@@ -8,8 +9,9 @@ const databaseManager = new DatabaseManager();
 const createRideService = new CreateRideService(databaseManager);
 const listRidesService = new ListRidesService(databaseManager);
 const findOneRideService = new FindOneRideService(databaseManager);
+const updateRideService = new UpdateRideService(databaseManager);
 
-const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOneRideService);
+const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOneRideService, updateRideService);
 
 let wrappedCallback = (callback) => {
   return (error, result) => {
