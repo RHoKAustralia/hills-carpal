@@ -8,8 +8,8 @@ class DatabaseManager {
       user: process.env.MYSQL_USER || 'root',
       password: process.env.MYSQL_PW || 'admin',
       database: process.env.MYSQL_DB || 'carpal',
-      multipleStatements: true
-      // connectTimeout: 60000,
+      multipleStatements: true,
+      connectTimeout: 60000 // Needs to be super high to wait for serverless aurora to wake up
       // debug: true
     };
   }
