@@ -61,7 +61,28 @@ functions:
             parameters:
               paths:
                 id: true
-
+  acceptRide:
+    handler: src/main/rides/awsLambdaRidesApis.acceptRide
+    events:
+      - http:
+          path: rides/{id}/accept
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+  declineRide:
+    handler: src/main/rides/awsLambdaRidesApis.declineRide
+    events:
+      - http:
+          path: rides/{id}/decline
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
   list:
     handler: src/main/rides/awsLambdaRidesApis.list
     # runtime: nodejs8.10
