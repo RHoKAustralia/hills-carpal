@@ -53,6 +53,8 @@ export default class Poll extends React.Component {
           if (this.state.submitState === 'form') {
             return (
               <iframe
+                name="poll"
+                title="poll"
                 frameborder="0"
                 width="100%"
                 height="600"
