@@ -31,9 +31,9 @@ let wrappedCallback = (callback) => {
   };
 };
 
-module.exports = {
-  list: (event, context, callback) => rides.list(event, context, wrappedCallback(callback)),
-  create: (event, context, callback) => rides.create(event, context, wrappedCallback(callback)),
-  findOne: (event, context, callback) => rides.findOne(event, context, wrappedCallback(callback)),
-  update: (event, context, callback) => rides.update(event, context, wrappedCallback(callback))
-};
+
+module.exports =
+  ['list', 'create', 'update', 'findOne', 'acceptRide', 'declineRide'].reduce(function(acc, current) {
+    acc[current] = rides[current](event, context, wrappedCallback(callback));
+    return acc;
+  }, {});

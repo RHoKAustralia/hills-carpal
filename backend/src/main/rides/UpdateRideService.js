@@ -27,9 +27,9 @@ class UpdateRideService {
     return this.updateRide(id, rideToUpdate, loginData);
   }
 
-  cancelRide(id, ride, loginData) {
+  declineRide(id, ride, loginData) {
     const rideToUpdate = Object.assign({}, ride);
-    rideToUpdate. gsstatus = RideStatus.CANCELLED;
+    rideToUpdate.status = RideStatus.OPEN;
     return this.updateRide(id, rideToUpdate, loginData);
   }
 
