@@ -3,6 +3,7 @@
 const jsonValidator = require('jsonschema');
 const rideSchema = require('../schema/ride.json');
 const RideRepository = require('./RideRepository');
+const RideStatus = require('../../main/rides/RideStatus');
 const RideMapper = require('./RideMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
@@ -20,6 +21,27 @@ class UpdateRideService {
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
+  acceptRide(id, ride, loginData) {
+    const rideToUpdate = Object.assign({}, ride);
+    rideToUpdate.status = RideStatus.CONFIRMED;
+    return this.updateRide(id, rideToUpdate, loginData);
+  }
+
+  cancelRide(id, ride, loginData) {
+    const rideToUpdate = Object.assign({}, ride);
+    rideToUpdate. gsstatus = RideStatus.CANCELLED;
+    return this.updateRide(id, rideToUpdate, loginData);
+  }
+
+  _getRide(id, loginData) {
+    return this._rideRepository
+      .findOne({
+        id: id,
+        facilitatorId: loginData.role === 'facilitator' ? loginData.email : undefined,
+        includePickupTimeInPast: true
+      });
+  }
+
   _updateRide(id, rideObject, loginData, connection) {
     rideObject.datetime = new Date().getTime();
 
@@ -28,12 +50,7 @@ class UpdateRideService {
       return Promise.reject(validationError);
     }
 
-    return this._rideRepository
-      .findOne({
-        id: id,
-        facilitatorId: loginData.role === 'facilitator' ? loginData.email : undefined,
-        includePickupTimeInPast: true
-      })
+    return this._getRide(id, loginData)
       .then(ride => {
         if (!ride || ride.deleted) {
           return null;
