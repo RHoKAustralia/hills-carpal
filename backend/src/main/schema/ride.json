@@ -62,7 +62,7 @@
     },
     "fbLink": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "driverGender": {
       "type": "string",
