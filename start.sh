@@ -13,4 +13,4 @@ echo "Starting frontend"
 cd -
 cd frontend
 yarn
-yarn start
+yarn local
