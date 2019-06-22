@@ -21,11 +21,16 @@ class FindRides extends Component {
       return false;
     }
 
-    this.searchAllRides();
+    this.getQueue();
   }
 
-  searchAllRides() {
-    const url = process.env.REACT_APP_API_URL + '/rides?listType=driver';
+  getQueue() {
+    console.log(this.props.auth);
+
+    const url =
+      process.env.REACT_APP_API_URL +
+      '/rides?listType=driver&driverId=' +
+      this.props.auth.getUserId();
     axiosInstance
       .get(url, {
         headers: {
