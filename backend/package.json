@@ -3,7 +3,8 @@
   "version": "1.0.1",
   "scripts": {
     "test": "mocha './src/test/**/*.test.js'",
-    "start": "node src/test/expressApis.js",
+    "start": "UNSAFE_GOD_MODE=true node src/test/expressApis.js",
+    "win": "SET UNSAFE_GOD_MODE=true& node src/test/expressApis.js",
     "refresh-db": "node ./src/main/database/index.js",
     "deploy-sls": "sls deploy"
   },
