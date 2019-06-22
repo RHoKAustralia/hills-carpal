@@ -13,7 +13,7 @@ const columns = [
       moment(cell.pickupTimeAndDateInUTC).format('dddd hh:mma DD/MM/YYYY'),
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     Header: 'Location from',
@@ -22,7 +22,7 @@ const columns = [
     filterMethod: (filter, rows) => {
       return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
     },
-    filterAll: true,
+    filterAll: true
   },
   {
     id: 'locationTo',
@@ -30,7 +30,7 @@ const columns = [
     accessor: cell => cell.locationTo.placeName,
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['locationTo'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     id: 'description',
@@ -46,24 +46,29 @@ const columns = [
     accessor: cell => {
       const endpoint = cell.status === 'OPEN' ? 'accept' : 'decline';
       const clickHandler = function() {
-
-          const data = axiosInstance
+        const data = axiosInstance
           .put(`rides/${this.id}/${endpoint}`, cell, {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-              },
-            })
-            .then(res => {
-                return res.data;
-            });
-
-        this.status = data.status;
-        window.location.reload();
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('id_token')}`
+            }
+          })
+          .then(res => {
+            this.status = data.status;
+            window.location.reload();
+            return res.data;
+          });
       };
 
       const label = cell.status === 'OPEN' ? 'Going' : 'Decline';
 
-      return <button onClick={clickHandler.bind(cell)} className={`outline ${label.toLowerCase()}`}>{label}</button>
+      return (
+        <button
+          onClick={clickHandler.bind(cell)}
+          className={`outline ${label.toLowerCase()}`}
+        >
+          {label}
+        </button>
+      );
     }
   }
 ];

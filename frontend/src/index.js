@@ -7,5 +7,3 @@ const routes = createRoutes();
 
 ReactDOM.render(routes, document.getElementById('root'));
 registerServiceWorker();
-
-console.log('hey there');
