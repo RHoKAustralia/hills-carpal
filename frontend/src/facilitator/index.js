@@ -53,15 +53,6 @@ const columns = [
     filterAll: true
   },
   {
-    id: 'fbLink',
-    Header: 'Facebook link',
-    accessor: cell => (
-      <a href={cell.fbLink} target="blank">
-        Go to facebook event
-      </a>
-    )
-  },
-  {
     accessor: 'driverGender',
     Header: 'Gender',
     filterMethod: (filter, rows) =>
