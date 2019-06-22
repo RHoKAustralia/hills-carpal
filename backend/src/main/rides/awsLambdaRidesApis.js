@@ -11,17 +11,22 @@ const listRidesService = new ListRidesService(databaseManager);
 const findOneRideService = new FindOneRideService(databaseManager);
 const updateRideService = new UpdateRideService(databaseManager);
 
-const rides = new AwsLambdaRideApis(createRideService, listRidesService, findOneRideService, updateRideService);
+const rides = new AwsLambdaRideApis(
+  createRideService,
+  listRidesService,
+  findOneRideService,
+  updateRideService
+);
 
-let wrappedCallback = (callback) => {
+let wrappedCallback = callback => {
   return (error, result) => {
     if (!error) {
       const response = {
         statusCode: 200,
         body: JSON.stringify(result),
         headers: {
-          "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-          "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+          'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+          'Access-Control-Allow-Credentials': true // Required for cookies, authorization headers with HTTPS
         }
       };
       callback(null, response);
@@ -31,9 +36,16 @@ let wrappedCallback = (callback) => {
   };
 };
 
-
-module.exports =
-  ['list', 'create', 'update', 'findOne', 'acceptRide', 'declineRide'].reduce(function(acc, current) {
-    acc[current] = rides[current](event, context, wrappedCallback(callback));
-    return acc;
-  }, {});
+module.exports = [
+  'list',
+  'create',
+  'update',
+  'findOne',
+  'acceptRide',
+  'declineRide'
+].reduce((acc, current) => {
+  acc[current] = (event, context, callback) => {
+    return rides[current](event, context, wrappedCallback(callback));
+  };
+  return acc;
+}, {});
