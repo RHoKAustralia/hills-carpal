@@ -2,6 +2,8 @@ import matchSorter from 'match-sorter';
 import moment from 'moment';
 import Table from '../components/table';
 
+import axiosInstance from '../auth/api';
+
 import React, { Component } from 'react';
 const columns = [
   {
@@ -39,13 +41,30 @@ const columns = [
     filterAll: true
   },
   {
-    id: 'fbLink',
-    Header: 'Facebook link',
-    accessor: cell => (
-      <a href={cell.fbLink} target="blank">
-        Go to facebook event
-      </a>
-    ),
+    id: 'status',
+    Header: 'Status',
+    accessor: cell => {
+      const endpoint = cell.status === 'OPEN' ? 'accept' : 'decline';
+      const clickHandler = function() {
+
+          const data = axiosInstance
+          .put(`rides/${this.id}/${endpoint}`, cell, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+              },
+            })
+            .then(res => {
+                return res.data;
+            });
+
+        this.status = data.status;
+        window.location.reload();
+      };
+
+      const label = cell.status === 'OPEN' ? 'Going' : 'Decline';
+
+      return <button onClick={clickHandler.bind(cell)} className={`outline ${label.toLowerCase()}`}>{label}</button>
+    }
   }
 ];
 

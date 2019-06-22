@@ -11,3 +11,21 @@ body {
 .ReactTable {
   margin-top: 20px;
 }
+
+button.outline {
+    border-width:1px;
+    border-style: solid;
+    background-color: transparent;
+    border-radius: 5px;
+    cursor:pointer;
+}
+
+button.outline.going {
+    color:green;
+    border-color:green;
+}
+
+button.outline.decline {
+    border-color: red;
+    color: red;
+}

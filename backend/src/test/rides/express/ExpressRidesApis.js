@@ -4,6 +4,8 @@ class ExpressRideApis {
     this.awsLambdaRideApis = awsLambdaRideApis;
     this.app.post('/rides', this.create.bind(this));
     this.app.put('/rides/:id', this.update.bind(this));
+    this.app.put('/rides/:id/accept', this.acceptRide.bind(this));
+    this.app.put('/rides/:id/decline', this.declineRide.bind(this));
     this.app.get('/rides/:id', this.findOne.bind(this));
     this.app.get('/rides', this.list.bind(this));
   }
@@ -26,6 +28,24 @@ class ExpressRideApis {
     });
   }
 
+  acceptRide(req, res) {
+    this.awsLambdaRideApis.acceptRide(this._extractAwsEvent(req), {}, (error, result) => {
+      if (error) {
+        return res.status(500).send(error);
+      }
+      res.status(200).send(result);
+    });
+  }
+
+  declineRide(req, res) {
+    this.awsLambdaRideApis.declineRide(this._extractAwsEvent(req), {}, (error, result) => {
+      if (error) {
+        return res.status(500).send(error);
+      }
+      res.status(200).send(result);
+    });
+  }
+ 
   list(req, res) {
     this.awsLambdaRideApis.list(this._extractAwsEvent(req), {}, (error, result) => {
       if (error) {
