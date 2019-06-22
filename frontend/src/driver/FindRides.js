@@ -6,7 +6,7 @@ import qs from "qs";
 import DriverTable from "./DriverTable";
 import DriverMap from "./DriverMap";
 
-class Driver extends Component {
+class FindRides extends Component {
   constructor() {
     super();
     this.state = {
@@ -149,6 +149,6 @@ class Driver extends Component {
   }
 }
 
-Driver.propTypes = {};
+FindRides.propTypes = {};
 
-export default Driver;
+export default FindRides;
