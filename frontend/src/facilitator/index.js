@@ -140,6 +140,12 @@ class Facilitator extends React.Component {
           <div className="col-6 create-button-row">
             <Link
               className="btn btn-primary create-button"
+              to={'/facilitator/clients'}
+            >
+              Clients
+            </Link>
+            <Link
+              className="btn btn-primary create-button"
               to={'/facilitator/create'}
             >
               Create new
