@@ -82,17 +82,17 @@ describe('SQL', function () {
     assert.equal(modifiedRideFromDb.status, RideStatus.CONFIRMED);
   });
 
-  it('should allow driver to cancel a ride', async () => {
+  it('should allow driver to decline a ride', async () => {
     const ride = randomRideWithFacilitator(loginData.email);
     await databaseContainsRide(ride);
 
     let storedRide = await findRideTestRepository.findOneByClientEmail(ride.client, connection);
     //Confirm the ride now
-    await updateRideService.cancelRide(storedRide.id, storedRide, loginData);
+    await updateRideService.declineRide(storedRide.id, storedRide, loginData);
 
     let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(storedRide.client, connection);
 
-    assert.equal(modifiedRideFromDb.status, RideStatus.CANCELLED);
+    assert.equal(modifiedRideFromDb.status, RideStatus.OPEN);
   })
 });
 
