@@ -79,6 +79,20 @@ describe('SQL', function () {
     assert.deepEqualExcluding(storedRide, rideRequest, ['id', 'datetime', 'pickupTimeAndDateInUTC', 'facilitatorId']);
     assert.equal(storedRide.facilitatorId, loginData.email);
     assert.equal(storedRide.pickupTimeAndDateInUTC.setMilliseconds(0), pickupTimeAndDateInUTC.toDate().setMilliseconds(0));
+
+  it('shouldn\'t be mandatory to provide a facebook event link', async () => {
+    let requestWithoutFacebookEventLink = Object.assign({}, rideRequest);
+    delete requestWithoutFacebookEventLink.fbLink;
+
+    await createRideService.createRide(requestWithoutFacebookEventLink, loginData);
+    let storedRide = await findRideTestRepository.findOneByClientEmail(requestWithoutFacebookEventLink.client, connection);
+
+
+    assert.deepEqualExcluding(storedRide, requestWithoutFacebookEventLink, ['id', 'datetime', 'pickupTimeAndDateInUTC', 'facilitatorId', 'fbLink']);
+    assert.equal(storedRide.facilitatorId, loginData.email);
+    assert.equal(storedRide.pickupTimeAndDateInUTC.setMilliseconds(0), pickupTimeAndDateInUTC.toDate().setMilliseconds(0));
+
+    assert.equal(storedRide.fbLink, null);
   });
 });
 
