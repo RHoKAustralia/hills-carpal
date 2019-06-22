@@ -84,9 +84,9 @@ class App extends Component {
         <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
           <a className="navbar-brand" href={this.getLogoHref()}>
             <img
-              src="/styles/carpal.png"
-              width="200"
-              height="100"
+              src="/styles/CarPal-Logo-emma-transparent.png"
+              width="100"
+              height="106"
               alt="HillsCarPal"
               id="icon"
             />

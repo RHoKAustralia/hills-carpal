@@ -27,6 +27,24 @@ class AwsLambdaRideApis {
       .catch(result => callback(result));
   }
 
+  acceptRide(event, context, callback) {
+    const loginData = decodeJwt(event);
+    const ride = JSON.parse(event.body);
+    const id = event.pathParameters.id;
+    this.updateRideService.acceptRide(id, ride, loginData)
+      .then(result => callback(null, result || {}))
+      .catch(result => callback(result));
+  }
+
+  declineRide(event, context, callback) {
+    const loginData = decodeJwt(event);
+    const ride = JSON.parse(event.body);
+    const id = event.pathParameters.id;
+    this.updateRideService.declineRide(id, ride, loginData)
+      .then(result => callback(null, result || {}))
+      .catch(result => callback(result));
+  }
+
   list(event, context, callback) {
     let loginData = decodeJwt(event);
     let queryParams = event.queryStringParameters || {};
