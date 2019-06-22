@@ -6,6 +6,7 @@ import history from './history';
 import Login from './auth/Login.js';
 import Facilitator from './facilitator/index.js';
 import CreateNewRide from './facilitator/CreateNewRide.js';
+import Clients from './facilitator/Clients.js';
 import Driver from './driver/index.js';
 
 const auth = new Auth();
@@ -38,6 +39,11 @@ export const createRoutes = () => {
             exact
             path="/facilitator/create"
             render={props => <CreateNewRide auth={auth} {...props} />}
+          />
+          <Route
+            exact
+            path="/facilitator/clients"
+            render={props => <Clients auth={auth} {...props} />}
           />
           <Route
             exact
