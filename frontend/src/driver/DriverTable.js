@@ -58,6 +58,7 @@ const columns = [
             });
 
         this.status = data.status;
+        window.location.reload();
       };
 
       const label = cell.status === 'OPEN' ? 'Going' : 'Decline';
