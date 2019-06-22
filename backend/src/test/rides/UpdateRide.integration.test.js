@@ -67,6 +67,33 @@ describe('SQL', function () {
     assert.equal(modifiedRideFromDb.facilitatorId, loginData.email);
     assert.equal(modifiedRideFromDb.pickupTimeAndDateInUTC.setMilliseconds(0), pickupTimeAndDateInUTC.toDate().setMilliseconds(0));
   });
+
+
+  it('should allow driver to confirm a ride', async () => {
+    const ride = randomRideWithFacilitator(loginData.email);
+    await databaseContainsRide(ride);
+
+    let storedRide = await findRideTestRepository.findOneByClientEmail(ride.client, connection);
+    //Confirm the ride now
+    await updateRideService.acceptRide(storedRide.id, storedRide, loginData);
+
+    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(storedRide.client, connection);
+
+    assert.equal(modifiedRideFromDb.status, RideStatus.CONFIRMED);
+  });
+
+  it('should allow driver to decline a ride', async () => {
+    const ride = randomRideWithFacilitator(loginData.email);
+    await databaseContainsRide(ride);
+
+    let storedRide = await findRideTestRepository.findOneByClientEmail(ride.client, connection);
+    //Confirm the ride now
+    await updateRideService.declineRide(storedRide.id, storedRide, loginData);
+
+    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(storedRide.client, connection);
+
+    assert.equal(modifiedRideFromDb.status, RideStatus.OPEN);
+  })
 });
 
 function modifyRide(ride) {
