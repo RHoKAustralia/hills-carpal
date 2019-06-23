@@ -26,6 +26,7 @@ class RideMapper {
       "status": ride.status,
       "deleted": parseInt(ride.deleted + ''),
       "facilitatorId": ride.facilitatorId || ride.facilitatorEmail,
+      "hasMps": !!ride.hasMps, // force bool
       "description": ride.description,
       "id": ride.id
     }
@@ -58,6 +59,7 @@ class RideMapper {
       status: ride.status,
       deleted: 0,
       facilitatorId: facilitatorId,
+      hasMps: !!ride.hasMps, // force bool
       description: ride.description
     }
   }
