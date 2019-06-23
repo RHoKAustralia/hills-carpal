@@ -28,6 +28,7 @@ class RideRepository {
                                   suburbTo,
                                   placeNameTo,
                                   postCodeTo,
+                                  hasMps,
                                   description) 
                          VALUES 
                                   (${
@@ -47,6 +48,7 @@ class RideRepository {
         escape(ride.locationTo.suburb),
         escape(ride.locationTo.placeName),
         escape(ride.locationTo.postcode),
+        escape(ride.hasMps),
         escape(ride.description)
       ].join(',')})`;
     console.log(query);
@@ -78,6 +80,7 @@ class RideRepository {
                                   suburbTo = ${escape(ride.locationTo.suburb)},
                                   placeNameTo = ${escape(ride.locationTo.placeName)},
                                   postCodeTo = ${escape(ride.locationTo.postcode)},
+                                  hasMps = ${escape(ride.hasMps)},
                                   description = ${escape(ride.description)} 
                                 WHERE
                                   id = ${id}`;
