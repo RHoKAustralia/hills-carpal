@@ -42,6 +42,12 @@ class CreateNewRide extends Component {
         })
         .then(res => {
           const data = res.data;
+          const client = this.state.clients.find(c => c.name === data.client);
+          let clientId = -1;
+          if(client) {
+            clientId = client.id;
+          }
+          data.selectedClientId = clientId;
           this.setState(data);
         });
     }
