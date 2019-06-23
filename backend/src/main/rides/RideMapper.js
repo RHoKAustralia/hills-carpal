@@ -20,7 +20,6 @@ class RideMapper {
         "postcode": ride.postCodeTo,
         "placeName": ride.placeNameTo
       },
-      "fbLink": ride.fbLink,
       "driverGender": ride.driverGender,
       "carType": ride.carType,
       "status": ride.status,
@@ -52,7 +51,6 @@ class RideMapper {
         placeName: ride.locationTo.placeName,
         postcode: ride.locationTo.postcode,
       },
-      fbLink: ride.fbLink,
       driverGender: ride.driverGender,
       carType: ride.carType,
       status: ride.status,
