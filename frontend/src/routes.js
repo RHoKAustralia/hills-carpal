@@ -11,6 +11,7 @@ import FindRides from './driver/FindRides';
 import DriverQueue from './driver/Queue';
 import DriverMenu from './driver/Menu';
 import Poll from './driver/Poll';
+import Clients from './facilitator/Clients.js';
 
 const auth = new Auth();
 
