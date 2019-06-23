@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS carpal.driver_ride (
   confirmed TINYINT(1),
   notified24h TINYINT(1),
   notified5m TINYINT(1),
+
   FOREIGN KEY (driver_id) REFERENCES driver(id),
   FOREIGN KEY (ride_id) REFERENCES rides(id)
 );
