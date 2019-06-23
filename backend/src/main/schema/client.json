@@ -10,6 +10,35 @@
     },
     "description": {
       "type": "string"
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "driverGender": {
+      "type": "string",
+      "required": true
+    },
+    "carType": {
+      "type": "string",
+      "required": true
+    },
+    "hasMps": {
+      "type": "boolean",
+      "required": true
+    },
+    "locationHome": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        },
+        "placeName": {
+          "type": "string"
+        }
+      }
     }
   }
 }

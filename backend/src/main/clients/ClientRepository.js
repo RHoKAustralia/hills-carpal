@@ -10,12 +10,27 @@ class ClientRepository {
 
   create(client, connection) {
     const escape = (data) => connection.escape(data);
-    let query = `INSERT INTO ${this._dbName}.clients(name,
-                                  description) 
-                         VALUES 
-                                  (${
+    const locationHome = `POINT(${client.locationHome.latitude}, ${client.locationHome.longitude})`;
+    let query = `INSERT INTO ${this._dbName}.clients(
+      name,
+      description,
+      phoneNumber,
+      driverGender,
+      carType,
+      locationHome,
+      placeNameHome,
+      hasMps
+    )
+      VALUES
+      (${
       [escape(client.name),
-        escape(client.description)
+        escape(client.description),
+        escape(client.phoneNumber),
+        escape(client.driverGender),
+        escape(client.carType),
+        locationHome,
+        escape(client.locationHome.placeName),
+        escape(client.hasMps)
       ].join(',')})`;
     console.log(query);
 
@@ -27,8 +42,15 @@ class ClientRepository {
       throw new Error('No id specified when updating client.');
     }
     const escape = (data) => connection.escape(data);
+    const locationHome = `POINT(${client.locationHome.latitude}, ${client.locationHome.longitude})`;
     let query = `UPDATE ${this._dbName}.clients SET name = ${escape(client.name)},
-                                  description = ${escape(client.description)}
+                                  description = ${escape(client.description)},
+                                  phoneNumber = ${escape(client.phoneNumber)},
+                                  driverGender = ${escape(client.driverGender)},
+                                  carType = ${escape(client.carType)},
+                                  locationHome = ${locationHome},
+                                  placeNameHome = ${escape(client.locationHome.placeName)},
+                                  hasMps = ${escape(client.hasMps)}
                                 WHERE
                                   id = ${id}`;
     console.log(query);

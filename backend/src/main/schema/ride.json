@@ -67,6 +67,10 @@
     "carType": {
       "type": "string",
       "required": true
+    },
+    "hasMps": {
+      "type": "boolean",
+      "required": true
     }
   }
 }

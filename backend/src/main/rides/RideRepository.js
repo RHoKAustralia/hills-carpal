@@ -28,6 +28,7 @@ class RideRepository {
                                   suburbTo,
                                   placeNameTo,
                                   postCodeTo,
+                                  hasMps,
                                   description) 
                          VALUES 
                                   (${
@@ -47,6 +48,7 @@ class RideRepository {
         escape(ride.locationTo.suburb),
         escape(ride.locationTo.placeName),
         escape(ride.locationTo.postcode),
+        escape(ride.hasMps),
         escape(ride.description)
       ].join(',')})`;
     console.log(query);
@@ -78,6 +80,7 @@ class RideRepository {
                                   suburbTo = ${escape(ride.locationTo.suburb)},
                                   placeNameTo = ${escape(ride.locationTo.placeName)},
                                   postCodeTo = ${escape(ride.locationTo.postcode)},
+                                  hasMps = ${escape(ride.hasMps)},
                                   description = ${escape(ride.description)} 
                                 WHERE
                                   id = ${id}`;
@@ -134,11 +137,11 @@ class RideRepository {
     if (jsonQuery.facilitatorId) {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`)
     }
-
+    
     let leftJoinForDriver  = jsonQuery.driverEmail && jsonQuery.driverEmail.length ? `
     LEFT JOIN ${this._dbName}.driver_ride dr on dr.ride_id = rides.id and dr.driver_email like "${jsonQuery.driverEmail}"`: '';
     let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${where.length ? ' WHERE ' + where.join(' AND ') : ''} ORDER BY pickupTimeAndDateInUTC ASC;`;
-    
+
     return this._databaseManager.query(query, connection)
       .then(rides =>
         rides.map(ride => {
