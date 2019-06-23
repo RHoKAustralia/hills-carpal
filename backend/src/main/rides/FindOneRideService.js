@@ -12,10 +12,6 @@ class FindOneRideService {
   }
 
   findOne(id, loginData) {
-    if (loginData.role === 'driver') {
-      return Promise.resolve(null);
-    }
-
     const connection = this._databaseManager.createConnection();
     const findOnePromise = this._findOne(id, loginData, connection);
     const closeConnection = () => this._databaseManager.closeConnection(connection);
@@ -32,7 +28,8 @@ class FindOneRideService {
     return {
       id: id,
       facilitatorId: loginData.role === 'facilitator' ? loginData.email : undefined,
-      includePickupTimeInPast: true
+      includePickupTimeInPast: true,
+      driverEmail: loginData.roles && loginData.roles.indexOf('driver') !== -1 ? loginData.email : undefined
     };
   }
 }
