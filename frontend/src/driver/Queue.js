@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import axiosInstance from '../auth/api';
 import history from '../history';
-import LocationSearch from './LocationSearch';
-import qs from 'qs';
 import DriverTable from './DriverTable';
-import DriverMap from './DriverMap';
 
 class FindRides extends Component {
   constructor() {
