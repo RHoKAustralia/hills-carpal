@@ -60,10 +60,6 @@
         }
       }
     },
-    "fbLink": {
-      "type": "string",
-      "required": false
-    },
     "driverGender": {
       "type": "string",
       "required": true
