@@ -18,6 +18,13 @@ const ListClientsService = require('../main/clients/ListClientsService');
 const UpdateClientService = require('../main/clients/UpdateClientService');
 const DeleteClientService = require('../main/clients/DeleteClientService');
 
+const ExpressImageApis = require('./images/express/ExpressImagesApis');
+const AwsLambdaImageApis = require('../main/images/aws/AwsLambdaImageApis');
+const UploadImageService = require('../main/images/UploadImageService');
+const ListImagesService = require('../main/images/ListImagesService');
+const UpdateImageService = require('../main/images/UpdateImageService');
+const DeleteImageService = require('../main/images/DeleteImageService');
+
 const ExpressAuthApis = require('./auth/ExpressAuthApis');
 const bodyParser = require('body-parser');
 const databaseManager = new DatabaseManager();
@@ -25,7 +32,7 @@ const databaseManager = new DatabaseManager();
 const https = require('https');
 const http = require('http');
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function(err) {
   console.log(err);
 });
 
@@ -36,42 +43,73 @@ const listRidesService = new ListRidesService(databaseManager);
 const findOneRideService = new FindOneRideService(databaseManager);
 const updateRideService = new UpdateRideService(databaseManager);
 const app = express();
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser());
+// app.use(bodyParser.json()); // for parsing application/json
+// app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", req.get("Origin"));
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
+// app.use((req, res, next) => {
+//   if (req.originalUrl.indexOf('upload') > -1) next();
+//   else {
+//     req.bodyParser.json()(req, res, next);
+//   }
+// });
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', req.get('Origin'));
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
   next();
 });
 
 new ExpressAuthApis(app);
 
-let awsLambdaRideApis = new AwsLambdaRideApis(createRideService,
+let awsLambdaRideApis = new AwsLambdaRideApis(
+  createRideService,
   listRidesService,
   findOneRideService,
-  updateRideService);
-
+  updateRideService
+);
+new ExpressRideApis(app, awsLambdaRideApis);
 
 const createClientService = new CreateClientService(databaseManager);
 const listClientsService = new ListClientsService(databaseManager);
 const updateClientService = new UpdateClientService(databaseManager);
 const deleteClientService = new DeleteClientService(databaseManager);
-let awsLabmdaClientApis = new AwsLambdaClientApis(createClientService, listClientsService, updateClientService, deleteClientService);
+let awsLambdaClientApis = new AwsLambdaClientApis(
+  createClientService,
+  listClientsService,
+  updateClientService,
+  deleteClientService
+);
 
-new ExpressRideApis(app, awsLambdaRideApis);
-new ExpressClientApis(app, awsLabmdaClientApis)
+new ExpressClientApis(app, awsLambdaClientApis);
+
+const createImageService = new UploadImageService(databaseManager);
+const listImagesService = new ListImagesService(databaseManager);
+const updateImageService = new UpdateImageService(databaseManager);
+const deleteImageService = new DeleteImageService(databaseManager);
+let awsLambdaImageApis = new AwsLambdaImageApis(
+  createImageService,
+  listImagesService,
+  updateImageService,
+  deleteImageService
+);
+
+new ExpressImageApis(app, awsLambdaImageApis);
 
 const options = {
-  key: fs.readFileSync(path.resolve(__dirname, './config/express/certs/key.pem')),
-  cert: fs.readFileSync(path.resolve(__dirname, './config/express/certs/certificate.pem'))
+  key: fs.readFileSync(
+    path.resolve(__dirname, './config/express/certs/key.pem')
+  ),
+  cert: fs.readFileSync(
+    path.resolve(__dirname, './config/express/certs/certificate.pem')
+  )
 };
 
 http.createServer(app).listen(8080, () => {
-  console.log("HTTP Server started and listening on port 8080")
+  console.log('HTTP Server started and listening on port 8080');
 });
 
 https.createServer(options, app).listen(8081, () => {
-  console.log("HTTPS Server started and listening on port 8081")
+  console.log('HTTPS Server started and listening on port 8081');
 });

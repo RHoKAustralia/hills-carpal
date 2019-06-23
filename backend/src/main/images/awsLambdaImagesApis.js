@@ -1,0 +1,44 @@
+const UploadImageService = require('./UploadImageService');
+const ListImagesService = require('./ListImagesService');
+const UpdateImageService = require('./UpdateImageService');
+const DeleteImageService = require('./DeleteImageService');
+const DatabaseManager = require('../database/DatabaseManager');
+const AwsLambdaImageApis = require('./aws/AwsLambdaImageApis');
+const databaseManager = new DatabaseManager();
+
+const uploadImageService = new UploadImageService(databaseManager);
+const listImagesService = new ListImagesService(databaseManager);
+const updateImageService = new UpdateImageService(databaseManager);
+const deleteImageService = new DeleteImageService(databaseManager);
+
+const images = new AwsLambdaImageApis(uploadImageService, listImagesService, updateImageService, deleteImageService);
+
+let wrappedCallback = (callback) => {
+  return (error, result) => {
+    if (!error) {
+      const response = {
+        statusCode: 200,
+        body: JSON.stringify(result),
+        headers: {
+          "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+          "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+        }
+      };
+      callback(null, response);
+    } else {
+      callback(error);
+    }
+  };
+};
+
+module.exports = [
+  'list',
+  'upload',
+  'update',
+  'delete',
+].reduce((acc, current) => {
+  acc[current] = (event, context, callback) => {
+    return images[current](event, context, wrappedCallback(callback));
+  };
+  return acc;
+}, {});
