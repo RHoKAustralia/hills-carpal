@@ -55,15 +55,15 @@ export default class Poll extends React.Component {
               <iframe
                 name="poll"
                 title="poll"
-                frameborder="0"
+                frameBorder="0"
                 width="100%"
                 height="600"
                 scrolling="auto"
                 allowtransparency="true"
-                src="https://alexgilleran.survey.fm/test-poll-please-ignore?iframe=1"
+                src="https://john3110.survey.fm/s/ride-feedback?iframe=1"
                 onLoad={this.onIFrameLoad}
               >
-                <a href="https://alexgilleran.survey.fm/test-poll-please-ignore">
+                <a href="https://john3110.survey.fm/s/ride-feedback">
                   View Survey
                 </a>
               </iframe>
