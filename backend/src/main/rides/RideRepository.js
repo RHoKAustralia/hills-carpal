@@ -80,9 +80,20 @@ class RideRepository {
                                   description = ${escape(ride.description)} 
                                 WHERE
                                   id = ${id}`;
-    console.log(query);
 
-    return this._databaseManager.query(query, connection);
+    let extraQuery = '';
+    //Check if driver has interacted with a ride
+    if (loginData.role === 'driver') {
+      extraQuery = `
+        ;IF EXISTS(select * from ${this._dbName}.driver_ride dr where dr.email ${escape(ride.driver.email)} and dr.ride_id = ${escape(ride.id)})
+        UPDATE ${this._dbName}.driver_ride SET updated_at = ${escape(ride.driver.updated_at)}, confirmed = ${escape(ride.driver.confirmed)}
+        else
+        insert into ${this._dbName}.driver_ride(driver_email, ride_id, confirmed, updated_at) VALUES (${[
+          escape(ride.driver.email), escape(ride.id), escape(ride.driver.confirmed), escape(ride.driver.updated_at)
+      ]}};`;
+    }
+
+    return this._databaseManager.query(query + extraQuery, connection);
   }
 
   findOne(jsonQuery, connection) {
