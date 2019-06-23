@@ -16,6 +16,7 @@ describe('RideMapper', async () => {
     const facilitatorId = RandomUtils.randomEmail();
     const dto = {
       'carType': 'suv',
+      'hasMps': false,
       'client': RandomUtils.randomEmail(),
       'deleted': 0,
       'description': RandomUtils.randomString(10),
@@ -61,6 +62,7 @@ describe('RideMapper', async () => {
       fbLink: dto.fbLink,
       driverGender: dto.driverGender,
       carType: dto.carType,
+      hasMps: dto.hasMps,
       status: dto.status,
       deleted: 0,
       facilitatorId: facilitatorId,
@@ -96,6 +98,7 @@ describe('RideMapper', async () => {
       fbLink: entity.fbLink,
       driverGender: entity.driverGender,
       carType: entity.carType,
+      hasMps: entity.hasMps,
       status: entity.status,
       deleted: entity.deleted,
       facilitatorId: entity.facilitatorId,
