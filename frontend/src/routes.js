@@ -10,6 +10,7 @@ import CreateNewRide from './facilitator/CreateNewRide.js';
 import FindRides from './driver/FindRides';
 import DriverQueue from './driver/Queue';
 import DriverMenu from './driver/Menu';
+import Poll from './driver/Poll';
 
 const auth = new Auth();
 
@@ -44,6 +45,11 @@ export const createRoutes = () => {
           />
           <Route
             exact
+            path="/facilitator/clients"
+            render={props => <Clients auth={auth} {...props} />}
+          />
+          <Route
+            exact
             path="/facilitator/:id"
             render={props => <CreateNewRide auth={auth} {...props} />}
           />
@@ -61,6 +67,11 @@ export const createRoutes = () => {
             exact
             path="/driver/queue"
             render={props => <DriverQueue auth={auth} {...props} />}
+          />
+          <Route
+            exact
+            path="/driver/rides/:rideId/poll"
+            render={props => <Poll auth={auth} {...props} />}
           />
         </Switch>
       </App>

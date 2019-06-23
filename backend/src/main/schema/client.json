@@ -1,0 +1,15 @@
+{
+  "id": "http://json-schema.org/geo",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "description": "A carpal client",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}

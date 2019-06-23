@@ -1,14 +1,24 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+
+const ExpressRideApis = require('./rides/express/ExpressRidesApis');
+const AwsLambdaRideApis = require('../main/rides/aws/AwsLambdaRideApis');
 const CreateRideService = require('../main/rides/CreateRideService');
 const ListRidesService = require('../main/rides/ListRidesService');
 const FindOneRideService = require('../main/rides/FindOneRideService');
 const UpdateRideService = require('../main/rides/UpdateRideService');
+
 const DatabaseManager = require('../main/database/DatabaseManager');
-const ExpressRideApis = require('./rides/express/ExpressRidesApis');
+
+const ExpressClientApis = require('./clients/express/ExpressClientsApis');
+const AwsLambdaClientApis = require('../main/clients/aws/AwsLambdaClientApis');
+const CreateClientService = require('../main/clients/CreateClientService');
+const ListClientsService = require('../main/clients/ListClientsService');
+const UpdateClientService = require('../main/clients/UpdateClientService');
+const DeleteClientService = require('../main/clients/DeleteClientService');
+
 const ExpressAuthApis = require('./auth/ExpressAuthApis');
-const AwsLambdaRideApis = require('../main/rides/aws/AwsLambdaRideApis');
 const bodyParser = require('body-parser');
 const databaseManager = new DatabaseManager();
 
@@ -37,12 +47,21 @@ app.use(function (req, res, next) {
 });
 
 new ExpressAuthApis(app);
+
 let awsLambdaRideApis = new AwsLambdaRideApis(createRideService,
   listRidesService,
   findOneRideService,
   updateRideService);
 
+
+const createClientService = new CreateClientService(databaseManager);
+const listClientsService = new ListClientsService(databaseManager);
+const updateClientService = new UpdateClientService(databaseManager);
+const deleteClientService = new DeleteClientService(databaseManager);
+let awsLabmdaClientApis = new AwsLambdaClientApis(createClientService, listClientsService, updateClientService, deleteClientService);
+
 new ExpressRideApis(app, awsLambdaRideApis);
+new ExpressClientApis(app, awsLabmdaClientApis)
 
 const options = {
   key: fs.readFileSync(path.resolve(__dirname, './config/express/certs/key.pem')),
