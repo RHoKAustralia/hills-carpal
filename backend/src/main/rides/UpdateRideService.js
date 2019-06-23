@@ -21,18 +21,24 @@ class UpdateRideService {
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
+  changeRideStatus(id, ride, loginData) {
+    const connection = this._databaseManager.createConnection();
+    let updatePromise = this._changeStatusRide(id, ride, loginData, connection);
+    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    return PromiseUtils.promiseFinally(updatePromise, closeConnection);
+  }
+
   acceptRide(id, ride, loginData) {
     const rideToUpdate = Object.assign({}, ride);
     rideToUpdate.status = RideStatus.CONFIRMED;
-    return this.updateRide(id, rideToUpdate, loginData);
+    return this.changeRideStatus(id, rideToUpdate, loginData);
   }
 
   declineRide(id, ride, loginData) {
     const rideToUpdate = Object.assign({}, ride);
     rideToUpdate.status = RideStatus.OPEN;
-    return this.updateRide(id, rideToUpdate, loginData);
+    return this.changeRideStatus(id, rideToUpdate, loginData);
   }
-
   _getRide(id, loginData) {
     return this._rideRepository
       .findOne({
@@ -59,6 +65,37 @@ class UpdateRideService {
         rideEntity.facilitatorId = ride.facilitatorId;
         return this._rideRepository.update(ride.id, rideEntity, connection);
       });
+  }
+
+
+  _changeStatusRide(id, rideObject, loginData, connection) {
+    rideObject.datetime = new Date().getTime();
+
+    let validationError = this._validate(rideObject);
+    if (validationError) {
+      return Promise.reject(validationError);
+    }
+
+    return this._getRide(id, loginData)
+    .then(ride => {
+      if (!ride || ride.deleted) {
+        return null;
+      }
+
+
+
+      if (!ride.driver) {
+        ride.driver = {
+          email: loginData.email,
+          confirmed: rideObject.status === "CONFIRMED",
+          updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+        };
+      }
+
+      let rideEntity = RideMapper.dtoToEntity(rideObject);
+      rideEntity.facilitatorId = ride.facilitatorId;
+      return this._rideRepository.update(ride.id, rideEntity, connection);
+    });
   }
 
   _validate(data) {
