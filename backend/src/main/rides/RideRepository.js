@@ -135,7 +135,9 @@ class RideRepository {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`)
     }
 
-    let query = `SELECT * FROM ${this._dbName}.rides ${where.length ? ' WHERE ' + where.join(' AND ') : ''} ORDER BY pickupTimeAndDateInUTC ASC;`;
+    let leftJoinForDriver  = jsonQuery.driverEmail && jsonQuery.driverEmail.length ? `
+    LEFT JOIN ${this._dbName}.driver_ride dr on dr.ride_id = rides.id and dr.driver_email like "${jsonQuery.driverEmail}"`: '';
+    let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${where.length ? ' WHERE ' + where.join(' AND ') : ''} ORDER BY pickupTimeAndDateInUTC ASC;`;
     
     return this._databaseManager.query(query, connection)
       .then(rides =>
