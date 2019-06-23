@@ -2,8 +2,6 @@ import matchSorter from 'match-sorter';
 import moment from 'moment';
 import Table from '../components/table';
 
-import axiosInstance from '../auth/api';
-
 import React, { Component } from 'react';
 const columns = [
   {
