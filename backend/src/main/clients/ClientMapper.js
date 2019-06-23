@@ -13,7 +13,7 @@ class ClientMapper {
       },
       "driverGender": client.driverGender,
       "carType": client.carType,
-      "hasMps": client.hasMps,
+      "hasMps": !!client.hasMps, // force bool
       "phoneNumber": client.phoneNumber,
       "id": client.id
     }
@@ -33,7 +33,7 @@ class ClientMapper {
       },
       "driverGender": client.driverGender,
       "carType": client.carType,
-      "hasMps": client.hasMps,
+      "hasMps": !!client.hasMps, // force bool
       "phoneNumber": client.phoneNumber
     }
   }

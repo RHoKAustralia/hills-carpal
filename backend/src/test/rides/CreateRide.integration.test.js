@@ -47,6 +47,7 @@ beforeEach(function setupData() {
   const clientEmail = `client.test.${Date.now()}@carpal.com`;
   rideRequest = {
     carType: 'suv',
+    hasMps: false,
     client: clientEmail,
     deleted: 0,
     description: 'wanna surf',
