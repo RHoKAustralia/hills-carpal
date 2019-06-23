@@ -7,7 +7,5 @@ CREATE TABLE IF NOT EXISTS carpal.clients (
   placeNameHome VARCHAR(255),
   driverGender VARCHAR(10),
   carType VARCHAR(255),
-  profilePhoto LONGBLOB,
-  pickupPrimary LONGBLOB,
-  pickupSecondary LONGBLOB
+  hasMps BOOLEAN
 );
