@@ -99,6 +99,7 @@ describe('SQL', function () {
 function modifyRide(ride) {
   return {
     'carType': 'suv',
+    'hasMps': false,
     'client': ride.client,
     'deleted': 0,
     'description': 'wanna surf',
