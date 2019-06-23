@@ -189,15 +189,16 @@ class RideRepository {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
     }
     if (jsonQuery.driverEmail) {
-      where.push(`driver_ride.driver_email = ${escape(jsonQuery.driverEmail)}`);
+      where.push(`dr.driver_email = ${escape(jsonQuery.driverEmail)}`);
     }
-  
-    let query = `SELECT * FROM ${this._dbName}.rides LEFT JOIN ${
+
+    let leftJoinForDriver = `LEFT JOIN ${
       this._dbName
-    }.driver_ride AS driver_ride ON carpal.rides.id = driver_ride.ride_id ${
+    }.driver_ride dr on dr.ride_id = rides.id`;
+    let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
     } ORDER BY pickupTimeAndDateInUTC ASC;`;
-    console.log(query);
+
     return this._databaseManager.query(query, connection).then(rides =>
       rides.map(ride => {
         // Workaround to map facilitatorEmail from database to the facilitatorId in the entity

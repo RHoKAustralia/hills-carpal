@@ -12,6 +12,7 @@ import DriverQueue from './driver/Queue';
 import DriverMenu from './driver/Menu';
 import Poll from './driver/Poll';
 import Clients from './facilitator/Clients.js';
+import RideDetail from "./driver/RideDetail";
 
 const auth = new Auth();
 
@@ -73,6 +74,11 @@ export const createRoutes = () => {
             exact
             path="/driver/rides/:rideId/poll"
             render={props => <Poll auth={auth} {...props} />}
+          />
+          <Route
+            exact
+            path="/driver/rides/:rideId/details"
+            render={props => <RideDetail auth={auth} {...props} />}
           />
         </Switch>
       </App>
