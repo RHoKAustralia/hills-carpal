@@ -70,7 +70,6 @@ export default class RideDetail extends React.Component {
   }
 
   acceptRide() {
-
     const self = this;
     axiosInstance
     .put(`/rides/${this.state.id}/accept`, this.state, {
@@ -102,18 +101,15 @@ export default class RideDetail extends React.Component {
   completeRide() {
     var self = this;
     this.setState({status: "ENDED"});
-    const data = Object.assign({}. self.state, {status: "ENDED"});
 
     axiosInstance
     .put('/rides/' + this.props.match.params.rideId, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
       },
-      data
+      data: self.state
     })
     .then(res => {
-      let data = res.data;
-      self.setState({status: "ENDED"});
       window.location.href = `/driver/rides/${this.state.id}/poll`
     });
   }
