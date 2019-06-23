@@ -139,7 +139,7 @@ class RideRepository {
     }
 
     let query = `SELECT * FROM ${this._dbName}.rides ${where.length ? ' WHERE ' + where.join(' AND ') : ''} ORDER BY pickupTimeAndDateInUTC ASC;`;
-    
+    console.log(query);
     return this._databaseManager.query(query, connection)
       .then(rides =>
         rides.map(ride => {
