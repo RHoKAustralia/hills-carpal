@@ -58,6 +58,7 @@ class RideRepository {
     if (!id) {
       throw new Error('No id specified when updating ride.');
     }
+
     const escape = (data) => connection.escape(data);
     const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
     const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
@@ -83,14 +84,11 @@ class RideRepository {
 
     let extraQuery = '';
     //Check if driver has interacted with a ride
-    if (loginData.role === 'driver') {
+    if (ride.driver) {
       extraQuery = `
-        ;IF EXISTS(select * from ${this._dbName}.driver_ride dr where dr.email ${escape(ride.driver.email)} and dr.ride_id = ${escape(ride.id)})
-        UPDATE ${this._dbName}.driver_ride SET updated_at = ${escape(ride.driver.updated_at)}, confirmed = ${escape(ride.driver.confirmed)}
-        else
-        insert into ${this._dbName}.driver_ride(driver_email, ride_id, confirmed, updated_at) VALUES (${[
-          escape(ride.driver.email), escape(ride.id), escape(ride.driver.confirmed), escape(ride.driver.updated_at)
-      ]}};`;
+        ;insert into ${this._dbName}.driver_ride(driver_email, ride_id, confirmed, updated_at) VALUES (${[
+          escape(ride.driver.email), escape(id), escape(ride.driver.confirmed ? 1 : 0), escape(ride.driver.updated_at)
+      ]}) ON DUPLICATE KEY UPDATE confirmed=${escape(ride.driver.confirmed ? 1 : 0)}, updated_at = ${escape(ride.driver.updated_at)}`;
     }
 
     return this._databaseManager.query(query + extraQuery, connection);

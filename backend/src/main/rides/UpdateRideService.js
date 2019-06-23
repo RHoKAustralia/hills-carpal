@@ -6,6 +6,7 @@ const RideRepository = require('./RideRepository');
 const RideStatus = require('../../main/rides/RideStatus');
 const RideMapper = require('./RideMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
+const moment = require('moment');
 
 class UpdateRideService {
 
@@ -82,17 +83,13 @@ class UpdateRideService {
         return null;
       }
 
-
-
-      if (!ride.driver) {
-        ride.driver = {
-          email: loginData.email,
-          confirmed: rideObject.status === "CONFIRMED",
-          updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
-        };
-      }
-
       let rideEntity = RideMapper.dtoToEntity(rideObject);
+      rideEntity.driver = {
+        email: loginData.email,
+        confirmed: rideObject.status === "CONFIRMED",
+        updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+      };
+
       rideEntity.facilitatorId = ride.facilitatorId;
       return this._rideRepository.update(ride.id, rideEntity, connection);
     });
