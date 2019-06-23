@@ -134,17 +134,6 @@ class CreateNewRide extends Component {
             />
           </div>
           <div className="form-group">
-            <label>Facebook link</label>
-            <input
-              value={this.state.fbLink}
-              onChange={e => this.setState({ fbLink: e.currentTarget.value })}
-              type="text"
-              name="fbLink"
-              className="form-control"
-              placeholder="Type your Facebook link here"
-            />
-          </div>
-          <div className="form-group">
             <label>Driver Gender</label>
             <select
               required

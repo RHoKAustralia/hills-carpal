@@ -103,6 +103,47 @@ functions:
             parameters:
               paths:
                 id: true
+
+  createClient:
+    handler: src/main/clients/awsLambdaClientsApis.create
+    events:
+      - http:
+          path: clients
+          method: post
+          cors: true
+
+  updateClient:
+    handler: src/main/clients/awsLambdaClientsApis.update
+    events:
+      - http:
+          path: clients/{id}
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
+  listClients:
+    handler: src/main/clients/awsLambdaClientsApis.list
+    events:
+      - http:
+          path: clients
+          method: get
+          cors: true
+
+  deleteClient:
+    handler: src/main/clients/awsLambdaClientsApis.delete
+    events:
+      - http:
+          path: clients/{id}
+          method: delete
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
 #  notify:
 #    handler: notify
 #      events:

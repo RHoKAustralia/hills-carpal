@@ -9,7 +9,6 @@ const PromiseUtils = require('../utils/PromiseUtils');
 const moment = require('moment');
 
 class UpdateRideService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._rideRepository = new RideRepository(databaseManager);
@@ -18,7 +17,8 @@ class UpdateRideService {
   updateRide(id, ride, loginData) {
     const connection = this._databaseManager.createConnection();
     let updatePromise = this._updateRide(id, ride, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
@@ -41,31 +41,37 @@ class UpdateRideService {
     return this.changeRideStatus(id, rideToUpdate, loginData);
   }
   _getRide(id, loginData) {
-    return this._rideRepository
-      .findOne({
-        id: id,
-        facilitatorId: loginData.role === 'facilitator' ? loginData.email : undefined,
-        includePickupTimeInPast: true
-      });
+    return this._rideRepository.findOne({
+      id: id,
+      facilitatorId:
+        loginData.role === 'facilitator' ? loginData.email : undefined,
+      includePickupTimeInPast: true
+    });
   }
 
   _updateRide(id, rideObject, loginData, connection) {
-    rideObject.datetime = new Date().getTime();
-
-    let validationError = this._validate(rideObject);
-    if (validationError) {
-      return Promise.reject(validationError);
-    }
-
-    return this._getRide(id, loginData)
-      .then(ride => {
-        if (!ride || ride.deleted) {
-          return null;
+    return this._getRide(id, loginData).then(ride => {
+      if (!ride || ride.deleted) {
+        return null;
+      }
+      const toSave = Object.assign(
+        {},
+        RideMapper.entityToDto(ride),
+        rideObject,
+        {
+          datetime: new Date().getTime()
         }
-        let rideEntity = RideMapper.dtoToEntity(rideObject);
-        rideEntity.facilitatorId = ride.facilitatorId;
-        return this._rideRepository.update(ride.id, rideEntity, connection);
-      });
+      );
+
+      let validationError = this._validate(toSave);
+      if (validationError) {
+        return Promise.reject(validationError);
+      }
+      let rideEntity = RideMapper.dtoToEntity(toSave);
+      rideEntity.facilitatorId = ride.facilitatorId;
+      console.log(rideEntity);
+      return this._rideRepository.update(ride.id, rideEntity, connection);
+    });
   }
 
 
@@ -103,7 +109,7 @@ class UpdateRideService {
         headers: {
           'Content-Type': 'text/plain'
         },
-        body: JSON.stringify({"error": validationResult.errors})
+        body: JSON.stringify({ error: validationResult.errors })
       };
     }
   }
