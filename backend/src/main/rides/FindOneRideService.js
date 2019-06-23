@@ -29,7 +29,7 @@ class FindOneRideService {
       id: id,
       facilitatorId: loginData.role === 'facilitator' ? loginData.email : undefined,
       includePickupTimeInPast: true,
-      driverEmail: loginData.roles.indexOf('driver') !== -1 ? loginData.email : undefined
+      driverEmail: loginData.roles && loginData.roles.indexOf('driver') !== -1 ? loginData.email : undefined
     };
   }
 }
