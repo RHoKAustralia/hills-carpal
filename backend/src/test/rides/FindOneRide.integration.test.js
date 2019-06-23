@@ -82,19 +82,6 @@ describe('When find one ride', async () => {
     assert.deepEqualExcluding(ride, storedRide, 'id');
   });
 
-  it('should not show single ride when user is driver', async function () {
-    // given
-    const loginData = {email: RandomUtils.randomEmail(), role: 'driver'};
-    const ride = randomRideWithFacilitator(RandomUtils.randomEmail());
-    const rideEntity = await databaseContainsRide(ride);
-
-    // when
-    const storedRide = await findOneRideService.findOne(rideEntity.id, loginData);
-
-    // then
-    assert.isNull(storedRide);
-  });
-
   async function databaseContainsRide(ride) {
     await rideRepository.create(ride, connection);
     let rideEntity = rideTestRepository.findOneByClientEmail(ride.client);
