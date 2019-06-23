@@ -21,7 +21,6 @@ class RideMapper {
           "postcode": ride.postCodeTo,
           "placeName": ride.placeNameTo
         },
-        "fbLink": ride.fbLink,
         "driverGender": ride.driverGender,
         "carType": ride.carType,
         "status": ride.status,
