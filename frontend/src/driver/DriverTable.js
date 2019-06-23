@@ -39,38 +39,6 @@ const columns = [
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['description'] }),
     filterAll: true
-  },
-  {
-    id: 'status',
-    Header: 'Status',
-    accessor: cell => {
-      const endpoint = cell.status === 'OPEN' ? 'accept' : 'decline';
-      const clickHandler = function() {
-        const data = axiosInstance
-          .put(`rides/${this.id}/${endpoint}`, cell, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('id_token')}`
-            }
-          })
-          .then(res => {
-            return res.data;
-          });
-
-        this.status = data.status;
-        window.location.reload();
-      };
-
-      const label = cell.status === 'OPEN' ? 'Going' : 'Decline';
-
-      return (
-        <button
-          onClick={clickHandler.bind(cell)}
-          className={`outline ${label.toLowerCase()}`}
-        >
-          {label}
-        </button>
-      );
-    }
   }
 ];
 
@@ -78,7 +46,10 @@ class DriverTable extends Component {
   render() {
     return (
       <Table
-        style={{ paddingTop: '10px' }}
+        style={{ paddingTop: '10px', cursor: 'pointer' }}
+        getTrProps={(state, rowInfo) => {  return { onClick: (e) =>  {
+          window.location.href=`/driver/rides/${rowInfo.original.id}/details`;
+          }}}}
         data={this.props.rides}
         columns={columns}
         filterable={false}
