@@ -51,7 +51,6 @@ beforeEach(function setupData() {
     deleted: 0,
     description: 'wanna surf',
     driverGender: 'male',
-    fbLink: 'http://facebook.com/profile/facilitator.test.1',
     locationFrom: {
       latitude: 1234,
       longitude: 4567,
