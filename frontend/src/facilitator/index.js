@@ -53,15 +53,6 @@ const columns = [
     filterAll: true
   },
   {
-    id: 'fbLink',
-    Header: 'Facebook link',
-    accessor: cell => (
-      <a href={cell.fbLink} target="blank">
-        Go to facebook event
-      </a>
-    )
-  },
-  {
     accessor: 'driverGender',
     Header: 'Gender',
     filterMethod: (filter, rows) =>
@@ -138,6 +129,12 @@ class Facilitator extends React.Component {
             <h4>Rides</h4>
           </div>
           <div className="col-6 create-button-row">
+            <Link
+              className="btn btn-primary create-button"
+              to={'/facilitator/clients'}
+            >
+              Clients
+            </Link>
             <Link
               className="btn btn-primary create-button"
               to={'/facilitator/create'}
