@@ -4,6 +4,8 @@ import axiosInstance from '../auth/api';
 import moment from 'moment';
 import history from "../history";
 
+import DriverMap from './DriverMap';
+
 export default class RideDetail extends React.Component {
 
   state = {
@@ -97,12 +99,12 @@ export default class RideDetail extends React.Component {
   }
 
   OfferRideButton() {
-    return <button onClick={this.acceptRide.bind(this)} className="btn btn-outline btn-primary">Offering a ride</button>
+    return <button onClick={this.acceptRide.bind(this)} className="btn btn-outline btn-primary">Offer a ride</button>
   }
 
 
   DeclineRideButton() {
-    return <button onClick={this.declineRide.bind(this)} className="btn btn-outline btn-danger">Declining</button>
+    return <button onClick={this.declineRide.bind(this)} className="btn btn-outline btn-danger">Decline</button>
   }
 
   render() {
@@ -130,6 +132,9 @@ export default class RideDetail extends React.Component {
               <dt>Ride details:</dt>
               <dd>{this.state.description}</dd>
             </dl>
+
+            <h5>Directions</h5>
+            <DriverMap rides={[this.state]}/>
           </div>
           <div className="card-footer">
             {!this.state.driver.confirmed  ? this.OfferRideButton() : this.DeclineRideButton()}
