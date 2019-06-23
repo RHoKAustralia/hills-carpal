@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS carpal.rides (
   suburbTo VARCHAR(255),
   placeNameTo VARCHAR(255),
   postCodeTo VARCHAR(10),
-  description VARCHAR(1024)
+  description VARCHAR(1024),
+  hasMps BOOLEAN
 );
 
