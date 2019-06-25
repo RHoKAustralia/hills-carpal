@@ -70,7 +70,6 @@ export default class RideDetail extends React.Component {
   }
 
   acceptRide() {
-
     const self = this;
     axiosInstance
     .put(`/rides/${this.state.id}/accept`, this.state, {
@@ -98,14 +97,37 @@ export default class RideDetail extends React.Component {
     });
   }
 
+
+  completeRide() {
+    var self = this;
+    this.setState({status: "ENDED"});
+
+    axiosInstance
+    .put('/rides/' + this.props.match.params.rideId, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+      },
+      data: self.state
+    })
+    .then(res => {
+      window.location.href = `/driver/rides/${this.state.id}/poll`
+    });
+  }
+
   OfferRideButton() {
     return <button onClick={this.acceptRide.bind(this)} className="btn btn-outline btn-primary">Offer a ride</button>
   }
 
 
   DeclineRideButton() {
-    return <button onClick={this.declineRide.bind(this)} className="btn btn-outline btn-danger">Decline</button>
+    return (
+      <span>
+      <button onClick={this.declineRide.bind(this)} className="card-link btn btn-outline btn-danger">Decline</button>
+        <button onClick={this.completeRide.bind(this)} className="card-link btn btn-outline btn-success">Complete the ride</button>
+      </span>
+    )
   }
+
 
   render() {
     if (this.props.match.params.rideId && this.state.id === undefined) {
