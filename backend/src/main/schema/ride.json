@@ -60,16 +60,16 @@
         }
       }
     },
-    "fbLink": {
-      "type": "string",
-      "required": true
-    },
     "driverGender": {
       "type": "string",
       "required": true
     },
     "carType": {
       "type": "string",
+      "required": true
+    },
+    "hasMps": {
+      "type": "boolean",
       "required": true
     }
   }
