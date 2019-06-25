@@ -11,7 +11,7 @@ const columns = [
       moment(cell.pickupTimeAndDateInUTC).format('dddd hh:mma DD/MM/YYYY'),
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     Header: 'Location from',
@@ -20,7 +20,7 @@ const columns = [
     filterMethod: (filter, rows) => {
       return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
     },
-    filterAll: true,
+    filterAll: true
   },
   {
     id: 'locationTo',
@@ -28,7 +28,7 @@ const columns = [
     accessor: cell => cell.locationTo.placeName,
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['locationTo'] }),
-    filterAll: true,
+    filterAll: true
   },
   {
     id: 'description',
@@ -37,15 +37,6 @@ const columns = [
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['description'] }),
     filterAll: true
-  },
-  {
-    id: 'fbLink',
-    Header: 'Facebook link',
-    accessor: cell => (
-      <a href={cell.fbLink} target="blank">
-        Go to facebook event
-      </a>
-    ),
   }
 ];
 
@@ -53,7 +44,10 @@ class DriverTable extends Component {
   render() {
     return (
       <Table
-        style={{ paddingTop: '10px' }}
+        style={{ paddingTop: '10px', cursor: 'pointer' }}
+        getTrProps={(state, rowInfo) => {  return { onClick: (e) =>  {
+          window.location.href=`/driver/rides/${rowInfo.original.id}/details`;
+          }}}}
         data={this.props.rides}
         columns={columns}
         filterable={false}

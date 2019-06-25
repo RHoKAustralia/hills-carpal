@@ -18,6 +18,10 @@ class CreateNewRide extends Component {
       locationTo: '',
       locationFrom: '',
       carType: '',
+      description: '',
+      hasMps: false,
+      clients: [],
+      selectedClientId: -1
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -38,14 +42,40 @@ class CreateNewRide extends Component {
         })
         .then(res => {
           const data = res.data;
-
+          const client = this.state.clients.find(c => c.name === data.client);
+          let clientId = -1;
+          if(client) {
+            clientId = client.id;
+          }
+          data.selectedClientId = clientId;
           this.setState(data);
         });
     }
+
+    axiosInstance
+      .get('/clients', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+      })
+      .then(res => {
+        const data = res.data;
+        const client = data.find(c => c.name === this.state.client);
+        let clientId = -1;
+        if(client) {
+          clientId = client.id;
+        }
+        this.setState({clients: data, selectedClientId: clientId});
+      });
   }
 
   handleSubmit(e) {
     e.preventDefault();
+
+    //hack remove non-ride props
+    let ride = this.state;
+    delete ride.clients;
+    delete ride.selectedClientId;
 
     if (this.props.match.params.id) {
       axiosInstance({
@@ -54,7 +84,7 @@ class CreateNewRide extends Component {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
-        data: this.state,
+        data: ride,
       }).then(_ => {
         this.props.history.push('/facilitator/');
       });
@@ -65,7 +95,7 @@ class CreateNewRide extends Component {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
-        data: this.state,
+        data: ride,
       }).then(_ => {
         this.props.history.push('/facilitator/');
       });
@@ -88,15 +118,29 @@ class CreateNewRide extends Component {
         <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label>Client</label>
-            <input
-              value={this.state.client}
+            <select
               required
-              onChange={e => this.setState({ client: e.currentTarget.value })}
-              type="text"
-              name="client"
-              className="form-control"
-              placeholder="Type your name"
-            />
+              onChange={e => {
+                const clientId = parseInt(e.currentTarget.value, 10);
+                const client = this.state.clients.find(c => c.id === clientId);
+                this.setState({
+                  selectedClientId: clientId,
+                  locationFrom: client.locationHome,
+                  locationTo: client.locationHome,
+                  carType: client.carType,
+                  client: client.name,
+                  driverGender: client.driverGender,
+                  hasMps: client.hasMps
+                });
+              }}
+              value={this.state.selectedClientId}
+              className="custom-select"
+            >
+              <option>Select from following</option>
+              {this.state.clients.map(c => {
+                return (<option key={c.id} value={c.id}>{c.name}</option>)
+              })}
+            </select>
           </div>
           <div className="form-group">
             <label>Date</label>
@@ -134,17 +178,6 @@ class CreateNewRide extends Component {
             />
           </div>
           <div className="form-group">
-            <label>Facebook link</label>
-            <input
-              value={this.state.fbLink}
-              onChange={e => this.setState({ fbLink: e.currentTarget.value })}
-              type="text"
-              name="fbLink"
-              className="form-control"
-              placeholder="Type your Facebook link here"
-            />
-          </div>
-          <div className="form-group">
             <label>Driver Gender</label>
             <select
               required
@@ -175,6 +208,18 @@ class CreateNewRide extends Component {
               <option value="noSUV">No SUV</option>
               <option value="All">All</option>
             </select>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="mps"
+              checked={this.state.hasMps}
+              onChange={e => {
+                this.setState({ hasMps: e.currentTarget.checked });
+              }}
+            />
+            <label className="form-check-label" htmlFor="mps">Has Mobility Parking Sticker</label>
           </div>
           <div className="form-group">
             <label>Description</label>

@@ -8,7 +8,9 @@ const changeSet = [
   '2018-08-04-3-create-rides-table.sql',
   '2018-08-04-4-create-driver-table.sql',
   '2018-08-04-5-create-driver_car-table.sql',
-  '2018-08-04-6-create-driver_ride-table.sql'
+  '2018-08-04-6-create-driver_ride-table.sql',
+  '2019-06-22-7-db-cleanup.sql',
+  '2019-06-22-1-create-client-table.sql'
 ];
 
 class RefreshDatabase {
