@@ -42,7 +42,6 @@ class ListRidesService {
     }
 
     const driverRoutesOnly = listType === 'driver';
-    const mine = !!query.mine;
 
     return {
       toLongitude: query.toLongitude,
@@ -56,7 +55,7 @@ class ListRidesService {
       includePickupTimeInPast: !driverRoutesOnly,
       facilitatorId:
         isFacilitator && !driverRoutesOnly ? loginData.email : undefined,
-      driverEmail: mine && loginData.email
+      driverId: query.driverId
     };
   }
 
