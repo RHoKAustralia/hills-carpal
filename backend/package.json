@@ -8,7 +8,8 @@
     "create-db": "MYSQL_FLAGS=\"-CONNECT_WITH_DB\" db-migrate db:create carpal",
     "refresh-db": "db-migrate up",
     "deploy-sls": "sls deploy",
-    "prettier-check": "npx prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --check"
+    "prettier": "prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --write",
+    "prettier-check": "prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --check"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
