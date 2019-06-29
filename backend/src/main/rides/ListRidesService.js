@@ -49,7 +49,10 @@ class ListRidesService {
       driverGenders: driverRoutesOnly ? ['any', loginData.driverGender] : undefined,
       driverCars: driverRoutesOnly ? ['All', loginData.car] : undefined,
       includePickupTimeInPast: !driverRoutesOnly,
-      facilitatorId: (isFacilitator && !driverRoutesOnly) ? loginData.email : undefined,
+      facilitatorId:
+        isFacilitator && !driverRoutesOnly ? loginData.email : undefined,
+      driverId: decodeURIComponent(query.driverId),
+      status: query.status && query.status.toUpperCase()
     };
   }
 
