@@ -99,7 +99,7 @@ jobs:
       - run: ls -lah
       - run: ./writeSecrets.sh
       - run: yarn run deploy-sls
-      - run: yarn run refresh-db
+      - run: yarn run refresh-db --env prod
 workflows:
   version: 2
   application-build-deploy:
