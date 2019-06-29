@@ -101,7 +101,6 @@ class RideRepository {
 	WHERE
 		id = ${id}`;
 
-		console.log(ride.driver);
     let extraQuery = '';
     //Check if driver has interacted with a ride
     if (ride.driver) {
@@ -117,6 +116,8 @@ class RideRepository {
         ride.driver.confirmed ? 1 : 0
       )}, updated_at = ${escape(ride.driver.updated_at)}`;
     }
+
+    console.log(query + extraQuery);
 
     return this._databaseManager.query(query + extraQuery, connection);
   }
@@ -184,11 +185,11 @@ class RideRepository {
 
     let leftJoinForDriver = `LEFT JOIN ${
       this._dbName
-		}.driver_ride dr on dr.ride_id = rides.id`;
-		
+    }.driver_ride dr on dr.ride_id = rides.id`;
+
     let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
-		} ORDER BY pickupTimeAndDateInUTC ASC;`;
+    } ORDER BY pickupTimeAndDateInUTC ASC;`;
 
     return this._databaseManager.query(query, connection).then(rides =>
       rides.map(ride => {

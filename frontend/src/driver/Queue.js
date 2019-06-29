@@ -22,11 +22,11 @@ class FindRides extends Component {
   }
 
   getQueue() {
-    console.log(this.props.auth);
-
     const url =
       process.env.REACT_APP_API_URL +
-      `/rides?listType=driver&driverId=${localStorage.getItem('user_id')}`;
+      `/rides?listType=driver&driverId=${localStorage.getItem(
+        'user_id'
+      )}&status=CONFIRMED`;
     axiosInstance
       .get(url, {
         headers: {
