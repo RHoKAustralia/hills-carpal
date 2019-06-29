@@ -2,14 +2,16 @@ const jsonwebtoken = require('jsonwebtoken');
 
 module.exports.decodeJwt = event => {
   try {
-    if (!event.headers.Authorization) {
+    const authHeader =
+      event.headers.Authorization || event.headers.authorization;
+
+    if (!authHeader) {
       return;
     }
 
     const domain = process.env.DOMAIN || 'carpal.org.au';
-    const tokenValue = event.headers.Authorization.split(' ')[1];
+    const tokenValue = authHeader.split(' ')[1];
     let decodedToken = jsonwebtoken.decode(tokenValue);
-
     if (process.env.UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,

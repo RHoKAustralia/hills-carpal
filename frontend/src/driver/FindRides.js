@@ -28,7 +28,7 @@ class FindRides extends Component {
   }
 
   searchAllRides() {
-    const url = process.env.REACT_APP_API_URL + '/rides?listType=driver';
+    const url = process.env.REACT_APP_API_URL + '/rides?listType=driver&status=OPEN';
     axiosInstance
       .get(url, {
         headers: {

@@ -28,15 +28,15 @@ class FindOneRideService {
   _createQuery(id, loginData) {
     return {
       id: id,
-      facilitatorId:
-        loginData.roles.indexOf('facilitator') !== -1
-          ? loginData.userId
-          : undefined,
-      includePickupTimeInPast: true,
-      driverId:
-        loginData.roles && loginData.roles.indexOf('driver') !== -1
-          ? loginData.userId
-          : undefined
+      // facilitatorId:
+      //   loginData.roles.indexOf('facilitator') !== -1
+      //     ? loginData.userId
+      //     : undefined,
+      includePickupTimeInPast: true
+      // driverId:
+      //   loginData.roles && loginData.roles.indexOf('driver') !== -1
+      //     ? loginData.userId
+      //     : undefined
     };
   }
 }
