@@ -171,3 +171,11 @@ resources:
         RestApiId:
           Ref: 'ApiGatewayRestApi'
         StatusCode: '401'
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    noEnvironment: true
+    port: 8080
