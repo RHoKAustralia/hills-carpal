@@ -51,6 +51,7 @@ export default class Auth {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
+    localStorage.setItem('user_id', authResult.idTokenPayload.sub);
 
     this.getProfile();
   }
@@ -60,6 +61,10 @@ export default class Auth {
     this.auth0.client.userInfo(accessToken, (err, profile) => {
       this.setProfile(err, profile);
     });
+  }
+
+  getUserId() {
+    return localStorage.getItem('user_id');
   }
 
   getAccessToken() {
@@ -86,6 +91,10 @@ export default class Auth {
     } else {
       history.replace('/');
     }
+  }
+
+  getRoles() {
+    return localStorage.getItem(KEY_USER_ROLE).split(',');
   }
 
   login() {
