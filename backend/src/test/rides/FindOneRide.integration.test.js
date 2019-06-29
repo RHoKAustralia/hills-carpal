@@ -59,7 +59,7 @@ describe('When find one ride', async () => {
     assert.deepEqualExcluding(ride, storedRide, 'id');
   });
 
-	// I'm not sure this is actually true...
+  // I'm not sure this is actually true...
   it.skip('should NOT show ride that was created by other facilitator', async function() {
     // given
     const loginData = { email: RandomUtils.randomEmail(), role: 'facilitator' };
