@@ -112,7 +112,7 @@ export default class RideDetail extends React.Component {
     this.setState({ status: 'ENDED' });
 
     axiosInstance
-      .put('/rides/' + this.props.match.params.rideId, {
+      .put('/rides/' + this.props.match.params.rideId, this.state, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
