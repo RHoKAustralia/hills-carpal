@@ -8,9 +8,9 @@ var path = require('path');
 var Promise;
 
 /**
-  * We receive the dbmigrate dependency from dbmigrate initially.
-  * This enables us to not have to rely on NODE_PATH.
-  */
+ * We receive the dbmigrate dependency from dbmigrate initially.
+ * This enables us to not have to rely on NODE_PATH.
+ */
 exports.setup = function(options, seedLink) {
   dbm = options.dbmigrate;
   type = dbm.dataType;
@@ -20,34 +20,32 @@ exports.setup = function(options, seedLink) {
 
 exports.up = function(db) {
   var filePath = path.join(__dirname, 'sqls', '20190629045830-init-up.sql');
-  return new Promise( function( resolve, reject ) {
-    fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
+  return new Promise(function(resolve, reject) {
+    fs.readFile(filePath, { encoding: 'utf-8' }, function(err, data) {
       if (err) return reject(err);
       console.log('received data: ' + data);
 
       resolve(data);
     });
-  })
-  .then(function(data) {
+  }).then(function(data) {
     return db.runSql(data);
   });
 };
 
 exports.down = function(db) {
   var filePath = path.join(__dirname, 'sqls', '20190629045830-init-down.sql');
-  return new Promise( function( resolve, reject ) {
-    fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
+  return new Promise(function(resolve, reject) {
+    fs.readFile(filePath, { encoding: 'utf-8' }, function(err, data) {
       if (err) return reject(err);
       console.log('received data: ' + data);
 
       resolve(data);
     });
-  })
-  .then(function(data) {
+  }).then(function(data) {
     return db.runSql(data);
   });
 };
 
 exports._meta = {
-  "version": 1
+  version: 1
 };

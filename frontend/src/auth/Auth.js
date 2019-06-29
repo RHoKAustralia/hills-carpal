@@ -1,7 +1,7 @@
-import auth0 from "auth0-js";
-import history from "../history";
+import auth0 from 'auth0-js';
+import history from '../history';
 
-export const KEY_USER_ROLE = "user_role";
+export const KEY_USER_ROLE = 'user_role';
 
 export default class Auth {
   constructor() {
@@ -10,8 +10,8 @@ export default class Auth {
       clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
       redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
       audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo`,
-      responseType: "token id_token",
-      scope: "openid"
+      responseType: 'token id_token',
+      scope: 'openid'
     });
 
     const metadataNamespace = process.env.REACT_APP_AUTH_METADATA_NAMESPACE;
@@ -36,7 +36,7 @@ export default class Auth {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
       } else if (err) {
-        history.replace("/");
+        history.replace('/');
         console.log(err);
       }
     });
@@ -48,9 +48,9 @@ export default class Auth {
       authResult.expiresIn * 1000 + new Date().getTime()
     );
 
-    localStorage.setItem("access_token", authResult.accessToken);
-    localStorage.setItem("id_token", authResult.idToken);
-    localStorage.setItem("expires_at", expiresAt);
+    localStorage.setItem('access_token', authResult.accessToken);
+    localStorage.setItem('id_token', authResult.idToken);
+    localStorage.setItem('expires_at', expiresAt);
 
     this.getProfile();
   }
@@ -63,9 +63,9 @@ export default class Auth {
   }
 
   getAccessToken() {
-    const accessToken = localStorage.getItem("access_token");
+    const accessToken = localStorage.getItem('access_token');
     if (!accessToken) {
-      throw new Error("No Access Token found");
+      throw new Error('No Access Token found');
     }
     return accessToken;
   }
@@ -73,18 +73,18 @@ export default class Auth {
   setProfile(error, profile) {
     let userRoles = profile[this.metadataKeyUserRole];
     if (process.env.REACT_APP_UNSAFE_GOD_MODE) {
-      userRoles = ["driver", "facilitator", "admin"];
+      userRoles = ['driver', 'facilitator', 'admin'];
     }
 
-    localStorage.setItem(KEY_USER_ROLE, userRoles || [""]);
+    localStorage.setItem(KEY_USER_ROLE, userRoles || ['']);
 
     const firstUserRole = userRoles[0];
-    if (firstUserRole === "facilitator") {
-      history.replace("/facilitator");
-    } else if (firstUserRole === "driver") {
-      history.replace("/driver");
+    if (firstUserRole === 'facilitator') {
+      history.replace('/facilitator');
+    } else if (firstUserRole === 'driver') {
+      history.replace('/driver');
     } else {
-      history.replace("/");
+      history.replace('/');
     }
   }
 
@@ -97,31 +97,31 @@ export default class Auth {
   }
 
   logout() {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("id_token");
-    localStorage.removeItem("expires_at");
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('expires_at');
     localStorage.removeItem(KEY_USER_ROLE);
 
-    history.replace("/");
+    history.replace('/');
   }
 
   isAuthenticated() {
-    const expiresAt = JSON.parse(localStorage.getItem("expires_at"));
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
   }
 
   hasFacilitatorPriviledge() {
     const userRoles = localStorage.getItem(KEY_USER_ROLE);
-    return userRoles.indexOf("facilitator") > -1 || this.hasAdminPriviledge();
+    return userRoles.indexOf('facilitator') > -1 || this.hasAdminPriviledge();
   }
 
   hasDriverPriviledge() {
     const userRoles = localStorage.getItem(KEY_USER_ROLE);
-    return userRoles.indexOf("driver") > -1 || this.hasAdminPriviledge();
+    return userRoles.indexOf('driver') > -1 || this.hasAdminPriviledge();
   }
 
   hasAdminPriviledge() {
     const userRoles = localStorage.getItem(KEY_USER_ROLE);
-    return userRoles.indexOf("admin") > -1;
+    return userRoles.indexOf('admin') > -1;
   }
 }

@@ -7,8 +7,7 @@ import matchSorter from 'match-sorter';
 import history from '../history';
 import './index.css';
 
-const getColumns = (table) => {
-
+const getColumns = table => {
   return [
     { accessor: 'client', Header: 'Client' },
     {
@@ -77,8 +76,7 @@ const getColumns = (table) => {
       )
     }
   ];
-
-}
+};
 
 class Facilitator extends React.Component {
   constructor() {
@@ -102,8 +100,8 @@ class Facilitator extends React.Component {
         ...row._original,
         pickupTimeAndDateInUTC,
         status: newStatus
-      }})
-    .then(res => {
+      }
+    }).then(res => {
       row.status = newStatus;
       let newState = this.state;
       newState.drives[row._index].status = newStatus;

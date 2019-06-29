@@ -9,7 +9,7 @@ import CreateNewRide from './facilitator/CreateNewRide.js';
 import Clients from './facilitator/Clients.js';
 import Driver from './driver/index.js';
 import Poll from './driver/Poll';
-import RideDetail from "./driver/RideDetail";
+import RideDetail from './driver/RideDetail';
 
 const auth = new Auth();
 
