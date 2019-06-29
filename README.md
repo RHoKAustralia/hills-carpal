@@ -6,6 +6,7 @@
 1. First get a local db running, which is easiest with docker
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d mysql:5.7
+yarn run create-db
 yarn run refresh-db
 ```
 
