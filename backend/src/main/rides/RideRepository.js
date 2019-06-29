@@ -71,41 +71,27 @@ class RideRepository {
     let query = `UPDATE ${this._dbName}.rides SET client = ${escape(
       ride.client
     )},
-                                  facilitatorEmail = ${escape(
-                                    ride.facilitatorId
-                                  )},
-                                  pickupTimeAndDateInUTC = ${escape(
-                                    moment(ride.pickupTimeAndDateInUTC).format(
-                                      'YYYY-MM-DD HH:mm:ss'
-                                    )
-                                  )},
-                                  locationFrom = ${locationFrom},
-                                  locationTo = ${locationTo},
-                                  fbLink = ${escape(ride.fbLink)},
-                                  driverGender = ${escape(ride.driverGender)},
-                                  carType = ${escape(ride.carType)},
-                                  status = ${escape(ride.status)},
-                                  deleted = ${ride.deleted},
-                                  suburbFrom = ${escape(
-                                    ride.locationFrom.suburb
-                                  )},
-                                  placeNameFrom = ${escape(
-                                    ride.locationFrom.placeName
-                                  )},
-                                  postCodeFrom = ${escape(
-                                    ride.locationFrom.postcode
-                                  )},
-                                  suburbTo = ${escape(ride.locationTo.suburb)},
-                                  placeNameTo = ${escape(
-                                    ride.locationTo.placeName
-                                  )},
-                                  postCodeTo = ${escape(
-                                    ride.locationTo.postcode
-                                  )},
-                                  hasMps = ${escape(ride.hasMps)},
-                                  description = ${escape(ride.description)} 
-                                WHERE
-                                  id = ${id}`;
+		facilitatorEmail = ${escape(ride.facilitatorId)},
+		pickupTimeAndDateInUTC = ${escape(
+      moment(ride.pickupTimeAndDateInUTC).format('YYYY-MM-DD HH:mm:ss')
+    )},
+		locationFrom = ${locationFrom},
+		locationTo = ${locationTo},
+		fbLink = ${escape(ride.fbLink)},
+		driverGender = ${escape(ride.driverGender)},
+		carType = ${escape(ride.carType)},
+		status = ${escape(ride.status)},
+		deleted = ${ride.deleted},
+		suburbFrom = ${escape(ride.locationFrom.suburb)},
+		placeNameFrom = ${escape(ride.locationFrom.placeName)},
+		postCodeFrom = ${escape(ride.locationFrom.postcode)},
+		suburbTo = ${escape(ride.locationTo.suburb)},
+		placeNameTo = ${escape(ride.locationTo.placeName)},
+		postCodeTo = ${escape(ride.locationTo.postcode)},
+		hasMps = ${escape(ride.hasMps)},
+		description = ${escape(ride.description)} 
+	WHERE
+		id = ${id}`;
 
     let extraQuery = '';
     //Check if driver has interacted with a ride
@@ -113,8 +99,8 @@ class RideRepository {
       extraQuery = `
         ;insert into ${
           this._dbName
-        }.driver_ride(driver_email, ride_id, confirmed, updated_at) VALUES (${[
-        escape(ride.driver.email),
+        }.driver_ride(driver_id, ride_id, confirmed, updated_at) VALUES (${[
+        escape(ride.driver.driver_id),
         escape(id),
         escape(ride.driver.confirmed ? 1 : 0),
         escape(ride.driver.updated_at)
@@ -122,6 +108,8 @@ class RideRepository {
         ride.driver.confirmed ? 1 : 0
       )}, updated_at = ${escape(ride.driver.updated_at)}`;
     }
+
+    console.log(query + extraQuery);
 
     return this._databaseManager.query(query + extraQuery, connection);
   }
@@ -176,12 +164,15 @@ class RideRepository {
     if (jsonQuery.facilitatorId) {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
     }
+    if (jsonQuery.status) {
+      where.push(`status = ${escape(jsonQuery.status)}`);
+    }
+    if (jsonQuery.driverId) {
+      where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
+    }
 
-    let leftJoinForDriver =
-      jsonQuery.driverEmail && jsonQuery.driverEmail.length
-        ? `
-    LEFT JOIN ${this._dbName}.driver_ride dr on dr.ride_id = rides.id and dr.driver_email like "${jsonQuery.driverEmail}"`
-        : '';
+    let leftJoinForDriver = `LEFT JOIN ${this._dbName}.driver_ride dr on dr.ride_id = rides.id`;
+
     let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
     } ORDER BY pickupTimeAndDateInUTC ASC;`;

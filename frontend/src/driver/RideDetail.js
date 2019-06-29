@@ -31,6 +31,7 @@ export default class RideDetail extends React.Component {
     description: ``,
     driver: {
       ride_id: this.props.match.params.rideId,
+      driver_id: null,
       email: null,
       confirmed: null,
       updated_at: Date.now()
@@ -54,8 +55,9 @@ export default class RideDetail extends React.Component {
         .then(res => {
           let data = res.data;
 
-          if (data.driver_email) {
+          if (data.driver_id) {
             data = Object.assign({}.data, {
+              driver_id: data.driver_id,
               email: data.driver_email,
               confirmed: data.confirmed,
               updated_at: data.updated_at,
@@ -70,11 +72,21 @@ export default class RideDetail extends React.Component {
   acceptRide() {
     const self = this;
     axiosInstance
-      .put(`/rides/${this.state.id}/accept`, this.state, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+      .put(
+        `/rides/${this.state.id}/accept`,
+        {
+          ...this.state,
+          driver: {
+            ...this.state.driver,
+            driver_id: localStorage.getItem('user_id')
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('id_token')}`
+          }
         }
-      })
+      )
       .then(res => {
         self.setState({ driver: { confirmed: true } });
         return res.data;

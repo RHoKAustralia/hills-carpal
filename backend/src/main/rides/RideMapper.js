@@ -32,10 +32,10 @@ class RideMapper {
         hasMps: !!ride.hasMps, // force bool
         id: ride.id
       },
-      ride.driver_email
+      ride.driver_id
         ? {
             driver: {
-              email: ride.driver_email,
+              driver_id: ride.driver_id,
               confirmed: ride.confirmed,
               updated_at: ride.updated_at,
               ride_id: ride.id
