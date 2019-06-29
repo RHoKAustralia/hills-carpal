@@ -3,14 +3,14 @@
   "version": "1.0.1",
   "scripts": {
     "test": "mocha './src/test/**/*.test.js'",
-    "start": "UNSAFE_GOD_MODE=true node src/test/expressApis.js",
-    "win": "SET UNSAFE_GOD_MODE=true& node src/test/expressApis.js",
-    "refresh-db": "node ./src/main/database/index.js",
+    "start": "UNSAFE_GOD_MODE=true sls offline",
+    "win": "SET UNSAFE_GOD_MODE=true& sls offline",
+    "create-db": "MYSQL_FLAGS=\"-CONNECT_WITH_DB\" db-migrate db:create carpal",
+    "refresh-db": "db-migrate up",
     "deploy-sls": "sls deploy"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.3",
     "jsonschema": "^1.2.4",
     "jsonwebtoken": "^8.1.0",
     "moment": "^2.22.2",
@@ -23,7 +23,10 @@
     "aws-sdk": "^2.250.1",
     "chai": "^4.1.2",
     "chai-exclude": "^1.0.9",
+    "db-migrate": "^0.11.6",
+    "db-migrate-mysql": "^1.1.10",
     "mocha": "^5.2.0",
-    "serverless": "^1.30.1"
+    "serverless": "^1.30.1",
+    "serverless-offline": "^5.5.0"
   }
 }
