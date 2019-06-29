@@ -175,16 +175,20 @@ class RideRepository {
     if (jsonQuery.facilitatorId) {
       where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
     }
+    if (jsonQuery.status) {
+      where.push(`status = ${escape(jsonQuery.status)}`);
+    }
     if (jsonQuery.driverId) {
       where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
     }
 
     let leftJoinForDriver = `LEFT JOIN ${
       this._dbName
-    }.driver_ride dr on dr.ride_id = rides.id`;
+		}.driver_ride dr on dr.ride_id = rides.id`;
+		
     let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
-    } ORDER BY pickupTimeAndDateInUTC ASC;`;
+		} ORDER BY pickupTimeAndDateInUTC ASC;`;
 
     return this._databaseManager.query(query, connection).then(rides =>
       rides.map(ride => {
