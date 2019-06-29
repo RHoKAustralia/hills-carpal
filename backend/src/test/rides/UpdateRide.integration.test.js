@@ -46,7 +46,7 @@ afterEach(async () => {
 });
 
 beforeEach(function setupData() {
-  loginData = { email: RandomUtils.randomEmail() };
+  loginData = { userId: RandomUtils.randomString() };
   pickupTimeAndDateInUTC = moment();
 });
 
