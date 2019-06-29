@@ -25,7 +25,8 @@ class UpdateRideService {
   changeRideStatus(id, ride, loginData) {
     const connection = this._databaseManager.createConnection();
     let updatePromise = this._changeStatusRide(id, ride, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
@@ -69,11 +70,10 @@ class UpdateRideService {
       }
       let rideEntity = RideMapper.dtoToEntity(toSave);
       rideEntity.facilitatorId = ride.facilitatorId;
-      console.log(rideEntity);
+
       return this._rideRepository.update(ride.id, rideEntity, connection);
     });
   }
-
 
   _changeStatusRide(id, rideObject, loginData, connection) {
     rideObject.datetime = new Date().getTime();
@@ -83,16 +83,15 @@ class UpdateRideService {
       return Promise.reject(validationError);
     }
 
-    return this._getRide(id, loginData)
-    .then(ride => {
+    return this._getRide(id, loginData).then(ride => {
       if (!ride || ride.deleted) {
         return null;
       }
-
       let rideEntity = RideMapper.dtoToEntity(rideObject);
       rideEntity.driver = {
+        driver_id: loginData.userId,
         email: loginData.email,
-        confirmed: rideObject.status === "CONFIRMED",
+        confirmed: rideObject.status === 'CONFIRMED',
         updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
       };
 

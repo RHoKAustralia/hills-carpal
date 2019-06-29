@@ -45,9 +45,13 @@ class DriverTable extends Component {
     return (
       <Table
         style={{ paddingTop: '10px', cursor: 'pointer' }}
-        getTrProps={(state, rowInfo) => {  return { onClick: (e) =>  {
-          window.location.href=`/driver/rides/${rowInfo.original.id}/details`;
-          }}}}
+        getTrProps={(state, rowInfo) => {
+          return {
+            onClick: e => {
+              window.location.href = `/driver/rides/${rowInfo.original.id}/details`;
+            }
+          };
+        }}
         data={this.props.rides}
         columns={columns}
         filterable={false}

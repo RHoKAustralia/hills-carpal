@@ -12,7 +12,6 @@ const Table = props => {
       columns={props.columns}
       width="100%"
       {...props}
-      
     />
   );
 };

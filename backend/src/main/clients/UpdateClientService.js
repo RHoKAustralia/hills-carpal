@@ -7,7 +7,6 @@ const ClientMapper = require('./ClientMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
 class UpdateClientService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._clientRepository = new ClientRepository(databaseManager);
@@ -16,7 +15,8 @@ class UpdateClientService {
   updateClient(id, client, loginData) {
     const connection = this._databaseManager.createConnection();
     let updatePromise = this._updateClient(id, client, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
@@ -38,7 +38,7 @@ class UpdateClientService {
         headers: {
           'Content-Type': 'text/plain'
         },
-        body: JSON.stringify({"error": validationResult.errors})
+        body: JSON.stringify({ error: validationResult.errors })
       };
     }
   }

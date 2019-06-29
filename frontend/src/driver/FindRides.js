@@ -6,7 +6,7 @@ import qs from 'qs';
 import DriverTable from './DriverTable';
 import DriverMap from './DriverMap';
 
-class Driver extends Component {
+class FindRides extends Component {
   constructor() {
     super();
     this.state = {
@@ -28,7 +28,8 @@ class Driver extends Component {
   }
 
   searchAllRides() {
-    const url = process.env.REACT_APP_API_URL + '/rides?listType=driver';
+    const url =
+      process.env.REACT_APP_API_URL + '/rides?listType=driver&status=OPEN';
     axiosInstance
       .get(url, {
         headers: {
@@ -124,12 +125,12 @@ class Driver extends Component {
           <div className="col-12 col-sm-6">
             <h4>Upcoming Trips</h4>
           </div>
-          <div className="col-12 col-sm-6 text-left text-sm-right">
+          {/* <div className="col-12 col-sm-6 text-left text-sm-right">
             <div className="btn-group">
               {this.renderLocationSearchBtn()}
               {this.renderMapBtn()}
             </div>
-          </div>
+          </div> */}
         </div>
         {this.state.showLocationSearch && (
           <LocationSearch
@@ -143,6 +144,6 @@ class Driver extends Component {
   }
 }
 
-Driver.propTypes = {};
+FindRides.propTypes = {};
 
-export default Driver;
+export default FindRides;

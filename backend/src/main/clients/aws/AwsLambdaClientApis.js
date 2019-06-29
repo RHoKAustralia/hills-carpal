@@ -1,10 +1,12 @@
 const decodeJwt = require('../../utils/jwt').decodeJwt;
 
 class AwsLambdaClientApis {
-  constructor(createClientService,
-              listClientsService,
-              updateClientService,
-              deleteClientService) {
+  constructor(
+    createClientService,
+    listClientsService,
+    updateClientService,
+    deleteClientService
+  ) {
     this.createClientService = createClientService;
     this.listClientsService = listClientsService;
     this.updateClientService = updateClientService;
@@ -13,7 +15,8 @@ class AwsLambdaClientApis {
 
   create(event, context, callback) {
     let loginData = decodeJwt(event);
-    this.createClientService.createClient(JSON.parse(event.body), loginData)
+    this.createClientService
+      .createClient(JSON.parse(event.body), loginData)
       .then(result => callback(null, result || {}))
       .catch(result => callback(result));
   }
@@ -22,7 +25,8 @@ class AwsLambdaClientApis {
     const loginData = decodeJwt(event);
     const client = JSON.parse(event.body);
     const id = event.pathParameters.id;
-    this.updateClientService.updateClient(id, client, loginData)
+    this.updateClientService
+      .updateClient(id, client, loginData)
       .then(result => callback(null, result || {}))
       .catch(result => callback(result));
   }
@@ -30,7 +34,8 @@ class AwsLambdaClientApis {
   list(event, context, callback) {
     let loginData = decodeJwt(event);
     let queryParams = event.queryStringParameters || {};
-    this.listClientsService.listClients(queryParams, loginData)
+    this.listClientsService
+      .listClients(queryParams, loginData)
       .then(result => callback(null, result || []))
       .catch(result => callback(result));
   }
@@ -38,7 +43,8 @@ class AwsLambdaClientApis {
   delete(event, context, callback) {
     let loginData = decodeJwt(event);
     const id = event.pathParameters.id;
-    this.deleteClientService.deleteClient(id, loginData)
+    this.deleteClientService
+      .deleteClient(id, loginData)
       .then(result => callback(null, result || {}))
       .catch(result => callback(result));
   }
