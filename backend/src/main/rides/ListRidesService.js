@@ -55,7 +55,7 @@ class ListRidesService {
       includePickupTimeInPast: !driverRoutesOnly,
       facilitatorId:
         isFacilitator && !driverRoutesOnly ? loginData.email : undefined,
-      driverId: decodeURIComponent(query.driverId),
+      driverId: query.driverId && decodeURIComponent(query.driverId),
       status: query.status && query.status.toUpperCase()
     };
   }
