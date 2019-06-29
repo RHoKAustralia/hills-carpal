@@ -25,7 +25,7 @@
   "prod": {
     "database": "carpal",
     "driver": "mysql",
-    "host": "carpal-dev.cluster-cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com",
+    "host": "ec2-54-206-9-7.ap-southeast-2.compute.amazonaws.com",
     "port": { "ENV": "MYSQL_PORT" },
     "user": "admin",
     "password": { "ENV": "SERVICE_MYSQL_PWD" },
