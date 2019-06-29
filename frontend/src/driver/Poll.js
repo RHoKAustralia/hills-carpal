@@ -76,7 +76,7 @@ export default class Poll extends React.Component {
           } else {
             return (
               <div>
-                Thanks! <Link to="/driver/find-ride">Find another ride</Link>
+                Thanks! <Link to="/driver/find-rides">Find another ride</Link>
               </div>
             );
           }

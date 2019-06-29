@@ -70,7 +70,7 @@ class UpdateRideService {
       }
       let rideEntity = RideMapper.dtoToEntity(toSave);
       rideEntity.facilitatorId = ride.facilitatorId;
-      console.log(rideEntity);
+
       return this._rideRepository.update(ride.id, rideEntity, connection);
     });
   }
