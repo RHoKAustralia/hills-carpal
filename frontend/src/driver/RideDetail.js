@@ -32,6 +32,7 @@ export default class RideDetail extends React.Component {
     driver: {
       ride_id: this.props.match.params.rideId,
       driver_id: null,
+      email: null,
       confirmed: null,
       updated_at: Date.now()
     }
@@ -57,6 +58,7 @@ export default class RideDetail extends React.Component {
           if (data.driver_id) {
             data = Object.assign({}.data, {
               driver_id: data.driver_id,
+              email: data.driver_email,
               confirmed: data.confirmed,
               updated_at: data.updated_at,
               ride_id: this.props.match.params.rideId

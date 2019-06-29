@@ -20,9 +20,7 @@ export default class Poll extends React.Component {
       // set ride to complete
       axiosInstance
         .put(
-          `${process.env.REACT_APP_API_URL}/rides/${
-            this.props.match.params.rideId
-          }`,
+          `${process.env.REACT_APP_API_URL}/rides/${this.props.match.params.rideId}`,
           {
             status: 'ENDED'
           },

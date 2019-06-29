@@ -13,17 +13,17 @@ const defaultClient = {
   carType: 'All',
   hasMps: false,
   locationHome: {}
-}
+};
 
 const clientSort = (lhs, rhs) => {
-  if ( lhs.name < rhs.name ){
+  if (lhs.name < rhs.name) {
     return -1;
   }
-  if ( lhs.name > rhs.name ){
+  if (lhs.name > rhs.name) {
     return 1;
   }
   return 0;
-}
+};
 
 class Clients extends Component {
   constructor() {
@@ -55,48 +55,47 @@ class Clients extends Component {
   saveClient(e) {
     e.preventDefault();
 
-    if(!isNaN(this.state.currentClient.id)) {
+    if (!isNaN(this.state.currentClient.id)) {
       let client = this.state.currentClient;
       axiosInstance({
         url: '/clients/' + this.state.currentClient.id,
         method: 'put',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
-        data: client,
+        data: client
       }).then(_ => {
         this.updateClientsWithCurrent();
       });
-    }
-    else {
+    } else {
       axiosInstance({
         url: '/clients',
         method: 'post',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
-        data: this.state.currentClient,
+        data: this.state.currentClient
       }).then(result => {
         let client = this.state.currentClient;
         client.id = result.data.insertId;
         let clients = this.state.clients;
         clients.push(client);
         clients.sort(clientSort);
-        this.setState({clients: clients, currentClient: defaultClient });
+        this.setState({ clients: clients, currentClient: defaultClient });
       });
     }
   }
 
-  setCurrent(id){
+  setCurrent(id) {
     this.setState({ currentClient: this.findClient(this.state.clients, id) });
   }
 
-  findClient(clients, id){
+  findClient(clients, id) {
     return clients.find(c => c.id === id);
   }
 
-  newClient(){
-    this.setState({ currentClient: defaultClient })
+  newClient() {
+    this.setState({ currentClient: defaultClient });
   }
 
   updateClientsWithCurrent() {
@@ -114,24 +113,24 @@ class Clients extends Component {
   }
 
   deleteCurrent() {
-    if(isNaN(this.state.currentClient.id)) {
+    if (isNaN(this.state.currentClient.id)) {
       return;
     }
 
     axiosInstance({
-        url: '/clients/' + this.state.currentClient.id,
-        method: 'delete',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-        }
-      }).then(_ => {
-        let clients = this.state.clients;
-        const idx = clients.findIndex(c => c.id === this.state.currentClient.id);
-        if(idx >= 0) {
-          clients.splice(idx, 1);
-          this.setState({ clients: clients, currentClient: defaultClient });
-        }
-      });
+      url: '/clients/' + this.state.currentClient.id,
+      method: 'delete',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('id_token')}`
+      }
+    }).then(_ => {
+      let clients = this.state.clients;
+      const idx = clients.findIndex(c => c.id === this.state.currentClient.id);
+      if (idx >= 0) {
+        clients.splice(idx, 1);
+        this.setState({ clients: clients, currentClient: defaultClient });
+      }
+    });
   }
 
   render() {
@@ -142,17 +141,28 @@ class Clients extends Component {
     return (
       <div className="container">
         <h1>Clients</h1>
-        <Link className="btn btn-secondary" to={'/facilitator'}>Back</Link>
+        <Link className="btn btn-secondary" to={'/facilitator'}>
+          Back
+        </Link>
         <div className="container">
           <div className="row">
             <ul className="nav flex-column col-3">
               <li className="nav-item">
-                <a className="nav-link active" onClick={() => this.newClient()}>Create Client</a>
+                <a className="nav-link active" onClick={() => this.newClient()}>
+                  Create Client
+                </a>
               </li>
               {this.state.clients.map(c => {
-                return (<li key={c.id} className="nav-item">
-                  <a className="nav-link" onClick={() => this.setCurrent(c.id)}>{c.name}</a>
-                </li>)
+                return (
+                  <li key={c.id} className="nav-item">
+                    <a
+                      className="nav-link"
+                      onClick={() => this.setCurrent(c.id)}
+                    >
+                      {c.name}
+                    </a>
+                  </li>
+                );
               })}
             </ul>
             <div className="col-9">
@@ -163,7 +173,7 @@ class Clients extends Component {
                     value={this.state.currentClient.name}
                     required
                     onChange={e => {
-                      let curr = {...this.state.currentClient};
+                      let curr = { ...this.state.currentClient };
                       curr.name = e.currentTarget.value;
                       this.setState({ currentClient: curr });
                     }}
@@ -178,7 +188,7 @@ class Clients extends Component {
                     value={this.state.currentClient.phoneNumber}
                     required
                     onChange={e => {
-                      let curr = {...this.state.currentClient};
+                      let curr = { ...this.state.currentClient };
                       curr.phoneNumber = e.currentTarget.value;
                       this.setState({ currentClient: curr });
                     }}
@@ -193,7 +203,7 @@ class Clients extends Component {
                     required
                     value={this.state.currentClient.locationHome}
                     onChange={value => {
-                      let curr = {...this.state.currentClient};
+                      let curr = { ...this.state.currentClient };
                       curr.locationHome = value;
                       this.setState({ currentClient: curr });
                     }}
@@ -204,7 +214,7 @@ class Clients extends Component {
                   <select
                     required
                     onChange={e => {
-                      let curr = {...this.state.currentClient};
+                      let curr = { ...this.state.currentClient };
                       curr.driverGender = e.currentTarget.value;
                       this.setState({ currentClient: curr });
                     }}
@@ -221,7 +231,7 @@ class Clients extends Component {
                   <select
                     required
                     onChange={e => {
-                      let curr = {...this.state.currentClient};
+                      let curr = { ...this.state.currentClient };
                       curr.carType = e.currentTarget.value;
                       this.setState({ currentClient: curr });
                     }}
@@ -240,12 +250,14 @@ class Clients extends Component {
                     id="mps"
                     checked={this.state.currentClient.hasMps}
                     onChange={e => {
-                      let curr = {...this.state.currentClient};
-                      curr.hasMps = e.currentTarget.checked
+                      let curr = { ...this.state.currentClient };
+                      curr.hasMps = e.currentTarget.checked;
                       this.setState({ currentClient: curr });
                     }}
                   />
-                  <label className="form-check-label" htmlFor="mps">Has Mobility Parking Sticker</label>
+                  <label className="form-check-label" htmlFor="mps">
+                    Has Mobility Parking Sticker
+                  </label>
                 </div>
                 <div className="form-group">
                   <label>Description</label>
@@ -253,7 +265,7 @@ class Clients extends Component {
                     rows={5}
                     maxLength={1024}
                     onChange={e => {
-                      let curr = {...this.state.currentClient};
+                      let curr = { ...this.state.currentClient };
                       curr.description = e.currentTarget.value;
                       this.setState({ currentClient: curr });
                     }}
@@ -266,13 +278,17 @@ class Clients extends Component {
                     Save
                   </button>
                 </div>
-                {!isNaN(this.state.currentClient.id) &&
+                {!isNaN(this.state.currentClient.id) && (
                   <div className="btn-group mr-2" role="group">
-                    <button className="btn btn-danger" type="button" onClick={() => this.deleteCurrent()}>
+                    <button
+                      className="btn btn-danger"
+                      type="button"
+                      onClick={() => this.deleteCurrent()}
+                    >
                       Delete
                     </button>
                   </div>
-                }
+                )}
               </form>
             </div>
           </div>

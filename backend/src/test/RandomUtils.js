@@ -1,4 +1,4 @@
-const randomstring = require("randomstring");
+const randomstring = require('randomstring');
 
 class RandomUtils {
   static randomString(length) {
@@ -11,7 +11,9 @@ class RandomUtils {
   }
 
   static randomEmail() {
-    return `${RandomUtils.randomString(6)}.${Date.now()}@${RandomUtils.randomString(6)}.com`;
+    return `${RandomUtils.randomString(
+      6
+    )}.${Date.now()}@${RandomUtils.randomString(6)}.com`;
   }
 }
 

@@ -46,38 +46,56 @@ afterEach(async () => {
 });
 
 beforeEach(function setupData() {
-  loginData = {email: RandomUtils.randomEmail()};
+  loginData = { email: RandomUtils.randomEmail() };
   pickupTimeAndDateInUTC = moment();
 });
 
-describe('SQL', function () {
-  it('should update and retrieve ride', async function () {
+describe('SQL', function() {
+  it('should update and retrieve ride', async function() {
     // given
     const ride = randomRideWithFacilitator(loginData.email);
     await databaseContainsRide(ride);
     const modifiedRide = modifyRide(ride);
-    let storedRide = await findRideTestRepository.findOneByClientEmail(ride.client, connection);
+    let storedRide = await findRideTestRepository.findOneByClientEmail(
+      ride.client,
+      connection
+    );
 
     // when
     await updateRideService.updateRide(storedRide.id, modifiedRide, loginData);
-    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(storedRide.client, connection);
+    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(
+      storedRide.client,
+      connection
+    );
 
     // then
-    assert.deepEqualExcluding(modifiedRideFromDb, RideMapper.dtoToEntity(modifiedRide), ['id', 'datetime', 'facilitatorId', 'pickupTimeAndDateInUTC']);
+    assert.deepEqualExcluding(
+      modifiedRideFromDb,
+      RideMapper.dtoToEntity(modifiedRide),
+      ['id', 'datetime', 'facilitatorId', 'pickupTimeAndDateInUTC']
+    );
     assert.equal(modifiedRideFromDb.facilitatorId, loginData.email);
-    assert.equal(modifiedRideFromDb.pickupTimeAndDateInUTC.setMilliseconds(0), pickupTimeAndDateInUTC.toDate().setMilliseconds(0));
+    assert.equal(
+      modifiedRideFromDb.pickupTimeAndDateInUTC.setMilliseconds(0),
+      pickupTimeAndDateInUTC.toDate().setMilliseconds(0)
+    );
   });
-
 
   it('should allow driver to confirm a ride', async () => {
     const ride = randomRideWithFacilitator(loginData.email);
     await databaseContainsRide(ride);
 
-    let storedRide = await findRideTestRepository.findOneByClientEmail(ride.client, connection);
+    let storedRide = await findRideTestRepository.findOneByClientEmail(
+      ride.client,
+      connection
+    );
     //Confirm the ride now
     await updateRideService.acceptRide(storedRide.id, storedRide, loginData);
 
-    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(storedRide.client, connection);
+    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(
+      storedRide.client,
+      connection
+    );
 
     assert.equal(modifiedRideFromDb.status, RideStatus.CONFIRMED);
   });
@@ -86,40 +104,48 @@ describe('SQL', function () {
     const ride = randomRideWithFacilitator(loginData.email);
     await databaseContainsRide(ride);
 
-    let storedRide = await findRideTestRepository.findOneByClientEmail(ride.client, connection);
+    let storedRide = await findRideTestRepository.findOneByClientEmail(
+      ride.client,
+      connection
+    );
     //Confirm the ride now
     await updateRideService.declineRide(storedRide.id, storedRide, loginData);
 
-    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(storedRide.client, connection);
+    let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(
+      storedRide.client,
+      connection
+    );
 
     assert.equal(modifiedRideFromDb.status, RideStatus.OPEN);
-  })
+  });
 });
 
 function modifyRide(ride) {
   return {
-    'carType': 'suv',
-    'hasMps': false,
-    'client': ride.client,
-    'deleted': 0,
-    'description': 'wanna surf',
-    'driverGender': 'male',
-    'locationFrom': {
-      "latitude": 1234,
-      "longitude": 4567,
-      "placeName": "home",
-      "suburb": "Bondi Junction",
-      "postcode": "2010"
+    carType: 'suv',
+    hasMps: false,
+    client: ride.client,
+    deleted: 0,
+    description: 'wanna surf',
+    driverGender: 'male',
+    locationFrom: {
+      latitude: 1234,
+      longitude: 4567,
+      placeName: 'home',
+      suburb: 'Bondi Junction',
+      postcode: '2010'
     },
-    'locationTo': {
-      "latitude": 9999,
-      "longitude": 7777,
-      "placeName": "beach",
-      "suburb": "Bondi",
-      "postcode": "2011"
+    locationTo: {
+      latitude: 9999,
+      longitude: 7777,
+      placeName: 'beach',
+      suburb: 'Bondi',
+      postcode: '2011'
     },
-    'pickupTimeAndDateInUTC': pickupTimeAndDateInUTC.format('YYYY-MM-DD HH:mm:ss.SSS'),
-    'status': RideStatus.OPEN
+    pickupTimeAndDateInUTC: pickupTimeAndDateInUTC.format(
+      'YYYY-MM-DD HH:mm:ss.SSS'
+    ),
+    status: RideStatus.OPEN
   };
 }
 
@@ -132,6 +158,3 @@ function randomRideWithFacilitator(facilitatorId) {
   ride.facilitatorId = facilitatorId;
   return ride;
 }
-
-
-
