@@ -8,11 +8,11 @@ class RideEntityBuilder {
     const client = `client.${Date.now()}`;
     const facilitator = `facilitator.${Date.now()}`;
     return {
-      carType: "all",
+      carType: 'all',
       hasMps: false,
       client: `${client}@${RandomUtils.randomString(5)}.com`,
       deleted: 0,
-      driverGender: (Math.random() * 1000) % 2 ? "male" : "female",
+      driverGender: (Math.random() * 1000) % 2 ? 'male' : 'female',
       facilitatorId: `${facilitator}@${RandomUtils.randomString(5)}.com`,
       locationFrom: {
         latitude: RandomUtils.randomNumber(4),
@@ -28,10 +28,12 @@ class RideEntityBuilder {
         postcode: RandomUtils.randomNumber(4).toString(),
         suburb: RandomUtils.randomString(10)
       },
-      pickupTimeAndDateInUTC: new Date(new Date(now.setMilliseconds(0)).setDate(now.getDate() + 5)),
+      pickupTimeAndDateInUTC: new Date(
+        new Date(now.setMilliseconds(0)).setDate(now.getDate() + 5)
+      ),
       status: RideStatus.OPEN,
-      description: RandomUtils.randomString(10),
-    }
+      description: RandomUtils.randomString(10)
+    };
   }
 }
 
