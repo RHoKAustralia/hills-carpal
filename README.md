@@ -11,10 +11,13 @@ yarn run refresh-db
 
 2. Run the backend locally
 ```
-node ./backend/src/test/expressApis.js
+cd backend
+yarn start
 ```
 
-3. Run the frontend
+It _should_ reload the code every time it's run, so there's no need to stop it and start it again when you make changes.
+
+3. Run the frontend (in another tab)
 ```
 cd frontend
 yarn run local
