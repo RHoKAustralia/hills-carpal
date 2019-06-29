@@ -5,7 +5,6 @@ const RidesMapper = require('./RideMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
 class ListRidesService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._rideRepository = new RideRepository(databaseManager);
@@ -14,9 +13,11 @@ class ListRidesService {
   listRides(query, loginData) {
     const connection = this._databaseManager.createConnection();
 
-    const listRidesPromise = this._listRides(query, loginData, connection)
-      .then(rides => rides.map(RidesMapper.entityToDto));
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const listRidesPromise = this._listRides(query, loginData, connection).then(
+      rides => rides.map(RidesMapper.entityToDto)
+    );
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(listRidesPromise, closeConnection);
   }
 
@@ -33,9 +34,10 @@ class ListRidesService {
     const isAdmin = this._hasRole('admin', loginData);
     const isDriver = this._hasRole('driver', loginData);
     const isFacilitator = this._hasRole('facilitator', loginData);
-    const notAdminAndListTypeDoesNotMatchRole = !this._hasRole(listType, loginData) && !isAdmin;
+    const notAdminAndListTypeDoesNotMatchRole =
+      !this._hasRole(listType, loginData) && !isAdmin;
     if (notAdminAndListTypeDoesNotMatchRole) {
-      console.log("WARNING: unauthorised attempt to query data", loginData);
+      console.log('WARNING: unauthorised attempt to query data', loginData);
       return null;
     }
 
@@ -46,10 +48,13 @@ class ListRidesService {
       toLatitude: query.toLatitude,
       fromLongitude: query.fromLongitude,
       fromLatitude: query.fromLatitude,
-      driverGenders: driverRoutesOnly ? ['any', loginData.driverGender] : undefined,
+      driverGenders: driverRoutesOnly
+        ? ['any', loginData.driverGender]
+        : undefined,
       driverCars: driverRoutesOnly ? ['All', loginData.car] : undefined,
       includePickupTimeInPast: !driverRoutesOnly,
-      facilitatorId: (isFacilitator && !driverRoutesOnly) ? loginData.email : undefined,
+      facilitatorId:
+        isFacilitator && !driverRoutesOnly ? loginData.email : undefined
     };
   }
 
@@ -57,6 +62,5 @@ class ListRidesService {
     return loginData.roles.indexOf(role) >= 0;
   }
 }
-
 
 module.exports = ListRidesService;

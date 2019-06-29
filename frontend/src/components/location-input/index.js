@@ -28,7 +28,7 @@ class LocationInput extends Component {
       const options = response.data.features.map(x => {
         return {
           label: x.place_name,
-          value: x,
+          value: x
         };
       });
       return { options };
@@ -53,7 +53,7 @@ class LocationInput extends Component {
       longitude: value.center[0],
       latitude: value.center[1],
       postcode: getValueFromContext('postcode'),
-      suburb: getValueFromContext('suburb'),
+      suburb: getValueFromContext('suburb')
     });
   }
   getValue() {
@@ -77,7 +77,7 @@ class LocationInput extends Component {
 }
 
 LocationInput.propTypes = {
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
 export default LocationInput;

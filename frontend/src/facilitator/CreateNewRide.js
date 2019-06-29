@@ -37,14 +37,14 @@ class CreateNewRide extends Component {
       axiosInstance
         .get('/rides/' + this.props.match.params.id, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('id_token')}`
+          }
         })
         .then(res => {
           const data = res.data;
           const client = this.state.clients.find(c => c.name === data.client);
           let clientId = -1;
-          if(client) {
+          if (client) {
             clientId = client.id;
           }
           data.selectedClientId = clientId;
@@ -55,17 +55,17 @@ class CreateNewRide extends Component {
     axiosInstance
       .get('/clients', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+        }
       })
       .then(res => {
         const data = res.data;
         const client = data.find(c => c.name === this.state.client);
         let clientId = -1;
-        if(client) {
+        if (client) {
           clientId = client.id;
         }
-        this.setState({clients: data, selectedClientId: clientId});
+        this.setState({ clients: data, selectedClientId: clientId });
       });
   }
 
@@ -82,9 +82,9 @@ class CreateNewRide extends Component {
         url: '/rides/' + this.props.match.params.id,
         method: 'put',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
-        data: ride,
+        data: ride
       }).then(_ => {
         this.props.history.push('/facilitator/');
       });
@@ -93,9 +93,9 @@ class CreateNewRide extends Component {
         url: '/rides',
         method: 'post',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
-        data: ride,
+        data: ride
       }).then(_ => {
         this.props.history.push('/facilitator/');
       });
@@ -138,7 +138,11 @@ class CreateNewRide extends Component {
             >
               <option>Select from following</option>
               {this.state.clients.map(c => {
-                return (<option key={c.id} value={c.id}>{c.name}</option>)
+                return (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                );
               })}
             </select>
           </div>
@@ -219,7 +223,9 @@ class CreateNewRide extends Component {
                 this.setState({ hasMps: e.currentTarget.checked });
               }}
             />
-            <label className="form-check-label" htmlFor="mps">Has Mobility Parking Sticker</label>
+            <label className="form-check-label" htmlFor="mps">
+              Has Mobility Parking Sticker
+            </label>
           </div>
           <div className="form-group">
             <label>Description</label>
