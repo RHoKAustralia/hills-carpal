@@ -1,18 +1,18 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import LocationInput from "../components/location-input";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import LocationInput from '../components/location-input';
 class LocationSearch extends Component {
   constructor() {
     super();
     this.state = {
-      locationTo: "",
-      locationFrom: ""
+      locationTo: '',
+      locationFrom: ''
     };
   }
   render() {
     return (
       <div>
-        <h4 style={{ marginTop: "10px" }}>Search Trips</h4>
+        <h4 style={{ marginTop: '10px' }}>Search Trips</h4>
         <p>Carpal will then use this trip to find nearby ride requests</p>
         <form
           onSubmit={e => {

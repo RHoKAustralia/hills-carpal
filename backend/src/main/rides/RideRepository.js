@@ -10,12 +10,8 @@ class RideRepository {
 
   create(ride, connection) {
     const escape = data => connection.escape(data);
-    const locationFrom = `POINT(${ride.locationFrom.latitude}, ${
-      ride.locationFrom.longitude
-    })`;
-    const locationTo = `POINT(${ride.locationTo.latitude}, ${
-      ride.locationTo.longitude
-    })`;
+    const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
+    const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
     let query = `INSERT INTO ${this._dbName}.rides(client,
                                   facilitatorEmail,
                                   pickupTimeAndDateInUTC,
@@ -70,12 +66,8 @@ class RideRepository {
     }
 
     const escape = data => connection.escape(data);
-    const locationFrom = `POINT(${ride.locationFrom.latitude}, ${
-      ride.locationFrom.longitude
-    })`;
-    const locationTo = `POINT(${ride.locationTo.latitude}, ${
-      ride.locationTo.longitude
-    })`;
+    const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
+    const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
     let query = `UPDATE ${this._dbName}.rides SET client = ${escape(
       ride.client
     )},
@@ -148,11 +140,7 @@ class RideRepository {
       jsonQuery.fromLatitude
     ) {
       where.push(
-        `ST_Contains(ST_Envelope(ST_GeomFromText('LINESTRING(${
-          jsonQuery.toLongitude
-        } ${jsonQuery.toLatitude}, ${jsonQuery.fromLongitude} ${
-          jsonQuery.fromLatitude
-        })')), locationFrom)`
+        `ST_Contains(ST_Envelope(ST_GeomFromText('LINESTRING(${jsonQuery.toLongitude} ${jsonQuery.toLatitude}, ${jsonQuery.fromLongitude} ${jsonQuery.fromLatitude})')), locationFrom)`
       );
     }
     if (!jsonQuery.includePickupTimeInPast) {
@@ -183,9 +171,7 @@ class RideRepository {
       where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
     }
 
-    let leftJoinForDriver = `LEFT JOIN ${
-      this._dbName
-    }.driver_ride dr on dr.ride_id = rides.id`;
+    let leftJoinForDriver = `LEFT JOIN ${this._dbName}.driver_ride dr on dr.ride_id = rides.id`;
 
     let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''

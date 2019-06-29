@@ -9,34 +9,35 @@ const assert = chai.assert;
 const moment = require('moment');
 chai.use(chaiExclude);
 
-
 describe('RideMapper', async () => {
-  it('should convert dto to entity', async function () {
+  it('should convert dto to entity', async function() {
     const pickupTimeAndDateInUTC = moment();
     const facilitatorId = RandomUtils.randomEmail();
     const dto = {
-      'carType': 'suv',
-      'hasMps': false,
-      'client': RandomUtils.randomEmail(),
-      'deleted': 0,
-      'description': RandomUtils.randomString(10),
-      'driverGender': (RandomUtils.randomNumber(2) % 2) ? 'male' : 'female',
-      'locationFrom': {
-        "latitude": RandomUtils.randomNumber(4),
-        "longitude": RandomUtils.randomNumber(4),
-        "placeName": RandomUtils.randomString(10),
-        "suburb": RandomUtils.randomString(10),
-        "postcode": RandomUtils.randomNumber(4)
+      carType: 'suv',
+      hasMps: false,
+      client: RandomUtils.randomEmail(),
+      deleted: 0,
+      description: RandomUtils.randomString(10),
+      driverGender: RandomUtils.randomNumber(2) % 2 ? 'male' : 'female',
+      locationFrom: {
+        latitude: RandomUtils.randomNumber(4),
+        longitude: RandomUtils.randomNumber(4),
+        placeName: RandomUtils.randomString(10),
+        suburb: RandomUtils.randomString(10),
+        postcode: RandomUtils.randomNumber(4)
       },
-      'locationTo': {
-        "latitude": RandomUtils.randomNumber(4),
-        "longitude": RandomUtils.randomNumber(4),
-        "placeName": RandomUtils.randomString(10),
-        "suburb": RandomUtils.randomString(10),
-        "postcode": RandomUtils.randomNumber(4)
+      locationTo: {
+        latitude: RandomUtils.randomNumber(4),
+        longitude: RandomUtils.randomNumber(4),
+        placeName: RandomUtils.randomString(10),
+        suburb: RandomUtils.randomString(10),
+        postcode: RandomUtils.randomNumber(4)
       },
-      'pickupTimeAndDateInUTC': pickupTimeAndDateInUTC.format('YYYY-MM-DD HH:mm:ss.SSS'),
-      'status': RideStatus.OPEN
+      pickupTimeAndDateInUTC: pickupTimeAndDateInUTC.format(
+        'YYYY-MM-DD HH:mm:ss.SSS'
+      ),
+      status: RideStatus.OPEN
     };
 
     const entity = RideMapper.dtoToEntity(dto, facilitatorId);
@@ -49,14 +50,14 @@ describe('RideMapper', async () => {
         longitude: dto.locationFrom.longitude,
         suburb: dto.locationFrom.suburb,
         placeName: dto.locationFrom.placeName,
-        postcode: dto.locationFrom.postcode,
+        postcode: dto.locationFrom.postcode
       },
       locationTo: {
         latitude: dto.locationTo.latitude,
         longitude: dto.locationTo.longitude,
         suburb: dto.locationTo.suburb,
         placeName: dto.locationTo.placeName,
-        postcode: dto.locationTo.postcode,
+        postcode: dto.locationTo.postcode
       },
       driverGender: dto.driverGender,
       carType: dto.carType,
@@ -68,7 +69,7 @@ describe('RideMapper', async () => {
     });
   });
 
-  it('should convert entity to dto', async function () {
+  it('should convert entity to dto', async function() {
     // given
     const entity = RideEntityBuilder.randomRideEntity();
 
@@ -103,8 +104,4 @@ describe('RideMapper', async () => {
       id: entity.id
     });
   });
-
 });
-
-
-

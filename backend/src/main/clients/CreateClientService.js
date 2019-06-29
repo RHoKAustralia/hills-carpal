@@ -7,7 +7,6 @@ const ClientRepository = require('./ClientRepository');
 const PromiseUtils = require('../utils/PromiseUtils');
 
 class CreateClientService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._ClientRepository = new ClientRepository(databaseManager);
@@ -17,7 +16,8 @@ class CreateClientService {
     const connection = this._databaseManager.createConnection();
 
     const createClientPromise = this._createClient(body, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(createClientPromise, closeConnection);
   }
 
@@ -40,7 +40,7 @@ class CreateClientService {
         headers: {
           'Content-Type': 'text/plain'
         },
-        body: JSON.stringify({"error": validationResult.errors})
+        body: JSON.stringify({ error: validationResult.errors })
       };
     }
   }

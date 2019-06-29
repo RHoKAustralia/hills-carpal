@@ -12,7 +12,7 @@ import DriverQueue from './driver/Queue';
 import DriverMenu from './driver/Menu';
 import Poll from './driver/Poll';
 import Clients from './facilitator/Clients.js';
-import RideDetail from "./driver/RideDetail";
+import RideDetail from './driver/RideDetail';
 
 const auth = new Auth();
 

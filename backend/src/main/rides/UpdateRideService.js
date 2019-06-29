@@ -90,6 +90,7 @@ class UpdateRideService {
       let rideEntity = RideMapper.dtoToEntity(rideObject);
       rideEntity.driver = {
         driver_id: loginData.userId,
+        email: loginData.email,
         confirmed: rideObject.status === 'CONFIRMED',
         updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
       };
