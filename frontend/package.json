@@ -29,7 +29,8 @@
     "react-table": "^6.8.6",
     "turf-linestring": "^1.0.2"
   },
-  "scripts": {
+    "scripts": {
+    "prestart": "npm install",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
