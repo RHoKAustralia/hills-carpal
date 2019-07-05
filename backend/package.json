@@ -3,6 +3,8 @@
   "version": "1.0.1",
   "scripts": {
     "test": "mocha './src/test/**/*.test.js'",
+    "dev": "UNSAFE_GOD_MODE=true sls offline",
+    "win": "SET UNSAFE_GOD_MODE=true& sls offline",
     "prestart": "npm install && npm create-db && npm run refresh-db",
     "start": "sls offline",
     "create-db": "MYSQL_FLAGS=\"-CONNECT_WITH_DB\" db-migrate db:create carpal",
