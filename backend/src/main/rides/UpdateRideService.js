@@ -89,6 +89,15 @@ class UpdateRideService {
 
       const rideObject = RideMapper.entityToDto(dbRide);
 
+      if (
+        rideObject.driver &&
+        rideObject.driver.driver_id !== loginData.userId
+      ) {
+        throw new Error(
+          "Attempting to change the status of someone else's ride"
+        );
+      }
+
       rideObject.datetime = new Date().getTime();
       rideObject.status = newStatus;
 
@@ -98,6 +107,8 @@ class UpdateRideService {
       }
 
       let rideEntity = RideMapper.dtoToEntity(rideObject);
+      console.log('LOGIN DATA');
+      console.log(loginData);
       rideEntity.driver = {
         driver_id: loginData.userId,
         email: loginData.email,
