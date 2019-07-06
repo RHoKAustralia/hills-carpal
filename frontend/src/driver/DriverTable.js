@@ -1,6 +1,7 @@
 import matchSorter from 'match-sorter';
 import moment from 'moment';
 import Table from '../components/table';
+import history from '../history';
 
 import React, { Component } from 'react';
 const columns = [
@@ -48,7 +49,7 @@ class DriverTable extends Component {
         getTrProps={(state, rowInfo) => {
           return {
             onClick: e => {
-              window.location.href = `/driver/rides/${rowInfo.original.id}/details`;
+              history.push(`/driver/rides/${rowInfo.original.id}/details`);
             }
           };
         }}

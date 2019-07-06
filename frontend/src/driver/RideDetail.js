@@ -1,6 +1,7 @@
 import React from 'react';
 import axiosInstance from '../auth/api';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import history from '../history';
 
 import DriverMap from './DriverMap';
@@ -107,22 +108,6 @@ export default class RideDetail extends React.Component {
       });
   }
 
-  completeRide() {
-    var self = this;
-    this.setState({ status: 'ENDED' });
-
-    axiosInstance
-      .put('/rides/' + this.props.match.params.rideId, this.state, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`
-        },
-        data: self.state
-      })
-      .then(res => {
-        window.location.href = `/driver/rides/${this.state.id}/poll`;
-      });
-  }
-
   OfferRideButton() {
     return (
       <button
@@ -134,7 +119,7 @@ export default class RideDetail extends React.Component {
     );
   }
 
-  DeclineRideButton() {
+  RideOfferedButtons() {
     return (
       <span>
         <button
@@ -143,12 +128,11 @@ export default class RideDetail extends React.Component {
         >
           Decline
         </button>
-        <button
-          onClick={this.completeRide.bind(this)}
-          className="card-link btn btn-outline btn-success"
-        >
-          Complete the ride
-        </button>
+        <Link to={`/driver/rides/${this.props.match.params.rideId}/poll`}>
+          <a className="card-link btn btn-outline btn-success">
+            Complete the ride
+          </a>
+        </Link>
       </span>
     );
   }
@@ -189,7 +173,7 @@ export default class RideDetail extends React.Component {
           <div className="card-footer">
             {!this.state.driver.confirmed
               ? this.OfferRideButton()
-              : this.DeclineRideButton()}
+              : this.RideOfferedButtons()}
           </div>
         </div>
       </div>

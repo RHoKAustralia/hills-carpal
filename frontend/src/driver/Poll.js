@@ -9,40 +9,49 @@ export default class Poll extends React.Component {
     submitState: 'form' // "form" | "saving" | "done" | "error"
   };
 
-  onIFrameLoad = () => {
-    this.loadCount++;
-
-    if (this.loadCount >= 2) {
-      this.setState({
-        submitState: 'saving'
-      });
-
-      // set ride to complete
-      axiosInstance
-        .put(
-          `${process.env.REACT_APP_API_URL}/rides/${this.props.match.params.rideId}`,
-          {
-            status: 'ENDED'
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('id_token')}`
-            }
-          }
-        )
-        .then(() => {
-          this.setState({
-            submitState: 'done'
-          });
-        })
-        .catch(e => {
-          console.error(e);
-          this.setState({
-            submitState: 'error'
-          });
-        });
+  /**
+   * Process a message from the survey frame.
+   *
+   * Why not just listen to onLoad? Because we can't see the difference between
+   * successs and failure, either causes the form to submit and the event to fire.
+   */
+  processMessage = event => {
+    if (event.data === 'carpal:surveySuccess') {
+      this.completeRide();
     }
   };
+
+  componentDidMount() {
+    window.addEventListener('message', this.processMessage, false);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('message', this.processMessage);
+  }
+
+  completeRide() {
+    this.setState({
+      submitState: 'saving'
+    });
+
+    axiosInstance
+      .put(`/rides/${this.props.match.params.rideId}/complete`, this.state, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+        }
+      })
+      .then(() => {
+        this.setState({
+          submitState: 'done'
+        });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          submitState: 'error'
+        });
+      });
+  }
 
   render() {
     return (
@@ -59,8 +68,7 @@ export default class Poll extends React.Component {
                 height="600"
                 scrolling="auto"
                 allowtransparency="true"
-                src="https://john3110.survey.fm/ride-feedback?iframe=1"
-                onLoad={this.onIFrameLoad}
+                src={`${process.env.REACT_APP_API_URL}/survey/ride-feedback?iframe=1`}
               >
                 <a href="https://john3110.survey.fm/ride-feedback">
                   View Survey
