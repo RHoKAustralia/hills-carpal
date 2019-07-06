@@ -53,7 +53,7 @@ beforeEach(function setupData() {
 describe('SQL', function() {
   it('should update and retrieve ride', async function() {
     // given
-    const ride = randomRideWithFacilitator(loginData.email);
+    const ride = randomRideWithFacilitator(loginData.userId);
     await databaseContainsRide(ride);
     const modifiedRide = modifyRide(ride);
     let storedRide = await findRideTestRepository.findOneByClientEmail(
@@ -74,7 +74,7 @@ describe('SQL', function() {
       RideMapper.dtoToEntity(modifiedRide),
       ['id', 'datetime', 'facilitatorId', 'pickupTimeAndDateInUTC']
     );
-    assert.equal(modifiedRideFromDb.facilitatorId, loginData.email);
+    assert.equal(modifiedRideFromDb.facilitatorId, loginData.userId);
     assert.equal(
       modifiedRideFromDb.pickupTimeAndDateInUTC.setMilliseconds(0),
       pickupTimeAndDateInUTC.toDate().setMilliseconds(0)
@@ -82,7 +82,7 @@ describe('SQL', function() {
   });
 
   it('should allow driver to confirm a ride', async () => {
-    const ride = randomRideWithFacilitator(loginData.email);
+    const ride = randomRideWithFacilitator(loginData.userId);
     await databaseContainsRide(ride);
 
     let storedRide = await findRideTestRepository.findOneByClientEmail(
@@ -90,7 +90,7 @@ describe('SQL', function() {
       connection
     );
     //Confirm the ride now
-    await updateRideService.acceptRide(storedRide.id, storedRide, loginData);
+    await updateRideService.acceptRide(storedRide.id, loginData);
 
     let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(
       storedRide.client,
@@ -101,7 +101,7 @@ describe('SQL', function() {
   });
 
   it('should allow driver to decline a ride', async () => {
-    const ride = randomRideWithFacilitator(loginData.email);
+    const ride = randomRideWithFacilitator(loginData.userId);
     await databaseContainsRide(ride);
 
     let storedRide = await findRideTestRepository.findOneByClientEmail(
@@ -109,7 +109,7 @@ describe('SQL', function() {
       connection
     );
     //Confirm the ride now
-    await updateRideService.declineRide(storedRide.id, storedRide, loginData);
+    await updateRideService.declineRide(storedRide.id, loginData);
 
     let modifiedRideFromDb = await findRideTestRepository.findOneByClientEmail(
       storedRide.client,
