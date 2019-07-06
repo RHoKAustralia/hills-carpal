@@ -19,7 +19,7 @@ module.exports.survey = (event, context, callback) => {
     hostname: 'john3110.survey.fm',
     headers: newHeaders,
     path:
-      event.path.replace('/survey', '') +
+      event.path.split('/survey')[1] +
       '?' +
       querystring.stringify(event.multiValueQueryStringParameters)
   };
