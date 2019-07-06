@@ -65,7 +65,9 @@ class FindRides extends Component {
   }
   renderPage() {
     if (this.state.page === 'table') {
-      return <DriverTable rides={this.state.rides} />;
+      return (
+        <DriverTable rides={this.state.rides} history={this.props.history} />
+      );
     }
     return (
       <DriverMap

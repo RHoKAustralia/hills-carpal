@@ -31,7 +31,11 @@ let wrappedCallback = callback => {
       };
       callback(null, response);
     } else {
-      callback(error);
+      console.error(error);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify(result)
+      });
     }
   };
 };
@@ -42,7 +46,8 @@ module.exports = [
   'update',
   'findOne',
   'acceptRide',
-  'declineRide'
+  'declineRide',
+  'completeRide'
 ].reduce((acc, current) => {
   acc[current] = (event, context, callback) => {
     return rides[current](event, context, wrappedCallback(callback));
