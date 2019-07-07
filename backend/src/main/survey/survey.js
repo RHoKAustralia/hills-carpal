@@ -6,12 +6,17 @@ const querystring = require('querystring');
  * window when the survey is successfully completed.
  */
 module.exports.survey = (event, context, callback) => {
+  console.log(event.headers);
   const newHeaders = {};
-  if (event.headers['Content-Type']) {
-    newHeaders['Content-Type'] = event.headers['Content-Type'];
+  const contentType =
+    event.headers['Content-Type'] || event.headers['content-type'];
+  if (contentType) {
+    newHeaders['Content-Type'] = contentType;
   }
-  if (event.headers['Content-Length']) {
-    newHeaders['Content-Length'] = event.headers['Content-Length'];
+  const contentLength =
+    event.headers['Content-Length'] || event.headers['content-length'];
+  if (contentLength) {
+    newHeaders['Content-Length'] = contentLength;
   }
 
   var options = {
