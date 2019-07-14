@@ -83,6 +83,17 @@ functions:
             parameters:
               paths:
                 id: true
+  completeRide:
+    handler: src/main/rides/awsLambdaRidesApis.completeRide
+    events:
+      - http:
+          path: rides/{id}/complete
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
   list:
     handler: src/main/rides/awsLambdaRidesApis.list
     # runtime: nodejs8.10
@@ -144,6 +155,18 @@ functions:
               paths:
                 id: true
 
+  survey:
+    handler: src/main/survey/survey.survey
+    events:
+      - http:
+          path: survey/{proxy+}
+          method: get
+          cors: true
+      - http:
+          path: survey/{proxy+}
+          method: post
+          cors: true
+
 #  notify:
 #    handler: notify
 #      events:
@@ -171,3 +194,11 @@ resources:
         RestApiId:
           Ref: 'ApiGatewayRestApi'
         StatusCode: '401'
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    noEnvironment: true
+    port: 8080

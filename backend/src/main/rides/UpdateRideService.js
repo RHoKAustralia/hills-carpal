@@ -22,24 +22,31 @@ class UpdateRideService {
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
-  changeRideStatus(id, ride, loginData) {
+  acceptRide(id, loginData) {
+    return this.changeRideStatus(id, RideStatus.CONFIRMED, loginData);
+  }
+
+  declineRide(id, loginData) {
+    return this.changeRideStatus(id, RideStatus.OPEN, loginData);
+  }
+
+  completeRide(id, loginData) {
+    return this.changeRideStatus(id, RideStatus.ENDED, loginData);
+  }
+
+  changeRideStatus(id, newStatus, loginData) {
     const connection = this._databaseManager.createConnection();
-    let updatePromise = this._changeStatusRide(id, ride, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    let updatePromise = this._changeRideStatus(
+      id,
+      newStatus,
+      loginData,
+      connection
+    );
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
-  acceptRide(id, ride, loginData) {
-    const rideToUpdate = Object.assign({}, ride);
-    rideToUpdate.status = RideStatus.CONFIRMED;
-    return this.changeRideStatus(id, rideToUpdate, loginData);
-  }
-
-  declineRide(id, ride, loginData) {
-    const rideToUpdate = Object.assign({}, ride);
-    rideToUpdate.status = RideStatus.OPEN;
-    return this.changeRideStatus(id, rideToUpdate, loginData);
-  }
   _getRide(id, loginData) {
     return this._rideRepository.findOne({
       id: id,
@@ -69,41 +76,55 @@ class UpdateRideService {
       }
       let rideEntity = RideMapper.dtoToEntity(toSave);
       rideEntity.facilitatorId = ride.facilitatorId;
-      console.log(rideEntity);
+
       return this._rideRepository.update(ride.id, rideEntity, connection);
     });
   }
 
-
-  _changeStatusRide(id, rideObject, loginData, connection) {
-    rideObject.datetime = new Date().getTime();
-
-    let validationError = this._validate(rideObject);
-    if (validationError) {
-      return Promise.reject(validationError);
-    }
-
-    return this._getRide(id, loginData)
-    .then(ride => {
-      if (!ride || ride.deleted) {
+  _changeRideStatus(id, newStatus, loginData, connection) {
+    return this._getRide(id, loginData).then(dbRide => {
+      if (!dbRide || dbRide.deleted) {
         return null;
       }
 
+      const rideObject = RideMapper.entityToDto(dbRide);
+
+      if (
+        rideObject.driver &&
+        rideObject.driver.driver_id !== loginData.userId
+      ) {
+        throw new Error(
+          "Attempting to change the status of someone else's ride"
+        );
+      }
+
+      rideObject.datetime = new Date().getTime();
+      rideObject.status = newStatus;
+
+      let validationError = this._validate();
+      if (validationError) {
+        return Promise.reject(validationError);
+      }
+
       let rideEntity = RideMapper.dtoToEntity(rideObject);
+      console.log('LOGIN DATA');
+      console.log(loginData);
       rideEntity.driver = {
+        driver_id: loginData.userId,
         email: loginData.email,
-        confirmed: rideObject.status === "CONFIRMED",
+        confirmed: rideObject.status === 'CONFIRMED',
         updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
       };
 
-      rideEntity.facilitatorId = ride.facilitatorId;
-      return this._rideRepository.update(ride.id, rideEntity, connection);
+      rideEntity.facilitatorId = rideObject.facilitatorId;
+      return this._rideRepository.update(id, rideEntity, connection);
     });
   }
 
   _validate(data) {
     const validationResult = jsonValidator.validate(data, rideSchema);
     if (validationResult.errors && validationResult.errors.length) {
+      console.error(validationResult);
       return {
         statusCode: 400,
         headers: {

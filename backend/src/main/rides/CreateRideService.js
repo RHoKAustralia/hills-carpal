@@ -8,7 +8,6 @@ const RideMapper = require('./RideMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
 class CreateRideService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._rideRepository = new RideRepository(databaseManager);
@@ -18,7 +17,8 @@ class CreateRideService {
     const connection = this._databaseManager.createConnection();
 
     const createRidePromise = this._createRide(body, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(createRidePromise, closeConnection);
   }
 
@@ -30,7 +30,10 @@ class CreateRideService {
       return Promise.reject(validationError);
     }
 
-    const payload = RideMapper.dtoToEntity(rideObject, loginData && loginData.email);
+    const payload = RideMapper.dtoToEntity(
+      rideObject,
+      loginData && loginData.email
+    );
     payload.status = RideStatus.OPEN;
     payload.deleted = '0';
 
@@ -45,7 +48,7 @@ class CreateRideService {
         headers: {
           'Content-Type': 'text/plain'
         },
-        body: JSON.stringify({"error": validationResult.errors})
+        body: JSON.stringify({ error: validationResult.errors })
       };
     }
   }

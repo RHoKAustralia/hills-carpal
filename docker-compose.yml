@@ -1,0 +1,35 @@
+version: "3.6"
+services:
+  database:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+  backend:
+    depends_on:
+      - database
+    working_dir: '/app'
+    volumes:
+      - ./backend:/app
+    image: node:lts
+    ports:
+      - 8080:8080
+      - 8081:8081
+    command: ['npm', 'run', 'start']
+    environment:
+      - UNSAFE_GOD_MODE=true
+  frontend:
+    image: node:lts
+    working_dir: '/app'
+    depends_on:
+      - backend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    command: ['npm', 'run', 'start']
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000/api
+      - REACT_APP_AUTH0_CALLBACK_URL=http://localhost:3000
+      - REACT_APP_UNSAFE_GOD_MODE=true

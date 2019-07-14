@@ -31,11 +31,17 @@
     "turf-linestring": "^1.0.2"
   },
   "scripts": {
+    "prestart": "npm install",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "local": "REACT_APP_API_URL='http://localhost:3000/api' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' npm start",
-    "win": "SET REACT_APP_API_URL=http://localhost:3000/api& SET REACT_APP_AUTH0_CALLBACK_URL=http://localhost:3000& SET REACT_APP_UNSAFE_GOD_MODE=true& npm start"
+    "local": "REACT_APP_API_URL='http://localhost:8080' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' npm start",
+    "win": "SET REACT_APP_API_URL=http://localhost:8080& SET REACT_APP_AUTH0_CALLBACK_URL=http://localhost:3000& SET REACT_APP_UNSAFE_GOD_MODE=true& npm start",
+    "prettier": "prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --write",
+    "prettier-check": "prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --check"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2"
   }
 }

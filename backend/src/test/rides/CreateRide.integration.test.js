@@ -47,11 +47,11 @@ beforeEach(function setupData() {
   const clientEmail = `client.test.${Date.now()}@carpal.com`;
   rideRequest = {
     carType: 'suv',
+    hasMps: false,
     client: clientEmail,
     deleted: 0,
     description: 'wanna surf',
     driverGender: 'male',
-    fbLink: 'http://facebook.com/profile/facilitator.test.1',
     locationFrom: {
       latitude: 1234,
       longitude: 4567,

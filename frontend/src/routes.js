@@ -6,9 +6,13 @@ import history from './history';
 import Login from './auth/Login.js';
 import Facilitator from './facilitator/index.js';
 import CreateNewRide from './facilitator/CreateNewRide.js';
-import Clients from './facilitator/Clients.js';
-import Driver from './driver/index.js';
+
+import FindRides from './driver/FindRides';
+import DriverQueue from './driver/Queue';
+import DriverMenu from './driver/Menu';
 import Poll from './driver/Poll';
+import Clients from './facilitator/Clients.js';
+import RideDetail from './driver/RideDetail';
 
 const auth = new Auth();
 
@@ -54,12 +58,27 @@ export const createRoutes = () => {
           <Route
             exact
             path="/driver"
-            render={props => <Driver auth={auth} {...props} />}
+            render={props => <DriverMenu auth={auth} {...props} />}
+          />
+          <Route
+            exact
+            path="/driver/find-rides"
+            render={props => <FindRides auth={auth} {...props} />}
+          />
+          <Route
+            exact
+            path="/driver/queue"
+            render={props => <DriverQueue auth={auth} {...props} />}
           />
           <Route
             exact
             path="/driver/rides/:rideId/poll"
             render={props => <Poll auth={auth} {...props} />}
+          />
+          <Route
+            exact
+            path="/driver/rides/:rideId/details"
+            render={props => <RideDetail auth={auth} {...props} />}
           />
         </Switch>
       </App>
