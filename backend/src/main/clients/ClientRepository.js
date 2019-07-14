@@ -9,7 +9,7 @@ class ClientRepository {
   }
 
   create(client, connection) {
-    const escape = (data) => connection.escape(data);
+    const escape = data => connection.escape(data);
     const locationHome = `POINT(${client.locationHome.latitude}, ${client.locationHome.longitude})`;
     let query = `INSERT INTO ${this._dbName}.clients(
       name,
@@ -22,8 +22,8 @@ class ClientRepository {
       hasMps
     )
       VALUES
-      (${
-      [escape(client.name),
+      (${[
+        escape(client.name),
         escape(client.description),
         escape(client.phoneNumber),
         escape(client.driverGender),
@@ -41,15 +41,19 @@ class ClientRepository {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }
-    const escape = (data) => connection.escape(data);
+    const escape = data => connection.escape(data);
     const locationHome = `POINT(${client.locationHome.latitude}, ${client.locationHome.longitude})`;
-    let query = `UPDATE ${this._dbName}.clients SET name = ${escape(client.name)},
+    let query = `UPDATE ${this._dbName}.clients SET name = ${escape(
+      client.name
+    )},
                                   description = ${escape(client.description)},
                                   phoneNumber = ${escape(client.phoneNumber)},
                                   driverGender = ${escape(client.driverGender)},
                                   carType = ${escape(client.carType)},
                                   locationHome = ${locationHome},
-                                  placeNameHome = ${escape(client.locationHome.placeName)},
+                                  placeNameHome = ${escape(
+                                    client.locationHome.placeName
+                                  )},
                                   hasMps = ${escape(client.hasMps)}
                                 WHERE
                                   id = ${id}`;
@@ -59,7 +63,7 @@ class ClientRepository {
   }
 
   list(connection) {
-    const escape = (data) => connection.escape(data);
+    const escape = data => connection.escape(data);
 
     let query = `SELECT * FROM ${this._dbName}.clients ORDER BY name ASC;`;
     console.log(query);
@@ -70,7 +74,7 @@ class ClientRepository {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }
-    const escape = (data) => connection.escape(data);
+    const escape = data => connection.escape(data);
     let query = `DELETE FROM ${this._dbName}.clients WHERE id = ${id}`;
 
     return this._databaseManager.query(query, connection);

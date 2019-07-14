@@ -7,7 +7,6 @@ const ClientMapper = require('./ClientMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
 class DeleteClientService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._clientRepository = new ClientRepository(databaseManager);
@@ -16,7 +15,8 @@ class DeleteClientService {
   deleteClient(id, loginData) {
     const connection = this._databaseManager.createConnection();
     let deletePromise = this._deleteClient(id, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(deletePromise, closeConnection);
   }
 

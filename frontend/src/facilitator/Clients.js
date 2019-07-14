@@ -62,13 +62,14 @@ class Clients extends Component {
     e.preventDefault();
 
     if (!isNaN(this.state.currentClient.id)) {
+      let client = this.state.currentClient;
       axiosInstance({
         url: '/clients/' + this.state.currentClient.id,
         method: 'put',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
-        data: this.state.currentClient
+        data: client
       }).then(_ => {
         this.updateClientsWithCurrent();
       });
@@ -257,7 +258,6 @@ class Clients extends Component {
                     onChange={e => {
                       let curr = { ...this.state.currentClient };
                       curr.hasMps = e.currentTarget.checked;
-                      console.log(curr);
                       this.setState({ currentClient: curr });
                     }}
                   />
