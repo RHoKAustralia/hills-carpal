@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axiosInstance from '../auth/api';
 import history from '../history';
 import LocationInput from '../components/location-input';
+import Dropzone from 'react-dropzone';
 
 const defaultClient = {
   id: NaN,
@@ -35,9 +36,36 @@ class Clients extends Component {
   }
 
   onDrop(accepted, rejected, event) {
-    this.props.cloudinaryUploadFile(accepted[0]).then(cloudFile => {
-      alert('done');
-    });
+    // this.props.cloudinaryUploadFile(accepted[0]).then(cloudFile => {
+    //   alert('done');
+    // });
+
+    const file = accepted[0];
+    const formData = new FormData();
+    formData.append(file.name, file);
+
+    // return this.handleResult(
+    //   file.name,
+    //   this.props.authFetch(`${functionRoot()}/cloudinaryUpload/upload`, {
+    //     method: 'POST',
+    //     body: formData
+    //   })
+    // );
+
+    axiosInstance
+      .post(
+        `/clients/${this.state.currentClient.id}/images`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        },
+        formData
+      )
+      .then(res => {
+        this.setState({ clients: res.data });
+      });
   }
 
   componentDidMount() {
@@ -280,16 +308,20 @@ class Clients extends Component {
                   />
                 </div>
 
+                
                 <div className="form-group">
-                  <OurDropzone
-                    accept="image/jpeg, image/png, image/svg+xml, image/gif"
+                  <Dropzone
+                    accept="image/jpeg, image/png"
                     onDrop={this.onDrop.bind(this)}
                   >
-                    <div>
-                      Try dropping some files here, or click to select files to
-                      upload.
-                    </div>
-                  </OurDropzone>
+                    {({ getRootProps, getInputProps }) => (
+                      <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        Try dropping some files here, or click to select files
+                        to upload.
+                      </div>
+                    )}
+                  </Dropzone>
                 </div>
 
                 <div className="btn-group mr-2" role="group">
