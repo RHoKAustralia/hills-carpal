@@ -155,6 +155,18 @@ functions:
               paths:
                 id: true
 
+  uploadClientImage:
+    handler: src/main/images/awsLambdaImagesApis.upload
+    events:
+      - http:
+          path: clients/{id}/images
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
   survey:
     handler: src/main/survey/survey.survey
     events:
@@ -197,8 +209,13 @@ resources:
 
 plugins:
   - serverless-offline
+  - serverless-apigw-binary
 
 custom:
   serverless-offline:
     noEnvironment: true
     port: 8080
+  apigwBinary:
+    types: #list of mime-types
+      - 'image/jpeg'
+      - 'image/png'

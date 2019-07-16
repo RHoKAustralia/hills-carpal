@@ -32,10 +32,10 @@ let wrappedCallback = (callback) => {
 };
 
 module.exports = [
-  'list',
+  // 'list',
   'upload',
-  'update',
-  'delete',
+  // 'update',
+  // 'delete',
 ].reduce((acc, current) => {
   acc[current] = (event, context, callback) => {
     return images[current](event, context, wrappedCallback(callback));
