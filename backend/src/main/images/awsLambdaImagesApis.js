@@ -3,7 +3,7 @@ const ListImagesService = require('./ListImagesService');
 const UpdateImageService = require('./UpdateImageService');
 const DeleteImageService = require('./DeleteImageService');
 const DatabaseManager = require('../database/DatabaseManager');
-const AwsLambdaImageApis = require('./aws/AwsLambdaImageApis');
+const AwsLambdaImageApis = require('./aws/AwsLambdaImagesApis');
 const databaseManager = new DatabaseManager();
 
 const uploadImageService = new UploadImageService(databaseManager);

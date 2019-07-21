@@ -1,6 +1,9 @@
 'use strict';
 
 const jsonValidator = require('jsonschema');
+
+var toArray = require('stream-to-array');
+
 // const ImageSchema = require('../schema/image.json');
 const ImageMapper = require('./ImageMapper');
 const ImageRepository = require('./ImageRepository');
@@ -12,19 +15,46 @@ class UploadImageService {
     this._ImageRepository = new ImageRepository(databaseManager);
   }
 
-  uploadImage(body, mime, clientId, loginData) {
-    const connection = this._databaseManager.createConnection();
-
+  async uploadImage(stream, mime, clientId, loginData) {
     // console.log(body);
     // const buffer = Buffer.from(body, 'base64');
-    // console.log(buffer);
-    // const content = buffer.toString('base64');
+    // console.log(buffer);toArray(stream)
+    // console.log(stream);
+    // const streamArr = await toArray(stream);
+    // console.log(streamArr);
+    // const buffers = streamArr.map(part =>
+    //   Buffer.isBuffer(part) ? part : Buffer.from(part)
+    // );
+    // const content = Buffer.concat(buffers);
+    const content = stream.toString('base64');
+
+    const connection = this._databaseManager.createConnection();
+
+    // const content = await new Promise((resolve, reject) =>
+    //   fs.readFile(
+    //     path,
+    //     {
+    //       encoding: 'base64'
+    //     },
+    //     (err, data) => {
+    //       if (err) {
+    //         reject(err);
+    //       } else {
+    //         resolve(data);
+    //       }
+    //     }
+    //   )
+    // );
 
     // console.log(Object.keys(body));
     // const content = body.toString(); //Buffer.from(body).toString('base64');
     // console.log(Buffer.from(body).toString('base64'));
-    const content = body.toString('base64');
-    console.log(content);
+    // const buffer = Buffer.from(body);
+    // console.log(Buffer.from(body).length);
+    // const type = fileType();
+    // console.log(type);
+    // const mime = type.mime;
+    // const content = buffer.toString('base64');
 
     const uploadImagePromise = this._ImageRepository.upload(
       content,

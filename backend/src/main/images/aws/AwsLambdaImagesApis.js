@@ -1,4 +1,5 @@
 const decodeJwt = require('../../utils/jwt').decodeJwt;
+const busboyParse = require('../busboyParse');
 
 class AwsLambdaImageApis {
   constructor(
@@ -15,12 +16,15 @@ class AwsLambdaImageApis {
 
   upload(event, context, callback) {
     let loginData = decodeJwt(event);
-    this.uploadImageService
-      .uploadImage(
-        event.body,
-        event.headers['content-type'] || event.headers['Content-Type'],
-        event.pathParameters.clientId,
-        loginData
+
+    busboyParse(event)
+      .then(result =>
+        this.uploadImageService.uploadImage(
+          result.stream,
+          result.contentType,
+          event.pathParameters.clientId,
+          loginData
+        )
       )
       .then(result => callback(null, result || {}))
       .catch(result => callback(result));

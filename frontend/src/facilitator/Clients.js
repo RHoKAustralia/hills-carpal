@@ -53,16 +53,12 @@ class Clients extends Component {
     // );
 
     axiosInstance
-      .post(
-        `/clients/${this.state.currentClient.id}/images`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        },
-        formData
-      )
+      .post(`/clients/${this.state.currentClient.id}/images`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then(res => {
         this.setState({ clients: res.data });
       });
@@ -308,10 +304,9 @@ class Clients extends Component {
                   />
                 </div>
 
-                
                 <div className="form-group">
                   <Dropzone
-                    accept="image/jpeg, image/png"
+                    // accept="image/jpeg, image/png"
                     onDrop={this.onDrop.bind(this)}
                   >
                     {({ getRootProps, getInputProps }) => (
