@@ -4,28 +4,25 @@ const ImageRepository = require('./ImageRepository');
 const ImageMapper = require('./ImageMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
-class ListImagesService {
+class ShowImageContentService {
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._imageRepository = new ImageRepository(databaseManager);
   }
 
-  listImages(clientId, loginData) {
+  getImage(imageId, loginData) {
     const connection = this._databaseManager.createConnection();
 
-    const listImagesPromise = this._listImages(
-      clientId,
-      loginData,
-      connection
-    ).then(images => images.map(ImageMapper.entityToDto));
+    const showImageContentPromise = this._imageRepository
+      .get(connection, imageId)
+      .then(images => images[0]);
     const closeConnection = () =>
       this._databaseManager.closeConnection(connection);
-    return PromiseUtils.promiseFinally(listImagesPromise, closeConnection);
-  }
-
-  _listImages(clientId, loginData, connection) {
-    return this._imageRepository.list(connection, clientId);
+    return PromiseUtils.promiseFinally(
+      showImageContentPromise,
+      closeConnection
+    );
   }
 }
 
-module.exports = ListImagesService;
+module.exports = ShowImageContentService;
