@@ -167,6 +167,29 @@ functions:
               paths:
                 id: true
 
+  listImages:
+    handler: src/main/images/awsLambdaImagesApis.list
+    events:
+      - http:
+          path: clients/{clientId}/images
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                clientId: true
+
+  showImageContent:
+    handler: src/main/images/awsLambdaImagesApis.show
+    events:
+      - http:
+          path: images/{imageId}
+          method: get
+          request:
+            parameters:
+              paths:
+                imageId: true
+
   survey:
     handler: src/main/survey/survey.survey
     events:

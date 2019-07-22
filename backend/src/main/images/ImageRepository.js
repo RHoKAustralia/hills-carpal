@@ -40,6 +40,26 @@ class ClientRepository {
     }
   }
 
+  list(connection, clientId) {
+    const escape = data => connection.escape(data);
+
+    let query = `SELECT * FROM ${this._dbName}.images AS images 
+      INNER JOIN ${this._dbName}.client_images AS client_images
+      ON images.id = client_images.images_id
+      WHERE client_images.clients_id = ${escape(clientId)}`;
+    console.log(query);
+    return this._databaseManager.query(query, connection);
+  }
+
+  get(connection, imageId) {
+    const escape = data => connection.escape(data);
+
+    let query = `SELECT * FROM ${this._dbName}.images AS images
+      WHERE images.id = ${escape(imageId)}`;
+    console.log(query);
+    return this._databaseManager.query(query, connection);
+  }
+
   // update(id, client, connection) {
   //   if (!id) {
   //     throw new Error('No id specified when updating client.');
@@ -51,14 +71,6 @@ class ClientRepository {
   //                                 id = ${id}`;
   //   console.log(query);
 
-  //   return this._databaseManager.query(query, connection);
-  // }
-
-  // list(connection) {
-  //   const escape = (data) => connection.escape(data);
-
-  //   let query = `SELECT * FROM ${this._dbName}.clients ORDER BY name ASC;`;
-  //   console.log(query);
   //   return this._databaseManager.query(query, connection);
   // }
 
