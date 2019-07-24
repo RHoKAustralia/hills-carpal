@@ -2,3 +2,9 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.client-image {
+  max-height: 100px;
+  max-width: 100px;
+  display: inline-block;
+}

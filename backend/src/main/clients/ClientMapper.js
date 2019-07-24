@@ -15,7 +15,8 @@ class ClientMapper {
       carType: client.carType,
       hasMps: !!client.hasMps, // force bool
       phoneNumber: client.phoneNumber,
-      id: client.id
+      id: client.id,
+      images: client.images
     };
   }
 
