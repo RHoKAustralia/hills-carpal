@@ -116,8 +116,19 @@ class Clients extends Component {
     }
   }
 
-  setCurrent(id) {
+  async setCurrent(id) {
     this.setState({ currentClient: this.findClient(this.state.clients, id) });
+    this.setState({ clientImages: null });
+
+    const images = await axiosInstance({
+      url: `/clients/${id}/images`,
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('id_token')}`
+      }
+    });
+
+    this.setState({ clientImages: images.data });
   }
 
   findClient(clients, id) {
@@ -305,18 +316,34 @@ class Clients extends Component {
                 </div>
 
                 <div className="form-group">
-                  <Dropzone
-                    // accept="image/jpeg, image/png"
-                    onDrop={this.onDrop.bind(this)}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                      <div {...getRootProps()}>
-                        <input {...getInputProps()} />
-                        Try dropping some files here, or click to select files
-                        to upload.
+                  {!isNaN(this.state.currentClient.id) ? (
+                    <React.Fragment>
+                      <div>
+                        {this.state.clientImages &&
+                          this.state.clientImages.map(image => (
+                            <img
+                              className="client-image"
+                              key={image.id}
+                              src={process.env.REACT_APP_API_URL + image.url}
+                            />
+                          ))}
                       </div>
-                    )}
-                  </Dropzone>
+                      <Dropzone
+                        accept="image/jpeg, image/png"
+                        onDrop={this.onDrop.bind(this)}
+                      >
+                        {({ getRootProps, getInputProps }) => (
+                          <div {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            Try dropping some files here, or click to select
+                            files to upload.
+                          </div>
+                        )}
+                      </Dropzone>
+                    </React.Fragment>
+                  ) : (
+                    <div>Save the client to add images</div>
+                  )}
                 </div>
 
                 <div className="btn-group mr-2" role="group">
