@@ -39,17 +39,15 @@ let wrappedCallback = callback => {
   };
 };
 
-const jsonFns = [
-  'list',
-  'upload'
-  // 'update',
-  // 'delete',
-].reduce((acc, current) => {
-  acc[current] = (event, context, callback) => {
-    return images[current](event, context, wrappedCallback(callback));
-  };
-  return acc;
-}, {});
+const jsonFns = ['list', 'upload', 'delete', 'update'].reduce(
+  (acc, current) => {
+    acc[current] = (event, context, callback) => {
+      return images[current](event, context, wrappedCallback(callback));
+    };
+    return acc;
+  },
+  {}
+);
 
 module.exports = {
   ...jsonFns,

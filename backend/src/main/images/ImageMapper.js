@@ -7,7 +7,15 @@ class ClientMapper {
       id: image.id,
       caption: image.caption,
       url: `/images/${image.id}`,
-      mimeType: image.mime_type,
+      mimeType: image.mime_type
+    };
+  }
+
+  static dtoToEntity(dto) {
+    return {
+      id: dto.id,
+      caption: dto.caption,
+      mime_type: dto.mimeType
     };
   }
 }

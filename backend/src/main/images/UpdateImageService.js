@@ -21,10 +21,10 @@ class UpdateImageService {
   }
 
   _updateImage(id, imageObject, loginData, connection) {
-    let validationError = this._validate(imageObject);
-    if (validationError) {
-      return Promise.reject(validationError);
-    }
+    // let validationError = this._validate(imageObject);
+    // if (validationError) {
+    //   return Promise.reject(validationError);
+    // }
 
     let imageEntity = ImageMapper.dtoToEntity(imageObject);
     return this._imageRepository.update(id, imageEntity, connection);

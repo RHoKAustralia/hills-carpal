@@ -190,6 +190,30 @@ functions:
               paths:
                 imageId: true
 
+  deleteImage:
+    handler: src/main/images/awsLambdaImagesApis.delete
+    events:
+      - http:
+          path: images/{id}
+          method: delete
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
+  updateImage:
+    handler: src/main/images/awsLambdaImagesApis.update
+    events:
+      - http:
+          path: images/{id}
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
   survey:
     handler: src/main/survey/survey.survey
     events:
