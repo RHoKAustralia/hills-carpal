@@ -145,9 +145,9 @@ class Clients extends Component {
     });
   }
 
-  onNewImage = image => {
+  onImagesChanged = images => {
     this.setState(state => ({
-      clientImages: [...state.clientImages, image]
+      clientImages: images
     }));
   };
 
@@ -293,14 +293,15 @@ class Clients extends Component {
                 </div>
 
                 <div className="form-group">
+                  <label>Images</label>
                   {!isNaN(this.state.currentClient.id) ? (
                     <ClientImages
                       clientId={this.state.currentClient.id}
                       images={this.state.clientImages}
-                      onNewImage={this.onNewImage}
+                      onChange={this.onImagesChanged}
                     />
                   ) : (
-                    <div>Save the client to add images</div>
+                    <div>Hit "Save" to add images</div>
                   )}
                 </div>
 
@@ -308,9 +309,8 @@ class Clients extends Component {
                   <button className="btn btn-primary" type="submit">
                     Save
                   </button>
-                </div>
-                {!isNaN(this.state.currentClient.id) && (
-                  <div className="btn-group mr-2" role="group">
+
+                  {!isNaN(this.state.currentClient.id) && (
                     <button
                       className="btn btn-danger"
                       type="button"
@@ -318,8 +318,8 @@ class Clients extends Component {
                     >
                       Delete
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </form>
             </div>
           </div>

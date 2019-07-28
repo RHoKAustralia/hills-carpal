@@ -60,24 +60,24 @@ class AwsLambdaImageApis {
       .catch(result => callback(result));
   }
 
-  // update(event, context, callback) {
-  //   const loginData = decodeJwt(event);
-  //   const image = JSON.parse(event.body);
-  //   const id = event.pathParameters.id;
-  //   this.updateImageService
-  //     .updateImage(id, image, loginData)
-  //     .then(result => callback(null, result || {}))
-  //     .catch(result => callback(result));
-  // }
+  update(event, context, callback) {
+    const loginData = decodeJwt(event);
+    const image = JSON.parse(event.body);
+    const id = event.pathParameters.id;
+    this.updateImageService
+      .updateImage(id, image, loginData)
+      .then(result => callback(null, result || {}))
+      .catch(result => callback(result));
+  }
 
-  // delete(event, context, callback) {
-  //   let loginData = decodeJwt(event);
-  //   const id = event.pathParameters.id;
-  //   this.deleteImageService
-  //     .deleteImage(id, loginData)
-  //     .then(result => callback(null, result || {}))
-  //     .catch(result => callback(result));
-  // }
+  delete(event, context, callback) {
+    let loginData = decodeJwt(event);
+    const id = event.pathParameters.id;
+    this.deleteImageService
+      .deleteImage(id, loginData)
+      .then(result => callback(null, result || {}))
+      .catch(result => callback(result));
+  }
 }
 
 module.exports = AwsLambdaImageApis;

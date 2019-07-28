@@ -70,29 +70,31 @@ class ImageRepository {
     return this._databaseManager.query(query, connection);
   }
 
-  // update(id, client, connection) {
-  //   if (!id) {
-  //     throw new Error('No id specified when updating client.');
-  //   }
-  //   const escape = (data) => connection.escape(data);
-  //   let query = `UPDATE ${this._dbName}.clients SET name = ${escape(client.name)},
-  //                                 description = ${escape(client.description)}
-  //                               WHERE
-  //                                 id = ${id}`;
-  //   console.log(query);
+  update(id, image, connection) {
+    if (!id) {
+      throw new Error('No id specified when updating client.');
+    }
+    const escape = data => connection.escape(data);
+    let query = `UPDATE ${this._dbName}.images SET mime_type = ${escape(
+      image.mime_type
+    )},
+                                  caption = ${escape(image.caption)}
+                                WHERE
+                                  id = ${escape(id)}`;
+    console.log(query);
 
-  //   return this._databaseManager.query(query, connection);
-  // }
+    return this._databaseManager.query(query, connection);
+  }
 
-  // delete(id, connection) {
-  //   if (!id) {
-  //     throw new Error('No id specified when updating client.');
-  //   }
-  //   const escape = (data) => connection.escape(data);
-  //   let query = `DELETE FROM ${this._dbName}.clients WHERE id = ${id}`;
+  delete(id, connection) {
+    if (!id) {
+      throw new Error('No id specified when deleting image.');
+    }
+    const escape = data => connection.escape(data);
+    let query = `DELETE FROM ${this._dbName}.images WHERE id = ${id}`;
 
-  //   return this._databaseManager.query(query, connection);
-  // }
+    return this._databaseManager.query(query, connection);
+  }
 }
 
 module.exports = ImageRepository;
