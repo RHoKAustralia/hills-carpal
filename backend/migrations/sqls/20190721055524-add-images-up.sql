@@ -4,7 +4,7 @@ CREATE TABLE `images` (
   `content` longtext NOT NULL,
   `caption` text,
   PRIMARY KEY (`id`)
-)
+);
 
 CREATE TABLE `client_images` (
   `images_id` int(11) DEFAULT NULL,

@@ -12,7 +12,7 @@ const PromiseUtils = require('../utils/PromiseUtils');
 class UploadImageService {
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
-    this._ImageRepository = new ImageRepository(databaseManager);
+    this._imageRepository = new ImageRepository(databaseManager);
   }
 
   async uploadImage(stream, mime, clientId, loginData) {
@@ -56,12 +56,12 @@ class UploadImageService {
     // const mime = type.mime;
     // const content = buffer.toString('base64');
 
-    const uploadImagePromise = this._ImageRepository.upload(
-      content,
-      mime,
-      clientId,
-      connection
-    );
+    const uploadImagePromise = this._imageRepository
+      .upload(content, mime, clientId, connection)
+      .then(image => {
+        console.log(image);
+        return ImageMapper.entityToDto(image);
+      });
     const closeConnection = () =>
       this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(uploadImagePromise, closeConnection);
