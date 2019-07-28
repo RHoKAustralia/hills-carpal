@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axiosInstance from '../auth/api';
 import history from '../history';
 import LocationInput from '../components/location-input';
-import Dropzone from 'react-dropzone';
+import ClientImages from './ClientImages';
 
 const defaultClient = {
   id: NaN,
@@ -33,35 +33,6 @@ class Clients extends Component {
       currentClient: defaultClient,
       clients: []
     };
-  }
-
-  onDrop(accepted, rejected, event) {
-    // this.props.cloudinaryUploadFile(accepted[0]).then(cloudFile => {
-    //   alert('done');
-    // });
-
-    const file = accepted[0];
-    const formData = new FormData();
-    formData.append(file.name, file);
-
-    // return this.handleResult(
-    //   file.name,
-    //   this.props.authFetch(`${functionRoot()}/cloudinaryUpload/upload`, {
-    //     method: 'POST',
-    //     body: formData
-    //   })
-    // );
-
-    axiosInstance
-      .post(`/clients/${this.state.currentClient.id}/images`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then(res => {
-        this.setState({ clients: res.data });
-      });
   }
 
   componentDidMount() {
@@ -173,6 +144,12 @@ class Clients extends Component {
       }
     });
   }
+
+  onNewImage = image => {
+    this.setState(state => ({
+      clientImages: [...state.clientImages, image]
+    }));
+  };
 
   render() {
     if (this.props.match.params.id && this.state.id === undefined) {
@@ -317,30 +294,11 @@ class Clients extends Component {
 
                 <div className="form-group">
                   {!isNaN(this.state.currentClient.id) ? (
-                    <React.Fragment>
-                      <div>
-                        {this.state.clientImages &&
-                          this.state.clientImages.map(image => (
-                            <img
-                              className="client-image"
-                              key={image.id}
-                              src={process.env.REACT_APP_API_URL + image.url}
-                            />
-                          ))}
-                      </div>
-                      <Dropzone
-                        accept="image/jpeg, image/png"
-                        onDrop={this.onDrop.bind(this)}
-                      >
-                        {({ getRootProps, getInputProps }) => (
-                          <div {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            Try dropping some files here, or click to select
-                            files to upload.
-                          </div>
-                        )}
-                      </Dropzone>
-                    </React.Fragment>
+                    <ClientImages
+                      clientId={this.state.currentClient.id}
+                      images={this.state.clientImages}
+                      onNewImage={this.onNewImage}
+                    />
                   ) : (
                     <div>Save the client to add images</div>
                   )}

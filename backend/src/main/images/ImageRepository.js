@@ -2,7 +2,7 @@
 
 const moment = require('moment');
 
-class ClientRepository {
+class ImageRepository {
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._dbName = this._databaseManager.databaseConfig.database;
@@ -33,6 +33,14 @@ class ClientRepository {
       await this._databaseManager.query(addJoinQuery, connection);
 
       await this._databaseManager.commit(connection);
+
+      return this._databaseManager
+        .query(
+          `SELECT images.id, images.mime_type, images.caption FROM ${this._dbName}.images AS images
+      WHERE images.id = (SELECT LAST_INSERT_ID())`,
+          connection
+        )
+        .then(images => images[0]);
     } catch (e) {
       await this._databaseManager.rollback(connection);
       console.error(e);
@@ -43,7 +51,9 @@ class ClientRepository {
   list(connection, clientId) {
     const escape = data => connection.escape(data);
 
-    let query = `SELECT * FROM ${this._dbName}.images AS images 
+    let query = `SELECT images.id, images.mime_type, images.caption FROM ${
+      this._dbName
+    }.images AS images 
       INNER JOIN ${this._dbName}.client_images AS client_images
       ON images.id = client_images.images_id
       WHERE client_images.clients_id = ${escape(clientId)}`;
@@ -85,4 +95,4 @@ class ClientRepository {
   // }
 }
 
-module.exports = ClientRepository;
+module.exports = ImageRepository;
