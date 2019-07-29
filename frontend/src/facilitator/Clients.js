@@ -4,6 +4,7 @@ import axiosInstance from '../auth/api';
 import history from '../history';
 import LocationInput from '../components/location-input';
 import ClientImages from './ClientImages';
+import './Clients.css';
 
 const defaultClient = {
   id: NaN,
@@ -50,6 +51,10 @@ class Clients extends Component {
       })
       .then(res => {
         this.setState({ clients: res.data });
+
+        if (res.data.length > 0) {
+          this.setCurrent(res.data[0].id);
+        }
       });
   }
 
@@ -159,168 +164,177 @@ class Clients extends Component {
     return (
       <div className="container">
         <h1>Clients</h1>
-        <Link className="btn btn-secondary" to={'/facilitator'}>
-          Back
-        </Link>
+
+        <div className="btn-group">
+          <Link className="btn btn-secondary" to={'/facilitator'}>
+            Back
+          </Link>
+          <button className="btn btn-primary" onClick={() => this.newClient()}>
+            Create Client
+          </button>
+        </div>
+
         <div className="container">
           <div className="row">
-            <ul className="nav flex-column col-3">
-              <li className="nav-item">
-                <a className="nav-link active" onClick={() => this.newClient()}>
-                  Create Client
-                </a>
-              </li>
-              {this.state.clients.map(c => {
-                return (
-                  <li key={c.id} className="nav-item">
-                    <a
-                      className="nav-link"
-                      onClick={() => this.setCurrent(c.id)}
-                    >
-                      {c.name}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="col-3">
+              <ul className="nav nav-fill nav-pills client-nav flex-column">
+                {this.state.clients.map(c => {
+                  return (
+                    <li key={c.id} className={`nav-item`}>
+                      <a
+                        className={`nav-link ${
+                          c.id === this.state.currentClient.id ? 'active' : ''
+                        }`}
+                        onClick={() => this.setCurrent(c.id)}
+                      >
+                        {c.name}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
             <div className="col-9">
-              <form onSubmit={this.saveClient.bind(this)}>
-                <div className="form-group">
-                  <label>Name</label>
-                  <input
-                    value={this.state.currentClient.name}
-                    required
-                    onChange={e => {
-                      let curr = { ...this.state.currentClient };
-                      curr.name = e.currentTarget.value;
-                      this.setState({ currentClient: curr });
-                    }}
-                    type="text"
-                    name="client"
-                    className="form-control"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Phone Number</label>
-                  <input
-                    value={this.state.currentClient.phoneNumber}
-                    required
-                    onChange={e => {
-                      let curr = { ...this.state.currentClient };
-                      curr.phoneNumber = e.currentTarget.value;
-                      this.setState({ currentClient: curr });
-                    }}
-                    type="text"
-                    name="client"
-                    className="form-control"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Home Address</label>
-                  <LocationInput
-                    required
-                    value={this.state.currentClient.locationHome}
-                    onChange={value => {
-                      let curr = { ...this.state.currentClient };
-                      curr.locationHome = value;
-                      this.setState({ currentClient: curr });
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Driver Gender</label>
-                  <select
-                    required
-                    onChange={e => {
-                      let curr = { ...this.state.currentClient };
-                      curr.driverGender = e.currentTarget.value;
-                      this.setState({ currentClient: curr });
-                    }}
-                    value={this.state.currentClient.driverGender}
-                    className="custom-select"
-                  >
-                    <option value="any">Any</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Car Type</label>
-                  <select
-                    required
-                    onChange={e => {
-                      let curr = { ...this.state.currentClient };
-                      curr.carType = e.currentTarget.value;
-                      this.setState({ currentClient: curr });
-                    }}
-                    value={this.state.currentClient.carType}
-                    className="custom-select"
-                  >
-                    <option>Car Type</option>
-                    <option value="All">All</option>
-                    <option value="noSUV">No SUV</option>
-                  </select>
-                </div>
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="mps"
-                    checked={this.state.currentClient.hasMps}
-                    onChange={e => {
-                      let curr = { ...this.state.currentClient };
-                      curr.hasMps = e.currentTarget.checked;
-                      this.setState({ currentClient: curr });
-                    }}
-                  />
-                  <label className="form-check-label" htmlFor="mps">
-                    Has Mobility Parking Sticker
-                  </label>
-                </div>
-                <div className="form-group">
-                  <label>Description</label>
-                  <textarea
-                    rows={5}
-                    maxLength={1024}
-                    onChange={e => {
-                      let curr = { ...this.state.currentClient };
-                      curr.description = e.currentTarget.value;
-                      this.setState({ currentClient: curr });
-                    }}
-                    className="form-control"
-                    value={this.state.currentClient.description}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Images</label>
-                  {!isNaN(this.state.currentClient.id) ? (
-                    <ClientImages
-                      clientId={this.state.currentClient.id}
-                      images={this.state.clientImages}
-                      onChange={this.onImagesChanged}
+              <section className="client-form-section">
+                <form onSubmit={this.saveClient.bind(this)}>
+                  <h5>Details</h5>
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input
+                      value={this.state.currentClient.name}
+                      required
+                      onChange={e => {
+                        let curr = { ...this.state.currentClient };
+                        curr.name = e.currentTarget.value;
+                        this.setState({ currentClient: curr });
+                      }}
+                      type="text"
+                      name="client"
+                      className="form-control"
                     />
-                  ) : (
-                    <div>Hit "Save" to add images</div>
-                  )}
-                </div>
-
-                <div className="btn-group mr-2" role="group">
-                  <button className="btn btn-primary" type="submit">
-                    Save
-                  </button>
-
-                  {!isNaN(this.state.currentClient.id) && (
-                    <button
-                      className="btn btn-danger"
-                      type="button"
-                      onClick={() => this.deleteCurrent()}
+                  </div>
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input
+                      value={this.state.currentClient.phoneNumber}
+                      required
+                      onChange={e => {
+                        let curr = { ...this.state.currentClient };
+                        curr.phoneNumber = e.currentTarget.value;
+                        this.setState({ currentClient: curr });
+                      }}
+                      type="text"
+                      name="client"
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Home Address</label>
+                    <LocationInput
+                      required
+                      value={this.state.currentClient.locationHome}
+                      onChange={value => {
+                        let curr = { ...this.state.currentClient };
+                        curr.locationHome = value;
+                        this.setState({ currentClient: curr });
+                      }}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Driver Gender</label>
+                    <select
+                      required
+                      onChange={e => {
+                        let curr = { ...this.state.currentClient };
+                        curr.driverGender = e.currentTarget.value;
+                        this.setState({ currentClient: curr });
+                      }}
+                      value={this.state.currentClient.driverGender}
+                      className="custom-select"
                     >
-                      Delete
+                      <option value="any">Any</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Car Type</label>
+                    <select
+                      required
+                      onChange={e => {
+                        let curr = { ...this.state.currentClient };
+                        curr.carType = e.currentTarget.value;
+                        this.setState({ currentClient: curr });
+                      }}
+                      value={this.state.currentClient.carType}
+                      className="custom-select"
+                    >
+                      <option>Car Type</option>
+                      <option value="All">All</option>
+                      <option value="noSUV">No SUV</option>
+                    </select>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="mps"
+                      checked={this.state.currentClient.hasMps}
+                      onChange={e => {
+                        let curr = { ...this.state.currentClient };
+                        curr.hasMps = e.currentTarget.checked;
+                        this.setState({ currentClient: curr });
+                      }}
+                    />
+                    <label className="form-check-label" htmlFor="mps">
+                      Has Mobility Parking Sticker
+                    </label>
+                  </div>
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      rows={5}
+                      maxLength={1024}
+                      onChange={e => {
+                        let curr = { ...this.state.currentClient };
+                        curr.description = e.currentTarget.value;
+                        this.setState({ currentClient: curr });
+                      }}
+                      className="form-control"
+                      value={this.state.currentClient.description}
+                    />
+                  </div>
+
+                  <div className="btn-group mr-2" role="group">
+                    <button className="btn btn-primary" type="submit">
+                      Save
                     </button>
-                  )}
-                </div>
-              </form>
+
+                    {!isNaN(this.state.currentClient.id) && (
+                      <button
+                        className="btn btn-danger"
+                        type="button"
+                        onClick={() => this.deleteCurrent()}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </section>
+
+              <section className="client-form-section">
+                <h5>Images</h5>
+                {!isNaN(this.state.currentClient.id) ? (
+                  <ClientImages
+                    clientId={this.state.currentClient.id}
+                    images={this.state.clientImages}
+                    onChange={this.onImagesChanged}
+                  />
+                ) : (
+                  <div>Hit "Save" to add images</div>
+                )}
+              </section>
             </div>
           </div>
         </div>
