@@ -165,7 +165,7 @@ functions:
           request:
             parameters:
               paths:
-                id: true
+                clientId: true
 
   listImages:
     handler: src/main/images/awsLambdaImagesApis.list
