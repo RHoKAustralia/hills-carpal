@@ -20,7 +20,7 @@ class AwsLambdaImageApis {
     let loginData = decodeJwt(event);
     let queryParams = event.queryStringParameters || {};
     this.listImagesService
-      .listImages(event.pathParameters.clientId, loginData)
+      .listImages(event.pathParameters.id, loginData)
       .then(result => callback(null, result || []))
       .catch(result => callback(result));
   }
@@ -33,7 +33,7 @@ class AwsLambdaImageApis {
         this.uploadImageService.uploadImage(
           result.stream,
           result.contentType,
-          event.pathParameters.clientId,
+          event.pathParameters.id,
           loginData
         )
       )
