@@ -183,12 +183,12 @@ functions:
     handler: src/main/images/awsLambdaImagesApis.show
     events:
       - http:
-          path: images/{imageId}
+          path: images/{id}
           method: get
           request:
             parameters:
               paths:
-                imageId: true
+                id: true
 
   deleteImage:
     handler: src/main/images/awsLambdaImagesApis.delete
