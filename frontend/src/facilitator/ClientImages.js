@@ -45,6 +45,7 @@ function Image({ image, deleteImage, onSave }) {
         className="client-image"
         key={image.id}
         src={process.env.REACT_APP_API_URL + image.url}
+        alt={caption}
       />
       <textarea
         rows={2}

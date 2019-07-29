@@ -7,7 +7,6 @@ const ImageMapper = require('./ImageMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
 
 class UpdateImageService {
-
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._imageRepository = new ImageRepository(databaseManager);
@@ -16,7 +15,8 @@ class UpdateImageService {
   updateImage(id, image, loginData) {
     const connection = this._databaseManager.createConnection();
     let updatePromise = this._updateImage(id, image, loginData, connection);
-    const closeConnection = () => this._databaseManager.closeConnection(connection);
+    const closeConnection = () =>
+      this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
   }
 
@@ -38,7 +38,7 @@ class UpdateImageService {
         headers: {
           'Content-Type': 'text/plain'
         },
-        body: JSON.stringify({"error": validationResult.errors})
+        body: JSON.stringify({ error: validationResult.errors })
       };
     }
   }
