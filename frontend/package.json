@@ -22,7 +22,7 @@
     "react": "^16.8.6",
     "react-async": "^7.0.5",
     "react-datepicker": "^1.5.0",
-    "react-dom": "^16.4.0",
+    "react-dom": "^16.8.6",
     "react-dropzone": "^10.1.5",
     "react-leaflet": "^1.9.1",
     "react-router-dom": "^4.2.2",
