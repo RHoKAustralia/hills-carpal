@@ -159,7 +159,7 @@ functions:
     handler: src/main/images/awsLambdaImagesApis.upload
     events:
       - http:
-          path: clients/{clientId}/images
+          path: clients/{id}/images
           method: post
           cors: true
           request:
@@ -171,7 +171,7 @@ functions:
     handler: src/main/images/awsLambdaImagesApis.list
     events:
       - http:
-          path: clients/{clientId}/images
+          path: clients/{id}/images
           method: get
           cors: true
           request:
