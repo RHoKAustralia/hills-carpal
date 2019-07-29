@@ -53,13 +53,23 @@ function Image({ image, deleteImage, onSave }) {
         value={caption}
         onChange={onCaptionChange}
       ></textarea>
-      <button
-        disabled={(image.caption || '') === caption}
-        onClick={() => saveCaption(image)}
-      >
-        {saving ? 'Saving...' : 'Save Caption'}
-      </button>
-      <button onClick={() => deleteImage(image.id)}>Delete</button>
+      <div className="btn-group mr-2" role="group">
+        <button
+          className="btn btn-primary"
+          disabled={(image.caption || '') === caption}
+          onClick={() => saveCaption(image)}
+        >
+          {saving ? 'Saving...' : 'Save Caption'}
+        </button>
+
+        <button
+          className="btn btn-danger"
+          type="button"
+          onClick={() => deleteImage(image.id)}
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }
