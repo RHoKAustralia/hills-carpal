@@ -28,6 +28,7 @@ functions:
   auth:
     handler: src/main/auth/auth.auth
     cors: true
+
   currentTime:
     handler: src/main/utils/ping.endpoint
     events:
@@ -185,7 +186,7 @@ functions:
       - http:
           path: images/{id}
           method: get
-          # contentHandling: CONVERT_TO_BINARY
+          contentHandling: CONVERT_TO_BINARY
           request:
             parameters:
               paths:
@@ -222,6 +223,7 @@ functions:
           path: survey/{proxy+}
           method: get
           cors: true
+
       - http:
           path: survey/{proxy+}
           method: post
@@ -258,6 +260,7 @@ resources:
 plugins:
   - serverless-offline
   - serverless-apigw-binary
+  - serverless-apigwy-binary
 
 custom:
   serverless-offline:
