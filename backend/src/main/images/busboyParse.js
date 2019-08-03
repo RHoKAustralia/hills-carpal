@@ -32,7 +32,7 @@ const parser = event => {
 
     busboy.on('finish', () => resolve(result));
 
-    busboy.write(event.body, event.isBase64Encoded ? 'base64' : 'binary');
+    busboy.write(event.body, 'binary'); //event.isBase64Encoded ? 'base64' : 'binary');
     busboy.end();
   });
 };
