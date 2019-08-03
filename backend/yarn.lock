@@ -603,7 +603,7 @@ bl@^1.0.0:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
 
-bluebird@^3.1.1, bluebird@^3.2.1, bluebird@^3.5.5:
+bluebird@^3.1.1, bluebird@^3.2.1, bluebird@^3.5.0, bluebird@^3.5.5:
   version "3.5.5"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
   integrity sha512-5am6HnnfN+urzt4yfg7IgTbotDjIT/u8AJpEt0sIU9FtXfVeezXAPKswrG+xKUCOYAINpSdgZVDU6QFh+cuH3w==
@@ -3255,6 +3255,13 @@ serverless-apigw-binary@^0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/serverless-apigw-binary/-/serverless-apigw-binary-0.4.4.tgz#f3cffd8365322a2a1d8bde5fd94b306b7a64d4fb"
   integrity sha512-2DJmQTzeXa/+8u9ekReqf7j4gQjBtzQE4MK9nlOnEz4F7MVWCQXYlLPmf2TXSoxxJZzlWvIiNzCTq6vAT9F5FQ==
+
+serverless-apigwy-binary@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/serverless-apigwy-binary/-/serverless-apigwy-binary-1.0.0.tgz#eb403a42305801816eefd61c8956efb7fab85f8a"
+  integrity sha512-nr2fDkGRk6/PioE5l6Dk5anYmrN4pdjoT4eHxr+RGIn+ZRJcYDlNBB6ytVRvSAL2txkkNd44HA/hKSGbHQw96Q==
+  dependencies:
+    bluebird "^3.5.0"
 
 serverless-offline@^5.5.0:
   version "5.5.0"

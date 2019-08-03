@@ -185,6 +185,7 @@ functions:
       - http:
           path: images/{id}
           method: get
+          contentHandling: CONVERT_TO_BINARY
           request:
             parameters:
               paths:
