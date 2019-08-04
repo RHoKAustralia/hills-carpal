@@ -11,6 +11,13 @@ class ListClientsService {
   }
 
   listClients(query, loginData) {
+    const isAdmin = this._hasRole('admin', loginData);
+    const isFacilitator = this._hasRole('facilitator', loginData);
+    if (!isAdmin && !isFacilitator) {
+      console.log('WARNING: unauthorised attempt to create client', loginData);
+      return Promise.reject(new Error('Not authorised'));
+    }
+
     const connection = this._databaseManager.createConnection();
 
     const listClientsPromise = this._listClients(
@@ -25,6 +32,10 @@ class ListClientsService {
 
   _listClients(query, loginData, connection) {
     return this._clientRepository.list(connection);
+  }
+
+  _hasRole(role, loginData) {
+    return loginData && loginData.roles.indexOf(role) >= 0;
   }
 }
 

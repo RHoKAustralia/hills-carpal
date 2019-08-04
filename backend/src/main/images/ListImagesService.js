@@ -11,6 +11,14 @@ class ListImagesService {
   }
 
   listImages(clientId, loginData) {
+    const isAdmin = this._hasRole('admin', loginData);
+    const isFacilitator = this._hasRole('facilitator', loginData);
+    const isDriver = this._hasRole('driver', loginData);
+    if (!isAdmin && !isFacilitator && !isDriver) {
+      console.log('WARNING: unauthorised attempt to create client', loginData);
+      return Promise.reject(new Error('Not authorised'));
+    }
+
     const connection = this._databaseManager.createConnection();
 
     const listImagesPromise = this._listImages(
@@ -25,6 +33,10 @@ class ListImagesService {
 
   _listImages(clientId, loginData, connection) {
     return this._imageRepository.list(connection, clientId);
+  }
+
+  _hasRole(role, loginData) {
+    return loginData && loginData.roles.indexOf(role) >= 0;
   }
 }
 
