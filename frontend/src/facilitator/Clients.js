@@ -96,7 +96,7 @@ class Clients extends Component {
           let clients = this.state.clients;
           clients.push(client);
           clients.sort(clientSort);
-          this.setState({ clients: clients, currentClient: defaultClient });
+          this.setState({ clients: clients, currentClient: client });
         })
         .catch(e => {
           console.error(e);

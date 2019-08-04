@@ -16,7 +16,7 @@ class UpdateImageService {
     const isAdmin = this._hasRole('admin', loginData);
     const isFacilitator = this._hasRole('facilitator', loginData);
     if (!isAdmin && !isFacilitator) {
-      console.log('WARNING: unauthorised attempt to create client', loginData);
+      console.log('WARNING: unauthorised attempt to update image', loginData);
       return Promise.reject(new Error('Not authorised'));
     }
 

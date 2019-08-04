@@ -14,8 +14,9 @@ class ShowImageContentService {
     const isAdmin = this._hasRole('admin', loginData);
     const isFacilitator = this._hasRole('facilitator', loginData);
     const isDriver = this._hasRole('driver', loginData);
+    
     if (!isAdmin && !isFacilitator && !isDriver) {
-      console.log('WARNING: unauthorised attempt to create client', loginData);
+      console.log('WARNING: unauthorised attempt to get image', loginData);
       return Promise.reject(new Error('Not authorised'));
     }
 

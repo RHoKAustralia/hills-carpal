@@ -44,7 +44,11 @@ function Image({ image, deleteImage, onSave }) {
       <img
         className="client-image"
         key={image.id}
-        src={process.env.REACT_APP_API_URL + image.url}
+        src={
+          process.env.REACT_APP_API_URL +
+          image.url +
+          `?access_token=${localStorage.getItem('id_token')}`
+        }
         alt={caption}
       />
       <textarea
