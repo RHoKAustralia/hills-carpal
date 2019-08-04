@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axiosInstance from '../auth/api';
 import history from '../history';
-import DriverTable from './DriverTable';
+import DriverList from './DriverList';
 
 class FindRides extends Component {
   constructor() {
@@ -60,14 +60,14 @@ class FindRides extends Component {
       );
     }
     return (
-      <div className="container-fluid">
+      <React.Fragment>
         <div className="row">
           <div className="col-12 col-sm-6">
             <h4>Your Upcoming Trips</h4>
           </div>
         </div>
-        {this.state.rides && <DriverTable rides={this.state.rides} />}
-      </div>
+        {this.state.rides && <DriverList rides={this.state.rides} />}
+      </React.Fragment>
     );
   }
 }

@@ -153,7 +153,7 @@ class Facilitator extends React.Component {
     }
     const handleRowClick = this.handleRowClick;
     return (
-      <div className="container-fluid">
+      <React.Fragment>
         <div className="row">
           <div className="col-6">
             <h4>Rides</h4>
@@ -190,7 +190,7 @@ class Facilitator extends React.Component {
             )}
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
