@@ -3,7 +3,8 @@ import axiosInstance from '../auth/api';
 import history from '../history';
 import LocationSearch from './LocationSearch';
 import qs from 'qs';
-import DriverTable from './DriverTable';
+// import DriverTable from './DriverTable';
+import DriverList from './DriverList';
 import DriverMap from './DriverMap';
 
 class FindRides extends Component {
@@ -90,7 +91,7 @@ class FindRides extends Component {
   renderPage() {
     if (this.state.page === 'table') {
       return (
-        <DriverTable rides={this.state.rides} history={this.props.history} />
+        <DriverList rides={this.state.rides} history={this.props.history} />
       );
     }
     return (
@@ -154,10 +155,10 @@ class FindRides extends Component {
       );
     }
     return (
-      <div className="container-fluid">
+      <React.Fragment>
         <div className="row">
           <div className="col-12 col-sm-6">
-            <h4>Upcoming Trips</h4>
+            <h4>Available Rides</h4>
           </div>
           {/* <div className="col-12 col-sm-6 text-left text-sm-right">
             <div className="btn-group">
@@ -173,7 +174,7 @@ class FindRides extends Component {
           />
         )}
         {this.state.rides && this.renderPage()}
-      </div>
+      </React.Fragment>
     );
   }
 }

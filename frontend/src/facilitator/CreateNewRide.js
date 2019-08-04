@@ -113,7 +113,7 @@ class CreateNewRide extends Component {
     }
 
     return (
-      <div className="container">
+      <React.Fragment>
         {this.getHeadline()}
         <form onSubmit={this.handleSubmit}>
           <div className="form-group">
@@ -251,7 +251,7 @@ class CreateNewRide extends Component {
             </Link>
           </div>
         </form>
-      </div>
+      </React.Fragment>
     );
   }
 }
