@@ -115,6 +115,10 @@ class Facilitator extends React.Component {
       history.replace('/');
       return false;
     }
+
+    this.setState({
+      loading: true
+    });
     axiosInstance
       .get('/rides?listType=facilitator', {
         headers: {
@@ -122,15 +126,30 @@ class Facilitator extends React.Component {
         }
       })
       .then(res => {
-        this.setState({ drives: res.data });
+        this.setState({ loading: false, drives: res.data });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          loading: false,
+          error: e
+        });
       });
   }
   handleRowClick(row) {
     this.props.history.push('/facilitator/' + row._original.id);
   }
   render() {
-    if (!this.state.drives) {
+    if (this.state.loading) {
       return <img alt="loader" className="loader" src="loader.svg" />;
+    }
+    if (this.state.error) {
+      return (
+        <span>
+          Error: {this.state.error.message}. Please refresh the page to try
+          again.
+        </span>
+      );
     }
     const handleRowClick = this.handleRowClick;
     return (
@@ -156,17 +175,19 @@ class Facilitator extends React.Component {
         </div>
         <div className="row">
           <div className="col-12">
-            <Table
-              getTrProps={function(state, rowInfo, column) {
-                return {
-                  onClick() {
-                    handleRowClick(rowInfo.row);
-                  }
-                };
-              }}
-              data={this.state.drives}
-              columns={getColumns(this)}
-            />
+            {this.state.drives && (
+              <Table
+                getTrProps={function(state, rowInfo, column) {
+                  return {
+                    onClick() {
+                      handleRowClick(rowInfo.row);
+                    }
+                  };
+                }}
+                data={this.state.drives}
+                columns={getColumns(this)}
+              />
+            )}
           </div>
         </div>
       </div>
