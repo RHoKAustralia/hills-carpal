@@ -4,8 +4,8 @@
   "description": "A geographical coordinate",
   "type": "object",
   "properties": {
-    "client": {
-      "type": "string",
+    "clientId": {
+      "type": "number",
       "required": true
     },
     "pickupTimeAndDateInUTC": {

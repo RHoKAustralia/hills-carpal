@@ -7,7 +7,8 @@ class RideMapper {
     return Object.assign(
       {},
       {
-        client: ride.client,
+        clientId: ride.clientId,
+        client: ride.clientName,
         pickupTimeAndDateInUTC: new Date(ride.pickupTimeAndDateInUTC),
         locationFrom: {
           latitude: ride.locationFrom.x,
@@ -50,7 +51,7 @@ class RideMapper {
       return null;
     }
     return {
-      client: `${ride.client}`,
+      clientId: ride.clientId,
       pickupTimeAndDateInUTC: new Date(ride.pickupTimeAndDateInUTC),
       locationFrom: {
         latitude: ride.locationFrom.latitude,

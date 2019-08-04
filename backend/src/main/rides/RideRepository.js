@@ -12,7 +12,7 @@ class RideRepository {
     const escape = data => connection.escape(data);
     const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
     const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
-    let query = `INSERT INTO ${this._dbName}.rides(client,
+    let query = `INSERT INTO ${this._dbName}.rides(clientId,
                                   facilitatorEmail,
                                   pickupTimeAndDateInUTC,
                                   locationFrom,
@@ -32,7 +32,7 @@ class RideRepository {
                                   description) 
                          VALUES 
                                   (${[
-                                    escape(ride.client),
+                                    escape(ride.clientId),
                                     escape(ride.facilitatorId),
                                     escape(
                                       moment(
@@ -68,8 +68,8 @@ class RideRepository {
     const escape = data => connection.escape(data);
     const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
     const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
-    let query = `UPDATE ${this._dbName}.rides SET client = ${escape(
-      ride.client
+    let query = `UPDATE ${this._dbName}.rides SET clientId = ${escape(
+      ride.clientId
     )},
 		facilitatorEmail = ${escape(ride.facilitatorId)},
 		pickupTimeAndDateInUTC = ${escape(
@@ -144,38 +144,43 @@ class RideRepository {
       );
     }
     if (!jsonQuery.includePickupTimeInPast) {
-      where.push('pickupTimeAndDateInUTC >= NOW()');
+      where.push('rides.pickupTimeAndDateInUTC >= NOW()');
     }
     if (jsonQuery.id) {
-      where.push(`id = ${jsonQuery.id}`);
+      where.push(`rides.id = ${jsonQuery.id}`);
     }
     if (jsonQuery.driverGenders && jsonQuery.driverGenders.length) {
       let genders = jsonQuery.driverGenders
-        .map(g => ` driverGender = '${g}'`)
+        .map(g => ` rides.driverGender = '${g}'`)
         .join(' or ');
       where.push(genders.length === 1 ? genders : `(${genders})`);
     }
     if (jsonQuery.driverCars) {
       let carTypes = jsonQuery.driverCars
-        .map(g => ` carType = '${g}'`)
+        .map(g => ` rides.carType = '${g}'`)
         .join(' or ');
       where.push(carTypes.length === 1 ? carTypes : `(${carTypes})`);
     }
     if (jsonQuery.facilitatorId) {
-      where.push(`facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
+      where.push(`rides.facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
     }
     if (jsonQuery.status) {
-      where.push(`status = ${escape(jsonQuery.status)}`);
+      where.push(`rides.status = ${escape(jsonQuery.status)}`);
     }
     if (jsonQuery.driverId) {
       where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
     }
 
-    let leftJoinForDriver = `LEFT JOIN ${this._dbName}.driver_ride dr on dr.ride_id = rides.id`;
+    const leftJoinForDriver = `LEFT JOIN ${this._dbName}.driver_ride dr ON dr.ride_id = rides.id`;
+    const leftJoinForClient = `LEFT JOIN ${this._dbName}.clients clients ON clients.id = rides.clientId`;
 
-    let query = `SELECT * FROM ${this._dbName}.rides ${leftJoinForDriver} ${
+    const query = `SELECT rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.placeNameFrom, rides.postCodeFrom, rides.locationFrom, rides.placeNameTo, rides.postCodeTo, rides.locationTo, rides.description, rides.hasMps, rides.clientId, clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at 
+    FROM ${this._dbName}.rides
+     ${leftJoinForClient} ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
     } ORDER BY pickupTimeAndDateInUTC ASC;`;
+
+    console.log(query);
 
     return this._databaseManager.query(query, connection).then(rides =>
       rides.map(ride => {

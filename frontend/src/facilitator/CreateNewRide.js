@@ -12,7 +12,7 @@ class CreateNewRide extends Component {
   constructor() {
     super();
     this.state = {
-      client: '',
+      clientId: null,
       pickupTimeAndDateInUTC: moment(),
       driverGender: '',
       locationTo: '',
@@ -128,7 +128,7 @@ class CreateNewRide extends Component {
                   locationFrom: client.locationHome,
                   locationTo: client.locationHome,
                   carType: client.carType,
-                  client: client.name,
+                  clientId: client.id,
                   driverGender: client.driverGender,
                   hasMps: client.hasMps
                 });

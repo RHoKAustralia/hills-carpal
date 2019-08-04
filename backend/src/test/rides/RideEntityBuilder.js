@@ -10,7 +10,7 @@ class RideEntityBuilder {
     return {
       carType: 'all',
       hasMps: false,
-      client: `${client}@${RandomUtils.randomString(5)}.com`,
+      clientId: RandomUtils.randomNumber,
       deleted: 0,
       driverGender: (Math.random() * 1000) % 2 ? 'male' : 'female',
       facilitatorId: `${facilitator}@${RandomUtils.randomString(5)}.com`,

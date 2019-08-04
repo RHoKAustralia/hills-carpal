@@ -124,7 +124,7 @@ function modifyRide(ride) {
   return {
     carType: 'suv',
     hasMps: false,
-    client: ride.client,
+    clientId: ride.clientId,
     deleted: 0,
     description: 'wanna surf',
     driverGender: 'male',

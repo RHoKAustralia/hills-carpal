@@ -2,13 +2,16 @@ import React from 'react';
 import axiosInstance from '../auth/api';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import ImageGallery from 'react-image-gallery';
+import 'react-image-gallery/styles/css/image-gallery.css';
+
 import history from '../history';
 
 import DriverMap from './DriverMap';
 
 export default class RideDetail extends React.Component {
   state = {
-    client: ``,
+    clientId: null,
     pickupTimeAndDateInUTC: ``,
     locationFrom: {
       latitude: ``,
@@ -47,6 +50,10 @@ export default class RideDetail extends React.Component {
     }
 
     if (this.props.match.params.rideId) {
+      this.setState({
+        loading: true
+      });
+
       axiosInstance
         .get('/rides/' + this.props.match.params.rideId, {
           headers: {
@@ -66,6 +73,22 @@ export default class RideDetail extends React.Component {
             });
           }
           this.setState(data);
+
+          return axiosInstance.get('/clients/' + data.clientId + '/images', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('id_token')}`
+            }
+          });
+        })
+        .then(res => {
+          this.setState({
+            images: res.data,
+            loading: false
+          });
+        })
+        .catch(e => {
+          this.setState({ error: e, loading: false });
+          console.error(e);
         });
     }
   }
@@ -137,9 +160,31 @@ export default class RideDetail extends React.Component {
     );
   }
 
+  getImages = () => {
+    if (!this.state.images) {
+      return [];
+    }
+    console.log(this.state.images);
+    return this.state.images.map(image => ({
+      original:
+        process.env.REACT_APP_API_URL +
+        image.url +
+        `?access_token=${localStorage.getItem('id_token')}`,
+      description: image.caption
+    }));
+  };
+
   render() {
-    if (this.props.match.params.rideId && this.state.id === undefined) {
+    if (this.state.loading) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
+    }
+
+    if (this.state.error) {
+      return (
+        <span>
+          Error: {this.state.error.message}. Please refresh to try again.
+        </span>
+      );
     }
 
     return (
@@ -149,12 +194,12 @@ export default class RideDetail extends React.Component {
             <h1>{this.state.client} is asking for a ride</h1>
           </div>
           <div className="card-body">
-            <h5 className="card-title">Ride details:</h5>
+            <h5 className="card-title">Ride Details</h5>
             <dl>
               <dt>When?</dt>
               <dd>
                 {moment(this.state.pickupTimeAndDateInUTC).format(
-                  'YYYY-MM-DD @ hh:mm'
+                  'YYYY-MM-DD hh:mma'
                 )}
               </dd>
               <dt>Who?</dt>
@@ -163,12 +208,15 @@ export default class RideDetail extends React.Component {
               <dd>{this.state.locationFrom.placeName}</dd>
               <dt>Drop Address</dt>
               <dd>{this.state.locationTo.placeName}</dd>
-              <dt>Ride details:</dt>
+              <dt>Description</dt>
               <dd>{this.state.description}</dd>
             </dl>
 
             <h5>Directions</h5>
             <DriverMap rides={[this.state]} />
+
+            <h5>Images</h5>
+            <ImageGallery items={this.getImages()} showThumbnails={false} />
           </div>
           <div className="card-footer">
             {!this.state.driver.confirmed

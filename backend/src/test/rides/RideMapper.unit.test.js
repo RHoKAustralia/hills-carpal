@@ -16,7 +16,7 @@ describe('RideMapper', async () => {
     const dto = {
       carType: 'suv',
       hasMps: false,
-      client: RandomUtils.randomEmail(),
+      client: 1,
       deleted: 0,
       description: RandomUtils.randomString(10),
       driverGender: RandomUtils.randomNumber(2) % 2 ? 'male' : 'female',
@@ -43,7 +43,7 @@ describe('RideMapper', async () => {
     const entity = RideMapper.dtoToEntity(dto, facilitatorId);
 
     assert.deepEqual(entity, {
-      client: dto.client,
+      client: 1,
       pickupTimeAndDateInUTC: new Date(dto.pickupTimeAndDateInUTC),
       locationFrom: {
         latitude: dto.locationFrom.latitude,
@@ -78,7 +78,7 @@ describe('RideMapper', async () => {
 
     // then
     assert.deepEqual(dto, {
-      client: entity.client,
+      client: 1,
       pickupTimeAndDateInUTC: new Date(entity.pickupTimeAndDateInUTC),
       locationFrom: {
         latitude: entity.locationFrom.x,

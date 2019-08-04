@@ -173,7 +173,9 @@ class FindRides extends Component {
             onLocationSearch={this.handleSearch}
           />
         )}
-        {this.state.rides && this.renderPage()}
+        {this.state.rides && this.state.rides.length > 0
+          ? this.renderPage()
+          : 'There are no rides available right now - try again later!'}
       </React.Fragment>
     );
   }
