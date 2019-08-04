@@ -119,7 +119,6 @@ class App extends Component {
 
   render() {
     const { isAuthenticated } = this.props.auth;
-
     return (
       <div className="hcp-app">
         <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
