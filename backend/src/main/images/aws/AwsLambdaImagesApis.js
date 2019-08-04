@@ -44,6 +44,7 @@ class AwsLambdaImageApis {
   show(event, context, callback) {
     let loginData = decodeJwt(event);
     let queryParams = event.queryStringParameters || {};
+    
     this.getImageService
       .getImage(event.pathParameters.id, loginData)
       .then(image => {
