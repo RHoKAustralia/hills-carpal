@@ -72,7 +72,7 @@ const loggedInLinks = [
   {
     type: 'internal',
     route: '/driver/queue',
-    caption: 'queue',
+    caption: 'your rides',
     role: 'driver'
   },
   {

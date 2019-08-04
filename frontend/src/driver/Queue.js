@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
 import axiosInstance from '../auth/api';
 import history from '../history';
 import DriverList from './DriverList';
@@ -63,10 +65,17 @@ class FindRides extends Component {
       <React.Fragment>
         <div className="row">
           <div className="col-12 col-sm-6">
-            <h4>Your Upcoming Trips</h4>
+            <h4>Your Upcoming Rides</h4>
           </div>
         </div>
-        {this.state.rides && <DriverList rides={this.state.rides} />}
+        {this.state.rides && this.state.rides.length > 0 ? (
+          <DriverList rides={this.state.rides} />
+        ) : (
+          <React.Fragment>
+            You don't have any rides right now! Go to{' '}
+            <Link to="/driver/find-rides">find a ride</Link> to accept one!
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }

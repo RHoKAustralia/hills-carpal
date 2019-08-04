@@ -48,7 +48,7 @@ beforeEach(function setupData() {
   rideRequest = {
     carType: 'suv',
     hasMps: false,
-    client: clientEmail,
+    clientId: 1,
     deleted: 0,
     description: 'wanna surf',
     driverGender: 'male',
