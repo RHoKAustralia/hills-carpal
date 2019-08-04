@@ -13,6 +13,13 @@ class DeleteImageService {
   }
 
   deleteImage(id, loginData) {
+    const isAdmin = this._hasRole('admin', loginData);
+    const isFacilitator = this._hasRole('facilitator', loginData);
+    if (!isAdmin && !isFacilitator) {
+      console.log('WARNING: unauthorised attempt to create client', loginData);
+      return Promise.reject(new Error('Not authorised'));
+    }
+
     const connection = this._databaseManager.createConnection();
     let deletePromise = this._deleteImage(id, loginData, connection);
     const closeConnection = () =>
@@ -22,6 +29,10 @@ class DeleteImageService {
 
   _deleteImage(id, loginData, connection) {
     return this._imageRepository.delete(id, connection).then(() => {});
+  }
+
+  _hasRole(role, loginData) {
+    return loginData && loginData.roles.indexOf(role) >= 0;
   }
 }
 

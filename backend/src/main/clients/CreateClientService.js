@@ -13,6 +13,13 @@ class CreateClientService {
   }
 
   createClient(body, loginData) {
+    const isAdmin = this._hasRole('admin', loginData);
+    const isFacilitator = this._hasRole('facilitator', loginData);
+    if (!isAdmin && !isFacilitator) {
+      console.log('WARNING: unauthorised attempt to create client', loginData);
+      return null;
+    }
+
     const connection = this._databaseManager.createConnection();
 
     const createClientPromise = this._createClient(body, loginData, connection);
@@ -43,6 +50,10 @@ class CreateClientService {
         body: JSON.stringify({ error: validationResult.errors })
       };
     }
+  }
+
+  _hasRole(role, loginData) {
+    return loginData.roles.indexOf(role) >= 0;
   }
 }
 

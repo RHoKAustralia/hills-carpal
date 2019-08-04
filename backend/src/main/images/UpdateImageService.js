@@ -13,6 +13,13 @@ class UpdateImageService {
   }
 
   updateImage(id, image, loginData) {
+    const isAdmin = this._hasRole('admin', loginData);
+    const isFacilitator = this._hasRole('facilitator', loginData);
+    if (!isAdmin && !isFacilitator) {
+      console.log('WARNING: unauthorised attempt to create client', loginData);
+      return Promise.reject(new Error('Not authorised'));
+    }
+
     const connection = this._databaseManager.createConnection();
     let updatePromise = this._updateImage(id, image, loginData, connection);
     const closeConnection = () =>
@@ -41,6 +48,10 @@ class UpdateImageService {
         body: JSON.stringify({ error: validationResult.errors })
       };
     }
+  }
+
+  _hasRole(role, loginData) {
+    return loginData && loginData.roles.indexOf(role) >= 0;
   }
 }
 

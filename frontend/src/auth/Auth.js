@@ -110,8 +110,9 @@ export default class Auth {
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem(KEY_USER_ROLE);
-
-    history.replace('/');
+    this.auth0.logout({
+      returnTo: window.location.origin + '/'
+    });
   }
 
   isAuthenticated() {
