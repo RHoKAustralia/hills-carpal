@@ -32,7 +32,9 @@ class Clients extends Component {
     super();
     this.state = {
       currentClient: defaultClient,
-      clients: []
+      clients: [],
+      loading: false,
+      error: null
     };
   }
 
@@ -43,6 +45,8 @@ class Clients extends Component {
       return false;
     }
 
+    this.setState({ loading: true });
+
     axiosInstance
       .get('/clients', {
         headers: {
@@ -50,11 +54,15 @@ class Clients extends Component {
         }
       })
       .then(res => {
-        this.setState({ clients: res.data });
+        this.setState({ clients: res.data, loading: false });
 
         if (res.data.length > 0) {
           this.setCurrent(res.data[0].id);
         }
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({ error: e, loading: false });
       });
   }
 
@@ -81,14 +89,18 @@ class Clients extends Component {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
         data: this.state.currentClient
-      }).then(result => {
-        let client = this.state.currentClient;
-        client.id = result.data.insertId;
-        let clients = this.state.clients;
-        clients.push(client);
-        clients.sort(clientSort);
-        this.setState({ clients: clients, currentClient: defaultClient });
-      });
+      })
+        .then(result => {
+          let client = this.state.currentClient;
+          client.id = result.data.insertId;
+          let clients = this.state.clients;
+          clients.push(client);
+          clients.sort(clientSort);
+          this.setState({ clients: clients, currentClient: defaultClient });
+        })
+        .catch(e => {
+          console.error(e);
+        });
     }
   }
 
@@ -157,8 +169,19 @@ class Clients extends Component {
   };
 
   render() {
-    if (this.props.match.params.id && this.state.id === undefined) {
+    if (
+      this.state.loading ||
+      (this.props.match.params.id && this.state.id === undefined)
+    ) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
+    }
+    if (this.state.error) {
+      return (
+        <span>
+          Error: {this.state.error.message}. Please refresh the page to try
+          again.
+        </span>
+      );
     }
 
     return (

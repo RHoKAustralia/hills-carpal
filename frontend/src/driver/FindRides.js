@@ -28,6 +28,9 @@ class FindRides extends Component {
   }
 
   searchAllRides() {
+    this.setState({
+      loading: true
+    });
     const url =
       process.env.REACT_APP_API_URL + '/rides?listType=driver&status=OPEN';
     axiosInstance
@@ -37,11 +40,24 @@ class FindRides extends Component {
         }
       })
       .then(res => {
-        this.setState({ rides: res.data });
+        this.setState({
+          loading: false,
+          rides: res.data
+        });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          loading: false,
+          error: e
+        });
       });
   }
 
   handleSearch({ locationFrom, locationTo }) {
+    this.setState({
+      loading: true
+    });
     const query = {
       listType: 'driver',
       toLongitude: locationTo.longitude,
@@ -58,8 +74,16 @@ class FindRides extends Component {
       })
       .then(res => {
         this.setState({
+          loading: false,
           rides: res.data,
           driverCoords: { locationFrom, locationTo }
+        });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          loading: false,
+          error: e
         });
       });
   }
@@ -118,8 +142,16 @@ class FindRides extends Component {
   }
 
   render() {
-    if (!this.state.rides) {
+    if (this.state.loading) {
       return <img alt="loader" className="loader" src="loader.svg" />;
+    }
+    if (this.state.error) {
+      return (
+        <span>
+          Error: {this.state.error.message}. Please refresh the page to try
+          again.
+        </span>
+      );
     }
     return (
       <div className="container-fluid">
@@ -140,7 +172,7 @@ class FindRides extends Component {
             onLocationSearch={this.handleSearch}
           />
         )}
-        {this.renderPage()}
+        {this.state.rides && this.renderPage()}
       </div>
     );
   }

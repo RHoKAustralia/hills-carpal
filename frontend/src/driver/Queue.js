@@ -28,6 +28,10 @@ class FindRides extends Component {
         localStorage.getItem('user_id')
       )}&status=CONFIRMED`;
 
+    this.setState({
+      loading: true
+    });
+
     axiosInstance
       .get(url, {
         headers: {
@@ -35,13 +39,25 @@ class FindRides extends Component {
         }
       })
       .then(res => {
-        this.setState({ rides: res.data });
+        this.setState({ rides: res.data, loading: false });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          error: e,
+          loading: false
+        });
       });
   }
 
   render() {
-    if (!this.state.rides) {
+    if (this.state.loading) {
       return <img alt="loader" className="loader" src="loader.svg" />;
+    }
+    if (this.state.error) {
+      return (
+        <span>Encountered an error - please try refreshing the page.</span>
+      );
     }
     return (
       <div className="container-fluid">
@@ -50,7 +66,7 @@ class FindRides extends Component {
             <h4>Your Upcoming Trips</h4>
           </div>
         </div>
-        <DriverTable rides={this.state.rides} />
+        {this.state.rides && <DriverTable rides={this.state.rides} />}
       </div>
     );
   }
