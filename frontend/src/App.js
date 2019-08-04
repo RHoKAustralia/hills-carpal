@@ -96,7 +96,6 @@ const loggedInLinks = [
 ];
 
 function getLinksForRoles(roles) {
-  console.log(roles);
   return loggedInLinks.filter(link => roles.some(role => link.role === role));
 }
 
