@@ -76,12 +76,10 @@ export default class Auth {
   }
 
   setProfile(error, profile) {
-    console.log(profile);
     let userRoles = profile[this.metadataKeyUserRole];
-    // if (process.env.REACT_APP_UNSAFE_GOD_MODE) {
-    //   userRoles = ['driver', 'facilitator', 'admin'];
-    // }
-    console.log(userRoles);
+    if (process.env.REACT_APP_UNSAFE_GOD_MODE) {
+      userRoles = ['driver', 'facilitator', 'admin'];
+    }
 
     localStorage.setItem(KEY_USER_ROLE, userRoles || ['']);
 
