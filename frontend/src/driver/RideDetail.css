@@ -1,0 +1,19 @@
+.ride-detail__footer {
+  display: flex;
+  justify-content: center;
+}
+
+.image-gallery-image {
+  background: #000;
+  display: flex;
+  justify-content: center;
+}
+
+.image-gallery-image img {
+  max-height: 30em;
+  width: unset;
+}
+
+.fullscreen .image-gallery-image img {
+  max-height: 100vh;
+}
