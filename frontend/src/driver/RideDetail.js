@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
+import './RideDetail.css';
 
 import history from '../history';
 
@@ -144,19 +145,20 @@ export default class RideDetail extends React.Component {
 
   RideOfferedButtons() {
     return (
-      <span>
+      <div className="btn-group" role="group">
         <button
           onClick={this.declineRide.bind(this)}
           className="card-link btn btn-outline btn-danger"
         >
           Decline
         </button>
-        <Link to={`/driver/rides/${this.props.match.params.rideId}/poll`}>
-          <a className="card-link btn btn-outline btn-success">
-            Complete the ride
-          </a>
+        <Link
+          to={`/driver/rides/${this.props.match.params.rideId}/poll`}
+          className="card-link btn btn-outline btn-success"
+        >
+          Complete the ride
         </Link>
-      </span>
+      </div>
     );
   }
 
@@ -164,7 +166,7 @@ export default class RideDetail extends React.Component {
     if (!this.state.images) {
       return [];
     }
-    console.log(this.state.images);
+
     return this.state.images.map(image => ({
       original:
         process.env.REACT_APP_API_URL +
@@ -216,9 +218,11 @@ export default class RideDetail extends React.Component {
             <DriverMap rides={[this.state]} />
 
             <h5>Images</h5>
-            <ImageGallery items={this.getImages()} showThumbnails={false} />
+            <div className="ride-detail__image-gallery">
+              <ImageGallery items={this.getImages()} showThumbnails={false} />
+            </div>
           </div>
-          <div className="card-footer">
+          <div className="card-footer ride-detail__footer">
             {!this.state.driver.confirmed
               ? this.OfferRideButton()
               : this.RideOfferedButtons()}
