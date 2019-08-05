@@ -271,3 +271,4 @@ custom:
       - 'image/jpeg'
       - 'image/png'
       - 'image/webp'
+      - 'multipart/form-data'
