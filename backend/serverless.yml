@@ -270,3 +270,4 @@ custom:
     types: #list of mime-types
       - 'image/jpeg'
       - 'image/png'
+      - 'image/webp'
