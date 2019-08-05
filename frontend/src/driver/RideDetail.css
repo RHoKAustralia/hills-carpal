@@ -5,16 +5,20 @@
 
 .image-gallery-image {
   background: #000;
-  display: flex;
-  justify-content: center;
+  text-align: center;
 }
 
 .image-gallery-image img {
-  max-height: 30em;
-  width: unset;
+  max-height: 15em;
+  max-width: 100%;
+  width: inherit;
 }
 
 .fullscreen .image-gallery-image img {
   max-height: 100vh;
   max-width: 100vw;
+}
+
+.leaflet-container {
+  z-index: 1;
 }

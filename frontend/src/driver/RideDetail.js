@@ -219,7 +219,11 @@ export default class RideDetail extends React.Component {
 
             <h5>Images</h5>
             <div className="ride-detail__image-gallery">
-              <ImageGallery items={this.getImages()} showThumbnails={false} />
+              <ImageGallery
+                items={this.getImages()}
+                showThumbnails={false}
+                useBrowserFullscreen={false}
+              />
             </div>
           </div>
           <div className="card-footer ride-detail__footer">
