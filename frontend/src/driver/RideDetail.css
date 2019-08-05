@@ -16,4 +16,6 @@
 
 .fullscreen .image-gallery-image img {
   max-height: 100vh;
+  max-width: 100vw;
+  z-index: 9999999;
 }
