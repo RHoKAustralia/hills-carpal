@@ -6,7 +6,6 @@ const querystring = require('querystring');
  * window when the survey is successfully completed.
  */
 module.exports.survey = (event, context, callback) => {
-  console.log(event.headers);
   const newHeaders = {};
   const contentType =
     event.headers['Content-Type'] || event.headers['content-type'];
@@ -72,7 +71,13 @@ module.exports.survey = (event, context, callback) => {
   });
 
   if (event.body) {
-    req.write(event.body);
+    if (event.isBase64Encoded) {
+      const buff = new Buffer(event.body, 'base64');
+      const text = buff.toString('utf-8');
+      req.write(text);
+    } else {
+      req.write(event.body);
+    }
   }
 
   req.end();
