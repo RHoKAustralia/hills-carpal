@@ -19,8 +19,8 @@ module.exports.decodeJwt = event => {
       decodedToken = {
         ...decodedToken,
         [`https://${domain}/email`]: 'test-driver@carpal.com',
-        [`https://${domain}/gender`]: 'male',
-        [`https://${domain}/car`]: 'suv',
+        [`https://${domain}/gender`]: 'female',
+        // [`https://${domain}/car`]: 'suv',
         [`https://${domain}/roles`]: ['driver', 'admin', 'facilitator']
       };
     }
