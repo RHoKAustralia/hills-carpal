@@ -38,6 +38,7 @@ To make this easier if you've got docker installed you can use that for the loca
 
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d mysql:5.7
+yarn run create-db
 yarn run refresh-db
 ```
 

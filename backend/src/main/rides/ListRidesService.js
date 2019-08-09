@@ -48,10 +48,12 @@ class ListRidesService {
       toLatitude: query.toLatitude,
       fromLongitude: query.fromLongitude,
       fromLatitude: query.fromLatitude,
-      driverGenders: driverRoutesOnly
-        ? ['any', loginData.driverGender]
-        : undefined,
-      driverCars: driverRoutesOnly ? ['All', loginData.car] : undefined,
+      driverGenders:
+        driverRoutesOnly && loginData.driverGender
+          ? ['any', loginData.driverGender]
+          : undefined,
+      driverCars:
+        driverRoutesOnly && loginData.car ? ['All', loginData.car] : undefined,
       includePickupTimeInPast: !driverRoutesOnly,
       facilitatorId:
         isFacilitator && !driverRoutesOnly ? loginData.email : undefined,
