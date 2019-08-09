@@ -144,7 +144,7 @@ class FindRides extends Component {
 
   render() {
     if (this.state.loading) {
-      return <img alt="loader" className="loader" src="loader.svg" />;
+      return <img alt="loader" className="loader" src="/loader.svg" />;
     }
     if (this.state.error) {
       return (
