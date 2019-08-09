@@ -40,7 +40,10 @@ export default class RideDetail extends React.Component {
       email: null,
       confirmed: null,
       updated_at: Date.now()
-    }
+    },
+    loading: false,
+    updating: false,
+    updateError: null
   };
 
   componentDidMount() {
@@ -95,7 +98,10 @@ export default class RideDetail extends React.Component {
   }
 
   acceptRide() {
-    const self = this;
+    this.setState({
+      updating: true,
+      updateError: null
+    });
     axiosInstance
       .put(
         `/rides/${this.state.id}/accept`,
@@ -112,23 +118,29 @@ export default class RideDetail extends React.Component {
           }
         }
       )
-      .then(res => {
-        self.setState({ driver: { confirmed: true } });
-        return res.data;
+      .then(() => {
+        this.setState({ driver: { confirmed: true }, updating: false });
+      })
+      .catch(e => {
+        this.setState({ updating: false, updateError: e });
       });
   }
 
   declineRide() {
-    const self = this;
+    this.setState({
+      updating: true
+    });
     axiosInstance
       .put(`/rides/${this.state.id}/decline`, this.state, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         }
       })
-      .then(res => {
-        self.setState({ driver: { confirmed: false } });
-        return res.data;
+      .then(() => {
+        this.setState({ driver: { confirmed: false }, updating: false });
+      })
+      .catch(e => {
+        this.setState({ updating: false, updateError: e });
       });
   }
 
@@ -227,9 +239,27 @@ export default class RideDetail extends React.Component {
             </div>
           </div>
           <div className="card-footer ride-detail__footer">
-            {!this.state.driver.confirmed
-              ? this.OfferRideButton()
-              : this.RideOfferedButtons()}
+            {(() => {
+              const buttons = () =>
+                !this.state.driver.confirmed
+                  ? this.OfferRideButton()
+                  : this.RideOfferedButtons();
+
+              if (this.state.updating) {
+                return (
+                  <img alt="loader" className="loader" src="/loader.svg" />
+                );
+              } else if (this.state.updateError) {
+                return (
+                  <React.Fragment>
+                    Error: {this.state.updateError}. Please try again!
+                    {buttons()}
+                  </React.Fragment>
+                );
+              } else {
+                return buttons();
+              }
+            })()}
           </div>
         </div>
       </div>
