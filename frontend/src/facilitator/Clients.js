@@ -33,7 +33,9 @@ class Clients extends Component {
       currentClient: defaultClient,
       clients: [],
       loading: false,
-      error: null
+      loadingError: null,
+      saving: false,
+      savingError: null
     };
   }
 
@@ -44,7 +46,7 @@ class Clients extends Component {
       return false;
     }
 
-    this.setState({ loading: true });
+    this.setState({ loading: true, loadingError: null });
 
     axiosInstance
       .get('/clients', {
@@ -61,16 +63,22 @@ class Clients extends Component {
       })
       .catch(e => {
         console.error(e);
-        this.setState({ error: e, loading: false });
+        this.setState({ loadingError: e, loading: false });
       });
   }
 
   saveClient(e) {
     e.preventDefault();
 
+    this.setState({
+      saving: true,
+      savingError: null
+    });
+
+    let promise;
     if (!isNaN(this.state.currentClient.id)) {
       let client = this.state.currentClient;
-      axiosInstance({
+      promise = axiosInstance({
         url: '/clients/' + this.state.currentClient.id,
         method: 'put',
         headers: {
@@ -81,31 +89,43 @@ class Clients extends Component {
         this.updateClientsWithCurrent();
       });
     } else {
-      axiosInstance({
+      promise = axiosInstance({
         url: '/clients',
         method: 'post',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         },
         data: this.state.currentClient
-      })
-        .then(result => {
-          let client = this.state.currentClient;
-          client.id = result.data.insertId;
-          let clients = this.state.clients;
-          clients.push(client);
-          clients.sort(clientSort);
-          this.setState({ clients: clients, currentClient: client });
-        })
-        .catch(e => {
-          console.error(e);
-        });
+      }).then(result => {
+        let client = this.state.currentClient;
+        client.id = result.data.insertId;
+        let clients = this.state.clients;
+        clients.push(client);
+        clients.sort(clientSort);
+        this.setState({ clients: clients, currentClient: client });
+      });
     }
+
+    promise
+      .then(() => {
+        this.setState({
+          saving: false
+        });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          saving: false,
+          savingError: e
+        });
+      });
   }
 
   async setCurrent(id) {
-    this.setState({ currentClient: this.findClient(this.state.clients, id) });
-    this.setState({ clientImages: null });
+    this.setState({
+      currentClient: this.findClient(this.state.clients, id),
+      clientImages: null
+    });
 
     const images = await axiosInstance({
       url: `/clients/${id}/images`,
@@ -167,6 +187,38 @@ class Clients extends Component {
     }));
   };
 
+  buttons = () => {
+    if (this.state.saving) {
+      return <img alt="loader" className="loader" src="/loader.svg" />;
+    } else {
+      return (
+        <React.Fragment>
+          {this.state.savingError && (
+            <span>
+              Error: {this.state.savingError.message}. Please try again.
+            </span>
+          )}
+
+          <div className="btn-group mr-2" role="group">
+            <button className="btn btn-primary" type="submit">
+              Save
+            </button>
+
+            {/* {!isNaN(this.state.currentClient.id) && (
+              <button
+                className="btn btn-danger"
+                type="button"
+                onClick={() => this.deleteCurrent()}
+              >
+                Delete
+              </button>
+            )} */}
+          </div>
+        </React.Fragment>
+      );
+    }
+  };
+
   render() {
     if (
       this.state.loading ||
@@ -174,11 +226,11 @@ class Clients extends Component {
     ) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
     }
-    if (this.state.error) {
+    if (this.state.loadingError) {
       return (
         <span>
-          Error: {this.state.error.message}. Please refresh the page to try
-          again.
+          Error: {this.state.loadingError.message}. Please refresh the page to
+          try again.
         </span>
       );
     }
@@ -330,21 +382,7 @@ class Clients extends Component {
                   />
                 </div>
 
-                <div className="btn-group mr-2" role="group">
-                  <button className="btn btn-primary" type="submit">
-                    Save
-                  </button>
-
-                  {!isNaN(this.state.currentClient.id) && (
-                    <button
-                      className="btn btn-danger"
-                      type="button"
-                      onClick={() => this.deleteCurrent()}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
+                {this.buttons()}
               </form>
             </section>
 

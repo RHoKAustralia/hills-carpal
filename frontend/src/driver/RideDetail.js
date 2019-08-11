@@ -122,13 +122,15 @@ export default class RideDetail extends React.Component {
         this.setState({ driver: { confirmed: true }, updating: false });
       })
       .catch(e => {
+        console.error(e);
         this.setState({ updating: false, updateError: e });
       });
   }
 
   declineRide() {
     this.setState({
-      updating: true
+      updating: true,
+      updateError: null
     });
     axiosInstance
       .put(`/rides/${this.state.id}/decline`, this.state, {
@@ -140,6 +142,7 @@ export default class RideDetail extends React.Component {
         this.setState({ driver: { confirmed: false }, updating: false });
       })
       .catch(e => {
+        console.error(e);
         this.setState({ updating: false, updateError: e });
       });
   }

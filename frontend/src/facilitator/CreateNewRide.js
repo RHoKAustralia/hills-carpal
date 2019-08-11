@@ -21,7 +21,11 @@ class CreateNewRide extends Component {
       description: '',
       hasMps: false,
       clients: [],
-      selectedClientId: -1
+      selectedClientId: -1,
+      loading: false,
+      loadingError: null,
+      updating: false,
+      updatingError: null
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -32,40 +36,61 @@ class CreateNewRide extends Component {
       history.replace('/');
       return false;
     }
+    this.setState({ loading: true, loadingError: null });
+
+    const promises = [];
 
     if (this.props.match.params.id) {
+      promises.push(
+        axiosInstance
+          .get('/rides/' + this.props.match.params.id, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('id_token')}`
+            }
+          })
+          .then(res => {
+            const data = res.data;
+            const client = this.state.clients.find(c => c.name === data.client);
+            let clientId = -1;
+            if (client) {
+              clientId = client.id;
+            }
+            data.selectedClientId = clientId;
+            this.setState({ ...data });
+          })
+      );
+    }
+
+    promises.push(
       axiosInstance
-        .get('/rides/' + this.props.match.params.id, {
+        .get('/clients', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('id_token')}`
           }
         })
         .then(res => {
           const data = res.data;
-          const client = this.state.clients.find(c => c.name === data.client);
+          const client = data.find(c => c.name === this.state.client);
           let clientId = -1;
           if (client) {
             clientId = client.id;
           }
-          data.selectedClientId = clientId;
-          this.setState(data);
-        });
-    }
+          this.setState({ clients: data, selectedClientId: clientId });
+        })
+    );
 
-    axiosInstance
-      .get('/clients', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`
-        }
+    Promise.all(promises)
+      .then(() => {
+        this.setState({
+          loading: false
+        });
       })
-      .then(res => {
-        const data = res.data;
-        const client = data.find(c => c.name === this.state.client);
-        let clientId = -1;
-        if (client) {
-          clientId = client.id;
-        }
-        this.setState({ clients: data, selectedClientId: clientId });
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          loading: false,
+          loadingError: e
+        });
       });
   }
 
@@ -73,12 +98,18 @@ class CreateNewRide extends Component {
     e.preventDefault();
 
     //hack remove non-ride props
-    let ride = this.state;
+    let ride = { ...this.state };
     delete ride.clients;
     delete ride.selectedClientId;
 
+    this.setState({
+      updating: true,
+      updatingError: null
+    });
+
+    let promise;
     if (this.props.match.params.id) {
-      axiosInstance({
+      promise = axiosInstance({
         url: '/rides/' + this.props.match.params.id,
         method: 'put',
         headers: {
@@ -89,7 +120,7 @@ class CreateNewRide extends Component {
         this.props.history.push('/facilitator/');
       });
     } else {
-      axiosInstance({
+      promise = axiosInstance({
         url: '/rides',
         method: 'post',
         headers: {
@@ -100,16 +131,69 @@ class CreateNewRide extends Component {
         this.props.history.push('/facilitator/');
       });
     }
+
+    promise
+      .then(() => {
+        this.setState({
+          updating: false
+        });
+      })
+      .catch(e => {
+        console.error(e);
+        this.setState({
+          updating: false,
+          updatingError: e
+        });
+      });
   }
+
   getHeadline() {
     if (this.props.match.params.id) {
       return <h1>Edit ride</h1>;
     }
     return <h1>Create new ride</h1>;
   }
-  render() {
-    if (this.props.match.params.id && this.state.id === undefined) {
+
+  buttons() {
+    if (this.state.updating) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
+    } else if (this.state.updatingError) {
+      return (
+        <span>
+          Failed to update: {this.state.updatingError.message}. Please try
+          again.
+        </span>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <div className="btn-group mr-2" role="group">
+            <button className="btn btn-primary" type="submit">
+              Save
+            </button>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            <Link className="btn btn-secondary" to={'/facilitator'}>
+              Back
+            </Link>
+          </div>
+        </React.Fragment>
+      );
+    }
+  }
+
+  render() {
+    if (this.state.loading) {
+      return <img alt="loader" className="loader" src="/loader.svg" />;
+    }
+
+    if (this.state.loadingError) {
+      return (
+        <span>
+          Failed to load: {this.state.loadingError.message}. Please try
+          refreshing the page.
+        </span>
+      );
     }
 
     return (
@@ -136,7 +220,7 @@ class CreateNewRide extends Component {
               value={this.state.selectedClientId}
               className="custom-select"
             >
-              <option>Select from following</option>
+              <option disabled={true}>Select from following</option>
               {this.state.clients.map(c => {
                 return (
                   <option key={c.id} value={c.id}>
@@ -191,7 +275,7 @@ class CreateNewRide extends Component {
               value={this.state.driverGender}
               className="custom-select"
             >
-              <option>Select from following</option>
+              <option disabled={true}>Select from following</option>
               <option value="any">Any</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -208,7 +292,7 @@ class CreateNewRide extends Component {
               value={this.state.carType}
               className="custom-select"
             >
-              <option>Select from following</option>
+              <option disabled={true}>Select from following</option>
               <option value="noSUV">No SUV</option>
               <option value="All">All</option>
             </select>
@@ -240,16 +324,7 @@ class CreateNewRide extends Component {
               value={this.state.description}
             />
           </div>
-          <div className="btn-group mr-2" role="group">
-            <button className="btn btn-primary" type="submit">
-              Save
-            </button>
-          </div>
-          <div className="btn-group mr-2" role="group">
-            <Link className="btn btn-secondary" to={'/facilitator'}>
-              Back
-            </Link>
-          </div>
+          {this.buttons()}
         </form>
       </React.Fragment>
     );
