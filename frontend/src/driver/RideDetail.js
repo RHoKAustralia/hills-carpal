@@ -149,12 +149,14 @@ export default class RideDetail extends React.Component {
 
   OfferRideButton() {
     return (
-      <button
-        onClick={this.acceptRide.bind(this)}
-        className="btn btn-outline btn-primary"
-      >
-        Offer a ride
-      </button>
+      <div className="btn-group" role="group">
+        <button
+          onClick={this.acceptRide.bind(this)}
+          className="btn btn-outline btn-primary"
+        >
+          Offer a ride
+        </button>
+      </div>
     );
   }
 
@@ -255,7 +257,9 @@ export default class RideDetail extends React.Component {
               } else if (this.state.updateError) {
                 return (
                   <React.Fragment>
-                    Error: {this.state.updateError}. Please try again!
+                    <div>
+                      Error: {this.state.updateError.message}. Please try again!
+                    </div>
                     {buttons()}
                   </React.Fragment>
                 );
