@@ -40,9 +40,8 @@ class CreateNewRide extends Component {
 
     const promises = [];
 
-    if (this.props.match.params.id) {
-      promises.push(
-        axiosInstance
+    const dataPromise = this.props.match.params.id
+      ? axiosInstance
           .get('/rides/' + this.props.match.params.id, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('id_token')}`
@@ -57,33 +56,37 @@ class CreateNewRide extends Component {
             }
             data.selectedClientId = clientId;
             this.setState({ ...data });
+
+            return data;
           })
-      );
-    }
+      : Promise.resolve();
 
-    promises.push(
-      axiosInstance
-        .get('/clients', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('id_token')}`
-          }
-        })
-        .then(res => {
-          const data = res.data;
-          const client = data.find(c => c.name === this.state.client);
-          let clientId = -1;
-          if (client) {
-            clientId = client.id;
-          }
-          this.setState({ clients: data, selectedClientId: clientId });
-        })
-    );
+    const clientPromise = axiosInstance
+      .get('/clients', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+        }
+      })
+      .then(res => {
+        const data = res.data;
 
-    Promise.all(promises)
-      .then(() => {
+        if (data.length === 0) {
+          throw new Error('Please add a client before adding a ride');
+        }
+
+        this.setState({ clients: data });
+
+        return data;
+      });
+
+    Promise.all([dataPromise, clientPromise])
+      .then(([data, clients]) => {
         this.setState({
           loading: false
         });
+
+        const clientId = (data && data.clientId) || clients[0].id;
+        this.setNewClient(clientId);
       })
       .catch(e => {
         console.error(e);
@@ -182,6 +185,21 @@ class CreateNewRide extends Component {
     }
   }
 
+  setNewClient = (clientId, clients = this.state.clients) => {
+    console.log(clients);
+    console.log(clientId);
+    const client = clients.find(c => c.id === clientId);
+    this.setState({
+      selectedClientId: clientId,
+      locationFrom: client.locationHome,
+      locationTo: client.locationHome,
+      carType: client.carType,
+      clientId: client.id,
+      driverGender: client.driverGender,
+      hasMps: client.hasMps
+    });
+  };
+
   render() {
     if (this.state.loading) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
@@ -206,16 +224,7 @@ class CreateNewRide extends Component {
               required
               onChange={e => {
                 const clientId = parseInt(e.currentTarget.value, 10);
-                const client = this.state.clients.find(c => c.id === clientId);
-                this.setState({
-                  selectedClientId: clientId,
-                  locationFrom: client.locationHome,
-                  locationTo: client.locationHome,
-                  carType: client.carType,
-                  clientId: client.id,
-                  driverGender: client.driverGender,
-                  hasMps: client.hasMps
-                });
+                this.setNewClient(clientId);
               }}
               value={this.state.selectedClientId}
               className="custom-select"
