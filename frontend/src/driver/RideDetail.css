@@ -24,3 +24,7 @@
 .leaflet-container {
   z-index: 1;
 }
+
+.title-case {
+  text-transform: capitalize;
+}
