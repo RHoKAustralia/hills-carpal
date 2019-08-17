@@ -1,30 +1,35 @@
 'use strict';
 
 const DatabaseManager = require('../database/DatabaseManager');
+const PromiseUtils = require('./PromiseUtils');
 
-module.exports.endpoint = async (event, context, callback) => {
-  try {
-    const currentTime = new Date().toTimeString();
+module.exports.endpoint = (event, context, callback) => {
+  const currentTime = new Date().toTimeString();
 
-    const databaseManager = new DatabaseManager();
-    const connection = databaseManager.createConnection();
-    await databaseManager.query('SELECT version();', connection);
+  const databaseManager = new DatabaseManager();
+  const connection = databaseManager.createConnection();
+  PromiseUtils.promiseFinally(
+    databaseManager
+      .query('SELECT version();', connection)
+      .then(() => {
+        const response = {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: `Hello, the current time is ${currentTime}.`
+          })
+        };
 
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: `Hello, the current time is ${currentTime}.`
+        callback(null, response);
       })
-    };
-
-    return response;
-  } catch (e) {
-    console.error(e);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'DB messed up yo' })
-    };
-  } finally {
-    databaseManager.closeConnection(connection);
-  }
+      .catch(e => {
+        console.error(e);
+        callback(null, {
+          statusCode: 500,
+          body: JSON.stringify({ error: 'DB messed up yo' })
+        });
+      }),
+    () => {
+      databaseManager.closeConnection(connection);
+    }
+  );
 };
