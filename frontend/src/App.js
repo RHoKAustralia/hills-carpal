@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axiosInstance from './auth/api';
 
 import './App.css';
 
@@ -98,6 +99,9 @@ const loggedInLinks = [
 function getLinksForRoles(roles) {
   return loggedInLinks.filter(link => roles.some(role => link.role === role));
 }
+
+// Warm up the database
+axiosInstance.get(`/ping`);
 
 class App extends Component {
   logout() {
