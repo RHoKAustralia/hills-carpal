@@ -13,7 +13,7 @@ const getImageService = new GetImageService(databaseManager);
 const updateImageService = new UpdateImageService(databaseManager);
 const deleteImageService = new DeleteImageService(databaseManager);
 
-const images = new AwsLambdaImageApis(
+const imageApis = new AwsLambdaImageApis(
   uploadImageService,
   listImagesService,
   getImageService,
@@ -42,7 +42,7 @@ let wrappedCallback = callback => {
 const jsonFns = ['list', 'upload', 'delete', 'update'].reduce(
   (acc, current) => {
     acc[current] = (event, context, callback) => {
-      return images[current](event, context, wrappedCallback(callback));
+      return imageApis[current](event, context, wrappedCallback(callback));
     };
     return acc;
   },
@@ -51,5 +51,5 @@ const jsonFns = ['list', 'upload', 'delete', 'update'].reduce(
 
 module.exports = {
   ...jsonFns,
-  show: (event, context, callback) => images.show(event, context, callback)
+  show: (event, context, callback) => imageApis.show(event, context, callback)
 };

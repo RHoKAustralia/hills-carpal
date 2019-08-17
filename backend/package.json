@@ -9,7 +9,7 @@
     "start": "sls offline",
     "create-db": "MYSQL_FLAGS=\"-CONNECT_WITH_DB\" db-migrate db:create carpal",
     "refresh-db": "db-migrate up",
-    "deploy-sls": "sls deploy",
+    "deploy-sls": "sls deploy --force",
     "prettier": "prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --write",
     "prettier-check": "prettier \"**/*.js\" \"**/*.json\" \"**/*.yml\" --check"
   },
