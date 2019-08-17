@@ -31,10 +31,12 @@ functions:
 
   currentTime:
     handler: src/main/utils/ping.endpoint
+    cors: true
     events:
       - http:
           path: ping
           method: get
+
   loggedin:
     handler: src/main/auth/loggedin.loggedin
     events:
