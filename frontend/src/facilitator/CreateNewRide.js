@@ -38,8 +38,6 @@ class CreateNewRide extends Component {
     }
     this.setState({ loading: true, loadingError: null });
 
-    const promises = [];
-
     const dataPromise = this.props.match.params.id
       ? axiosInstance
           .get('/rides/' + this.props.match.params.id, {

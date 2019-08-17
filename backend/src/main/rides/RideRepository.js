@@ -174,9 +174,12 @@ class RideRepository {
     const leftJoinForDriver = `LEFT JOIN ${this._dbName}.driver_ride dr ON dr.ride_id = rides.id`;
     const leftJoinForClient = `LEFT JOIN ${this._dbName}.clients clients ON clients.id = rides.clientId`;
 
-    const query = `SELECT rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.placeNameFrom, rides.postCodeFrom, rides.locationFrom, rides.placeNameTo, rides.postCodeTo, rides.locationTo, rides.description, rides.hasMps, rides.clientId, clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at 
-    FROM ${this._dbName}.rides
-     ${leftJoinForClient} ${leftJoinForDriver} ${
+    const query = `SELECT rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.placeNameFrom, rides.postCodeFrom,
+      rides.locationFrom, rides.placeNameTo, rides.postCodeTo, rides.locationTo, rides.description, rides.hasMps, rides.clientId,
+      clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at,
+      clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription
+      FROM ${this._dbName}.rides
+      ${leftJoinForClient} ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
     } ORDER BY pickupTimeAndDateInUTC ASC;`;
 

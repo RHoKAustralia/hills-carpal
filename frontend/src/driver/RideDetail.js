@@ -221,13 +221,25 @@ export default class RideDetail extends React.Component {
                   'YYYY-MM-DD hh:mma'
                 )}
               </dd>
-              <dt>Who?</dt>
+              <dt>Client Name</dt>
               <dd>{this.state.client}</dd>
+              <dt>Client Phone Number</dt>
+              <dd>{this.state.clientPhoneNumber}</dd>
+              <dt>Client Has Mobility Parking Sticker?</dt>
+              <dd>{this.state.hasMps ? 'Yes' : 'No'}</dd>
+              <dt>Preferred Driver Gender</dt>
+              <dd className="title-case">{this.state.driverGender}</dd>
+              <dt>Preferred Car Type</dt>
+              <dd>
+                {this.state.carType === 'noSUV' ? 'No SUVs please' : 'n/a'}
+              </dd>
               <dt>Pickup Address</dt>
               <dd>{this.state.locationFrom.placeName}</dd>
               <dt>Drop Address</dt>
               <dd>{this.state.locationTo.placeName}</dd>
-              <dt>Description</dt>
+              <dt>Client Description</dt>
+              <dd>{this.state.clientDescription}</dd>
+              <dt>Ride Description</dt>
               <dd>{this.state.description}</dd>
             </dl>
 

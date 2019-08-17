@@ -31,7 +31,9 @@ class RideMapper {
         facilitatorId: ride.facilitatorId || ride.facilitatorEmail,
         description: ride.description,
         hasMps: !!ride.hasMps, // force bool
-        id: ride.id
+        id: ride.id,
+        clientPhoneNumber: ride.clientPhoneNumber,
+        clientDescription: ride.clientDescription
       },
       ride.driver_id
         ? {
@@ -73,7 +75,9 @@ class RideMapper {
       deleted: 0,
       facilitatorId: facilitatorId,
       hasMps: !!ride.hasMps, // force bool
-      description: ride.description
+      description: ride.description,
+      clientPhoneNumber: ride.clientPhoneNumber,
+      clientDescription: ride.clientDescription
     };
   }
 }
