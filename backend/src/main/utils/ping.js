@@ -3,15 +3,11 @@
 const DatabaseManager = require('../database/DatabaseManager');
 
 module.exports.endpoint = async (event, context, callback) => {
-  const currentTime = new Date().toTimeString();
-
-  const databaseManager = new DatabaseManager();
-
-  databaseManager.createConnection();
-
-  const connection = databaseManager.createConnection();
-
   try {
+    const currentTime = new Date().toTimeString();
+
+    const databaseManager = new DatabaseManager();
+    const connection = databaseManager.createConnection();
     await databaseManager.query('SELECT version();', connection);
 
     const response = {
