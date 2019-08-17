@@ -1,14 +1,34 @@
 'use strict';
 
-module.exports.endpoint = (event, context, callback) => {
-  const currentTime = new Date().toTimeString();
-  console.log('Called at ' + currentTime);
+const DatabaseManager = require('../database/DatabaseManager');
 
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: `Hello, the current time is ${currentTime}.`
-    })
-  };
-  callback(null, response);
+module.exports.endpoint = async (event, context, callback) => {
+  const currentTime = new Date().toTimeString();
+
+  const databaseManager = new DatabaseManager();
+
+  databaseManager.createConnection();
+
+  const connection = databaseManager.createConnection();
+
+  try {
+    await databaseManager.query('SELECT version();', connection);
+
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: `Hello, the current time is ${currentTime}.`
+      })
+    };
+
+    return response;
+  } catch (e) {
+    console.error(e);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'DB messed up yo' })
+    };
+  } finally {
+    databaseManager.closeConnection(connection);
+  }
 };
