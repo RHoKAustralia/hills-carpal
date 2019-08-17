@@ -1,5 +1,3 @@
-'use strict';
-
 const DatabaseManager = require('../database/DatabaseManager');
 const PromiseUtils = require('./PromiseUtils');
 

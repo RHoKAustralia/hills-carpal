@@ -6,7 +6,7 @@ provider:
   region: ap-southeast-2
   stage: dev
   memorySize: 128
-  timeout: 30
+  timeout: 60
   environment:
     AUTH0_CLIENT_ID: ${file(./props.json):AUTH0_CLIENT_ID}
     MYSQL_HOST: carpal-dev.cluster-cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com
