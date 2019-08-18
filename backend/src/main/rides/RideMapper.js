@@ -77,7 +77,8 @@ class RideMapper {
       hasMps: !!ride.hasMps, // force bool
       description: ride.description,
       clientPhoneNumber: ride.clientPhoneNumber,
-      clientDescription: ride.clientDescription
+      clientDescription: ride.clientDescription,
+      driver: ride.driver
     };
   }
 }

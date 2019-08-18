@@ -261,7 +261,6 @@ export default class RideDetail extends React.Component {
           </div>
           <div className="card-footer ride-detail__footer">
             {(() => {
-              console.log(this.state);
               const buttons = () =>
                 this.state.driver && this.state.driver.confirmed
                   ? this.RideOfferedButtons()
