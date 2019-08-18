@@ -1,17 +1,20 @@
 'use strict';
 
+const moment = require('moment');
 const jsonValidator = require('jsonschema');
+
+const FindOneRideService = require('./FindOneRideService');
 const rideSchema = require('../schema/ride.json');
 const RideRepository = require('./RideRepository');
 const RideStatus = require('../../main/rides/RideStatus');
 const RideMapper = require('./RideMapper');
 const PromiseUtils = require('../utils/PromiseUtils');
-const moment = require('moment');
 
 class UpdateRideService {
   constructor(databaseManager) {
     this._databaseManager = databaseManager;
     this._rideRepository = new RideRepository(databaseManager);
+    this._findOneRideService = new FindOneRideService(databaseManager);
   }
 
   updateRide(id, ride, loginData) {
@@ -41,7 +44,9 @@ class UpdateRideService {
       newStatus,
       loginData,
       connection
-    );
+    ).then(() => {
+      return this._findOneRideService.findOne(id, loginData);
+    });
     const closeConnection = () =>
       this._databaseManager.closeConnection(connection);
     return PromiseUtils.promiseFinally(updatePromise, closeConnection);
@@ -107,14 +112,17 @@ class UpdateRideService {
       }
 
       let rideEntity = RideMapper.dtoToEntity(rideObject);
-      console.log('LOGIN DATA');
-      console.log(loginData);
-      rideEntity.driver = {
-        driver_id: loginData.userId,
-        email: loginData.email,
-        confirmed: rideObject.status === 'CONFIRMED',
-        updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
-      };
+
+      if (newStatus === RideStatus.OPEN) {
+        rideEntity.driver = null;
+      } else {
+        rideEntity.driver = {
+          driver_id: loginData.userId,
+          email: loginData.email,
+          confirmed: rideObject.status === RideStatus.CONFIRMED,
+          updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+        };
+      }
 
       rideEntity.facilitatorId = rideObject.facilitatorId;
       return this._rideRepository.update(id, rideEntity, connection);

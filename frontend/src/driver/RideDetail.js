@@ -67,16 +67,7 @@ export default class RideDetail extends React.Component {
         .then(res => {
           let data = res.data;
 
-          if (data.driver_id) {
-            data = Object.assign({}.data, {
-              driver_id: data.driver_id,
-              email: data.driver_email,
-              confirmed: data.confirmed,
-              updated_at: data.updated_at,
-              ride_id: this.props.match.params.rideId
-            });
-          }
-          this.setState(data);
+          this.setDriverState(data);
 
           return axiosInstance.get('/clients/' + data.clientId + '/images', {
             headers: {
@@ -96,6 +87,13 @@ export default class RideDetail extends React.Component {
         });
     }
   }
+
+  setDriverState = data => {
+    this.setState({
+      ...data,
+      driver: data.driver ? data.driver : undefined
+    });
+  };
 
   acceptRide() {
     this.setState({
@@ -118,8 +116,9 @@ export default class RideDetail extends React.Component {
           }
         }
       )
-      .then(() => {
-        this.setState({ driver: { confirmed: true }, updating: false });
+      .then(res => {
+        this.setDriverState(res.data);
+        this.setState({ updating: false });
       })
       .catch(e => {
         console.error(e);
@@ -138,8 +137,9 @@ export default class RideDetail extends React.Component {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         }
       })
-      .then(() => {
-        this.setState({ driver: { confirmed: false }, updating: false });
+      .then(res => {
+        this.setDriverState(res.data);
+        this.setState({ updating: false });
       })
       .catch(e => {
         console.error(e);
@@ -161,7 +161,7 @@ export default class RideDetail extends React.Component {
   }
 
   RideOfferedButtons() {
-    return (
+    return this.state.driver.driver_id === this.props.auth.getUserId() ? (
       <div className="btn-group" role="group">
         <button
           onClick={this.declineRide.bind(this)}
@@ -175,6 +175,10 @@ export default class RideDetail extends React.Component {
         >
           Complete the ride
         </Link>
+      </div>
+    ) : (
+      <div>
+        This ride has already been offered by {this.state.driver.email}!
       </div>
     );
   }
@@ -257,10 +261,11 @@ export default class RideDetail extends React.Component {
           </div>
           <div className="card-footer ride-detail__footer">
             {(() => {
+              console.log(this.state);
               const buttons = () =>
-                !this.state.driver.confirmed
-                  ? this.OfferRideButton()
-                  : this.RideOfferedButtons();
+                this.state.driver && this.state.driver.confirmed
+                  ? this.RideOfferedButtons()
+                  : this.OfferRideButton();
 
               if (this.state.updating) {
                 return (
