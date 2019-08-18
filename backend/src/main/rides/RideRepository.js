@@ -65,6 +65,8 @@ class RideRepository {
       throw new Error('No id specified when updating ride.');
     }
 
+    this._databaseManager.beginTransaction(connection);
+
     const escape = data => connection.escape(data);
     const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
     const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
@@ -94,6 +96,7 @@ class RideRepository {
 		id = ${id}`;
 
     let extraQuery = '';
+
     //Check if driver has interacted with a ride
     if (ride.driver) {
       extraQuery = `
@@ -107,11 +110,18 @@ class RideRepository {
       ]}) ON DUPLICATE KEY UPDATE confirmed=${escape(
         ride.driver.confirmed ? 1 : 0
       )}, updated_at = ${escape(ride.driver.updated_at)}`;
+    } else {
+      extraQuery = `;delete from ${
+        this._dbName
+      }.driver_ride WHERE ride_id = ${escape(id)}`;
     }
 
     console.log(query + extraQuery);
 
-    return this._databaseManager.query(query + extraQuery, connection);
+    return this._databaseManager
+      .query(query + extraQuery, connection)
+      .then(() => this._databaseManager.commit(connection))
+      .catch(() => this._databaseManager.rollback(connection));
   }
 
   findOne(jsonQuery, connection) {
