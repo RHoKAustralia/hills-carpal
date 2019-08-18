@@ -102,14 +102,13 @@ class RideRepository {
       extraQuery = `
         ;insert into ${
           this._dbName
-        }.driver_ride(driver_id, ride_id, confirmed, updated_at) VALUES (${[
+        }.driver_ride(driver_id, ride_id, confirmed) VALUES (${[
         escape(ride.driver.driver_id),
         escape(id),
-        escape(ride.driver.confirmed ? 1 : 0),
-        escape(ride.driver.updated_at)
+        escape(ride.driver.confirmed ? 1 : 0)
       ]}) ON DUPLICATE KEY UPDATE confirmed=${escape(
         ride.driver.confirmed ? 1 : 0
-      )}, updated_at = ${escape(ride.driver.updated_at)}`;
+      )}`;
     } else {
       extraQuery = `;delete from ${
         this._dbName

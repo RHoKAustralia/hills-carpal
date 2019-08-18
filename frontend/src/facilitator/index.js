@@ -60,20 +60,26 @@ const getColumns = table => {
     {
       Header: 'Change status',
       id: 'statusChanger',
-      Cell: ({ row }) => (
-        <div onClick={e => e.stopPropagation()} className="form-group">
-          <select
-            onChange={e => table.handleStatusChange(e, row)}
-            value={row['status']}
-            className="custom-select"
-          >
-            <option value="OPEN">Open</option>
-            <option value="CONFIRMED">Confirmed</option>
-            <option value="ENDED">Ended</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
-        </div>
-      )
+      Cell: ({ row }) => {
+        return (
+          <div onClick={e => e.stopPropagation()} className="form-group">
+            <select
+              onChange={e => table.handleStatusChange(e, row)}
+              value={row['status']}
+              className="custom-select"
+            >
+              <option value="OPEN">Open</option>
+              <option value="CONFIRMED" disabled={!row._original.driver}>
+                Confirmed
+              </option>
+              <option value="ENDED" disabled={!row._original.driver}>
+                Ended
+              </option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+        );
+      }
     }
   ];
 };
@@ -99,7 +105,8 @@ class Facilitator extends React.Component {
       data: {
         ...row._original,
         pickupTimeAndDateInUTC,
-        status: newStatus
+        status: newStatus,
+        driver: newStatus !== 'OPEN' ? row._original.driver : null
       }
     }).then(res => {
       row.status = newStatus;
