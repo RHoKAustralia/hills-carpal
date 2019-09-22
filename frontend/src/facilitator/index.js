@@ -37,24 +37,17 @@ const getColumns = table => {
       filterAll: true
     },
     {
-      accessor: 'driverGender',
-      Header: 'Gender',
-      filterMethod: (filter, rows) =>
-        matchSorter(rows, filter.value, { keys: ['driverGender'] }),
-      filterAll: true
-    },
-    {
-      accessor: 'carType',
-      Header: 'Car',
-      filterMethod: (filter, rows) =>
-        matchSorter(rows, filter.value, { keys: ['carType'] }),
-      filterAll: true
-    },
-    {
       accessor: 'status',
       Header: 'Status',
       filterMethod: (filter, rows) =>
         matchSorter(rows, filter.value, { keys: ['status'] }),
+      filterAll: true
+    },
+    {
+      accessor: 'driver.driver_name',
+      Header: 'Driver',
+      filterMethod: (filter, rows) =>
+        matchSorter(rows, filter.value, { keys: ['driver.driver_name'] }),
       filterAll: true
     },
     {

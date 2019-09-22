@@ -118,6 +118,7 @@ class UpdateRideService {
       } else {
         rideEntity.driver = {
           driver_id: loginData.userId,
+          driver_name: loginData.name,
           email: loginData.email,
           confirmed: rideObject.status === RideStatus.CONFIRMED,
           updated_at: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
