@@ -19,15 +19,17 @@ module.exports.decodeJwt = event => {
       decodedToken = {
         ...decodedToken,
         [`https://${domain}/email`]: 'test-driver@carpal.com',
-        [`https://${domain}/gender`]: 'female',
+        [`https://${domain}/gender`]: 'male',
         // [`https://${domain}/car`]: 'suv',
-        [`https://${domain}/roles`]: ['driver', 'admin', 'facilitator']
+        [`https://${domain}/roles`]: ['driver', 'admin', 'facilitator'],
+        [`https://${domain}/name`]: 'Test Driver'
       };
     }
     const claims = {};
     claims.userId = decodedToken.sub;
     claims.email = decodedToken[`https://${domain}/email`];
     claims.roles = decodedToken[`https://${domain}/roles`];
+    claims.name = decodedToken[`https://${domain}/name`];
 
     if (claims.roles.indexOf('driver') >= 0) {
       claims.driverGender = decodedToken[`https://${domain}/gender`];

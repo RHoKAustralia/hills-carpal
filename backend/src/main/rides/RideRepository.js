@@ -102,9 +102,10 @@ class RideRepository {
       extraQuery = `
         ;insert into ${
           this._dbName
-        }.driver_ride(driver_id, ride_id, confirmed) VALUES (${[
+        }.driver_ride(driver_id, ride_id, driver_name, confirmed) VALUES (${[
         escape(ride.driver.driver_id),
         escape(id),
+        escape(ride.driver.driver_name),
         escape(ride.driver.confirmed ? 1 : 0)
       ]}) ON DUPLICATE KEY UPDATE confirmed=${escape(
         ride.driver.confirmed ? 1 : 0
@@ -186,7 +187,7 @@ class RideRepository {
     const query = `SELECT rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.placeNameFrom, rides.postCodeFrom,
       rides.locationFrom, rides.placeNameTo, rides.postCodeTo, rides.locationTo, rides.description, rides.hasMps, rides.clientId,
       clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at,
-      clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription
+      dr.driver_name, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription
       FROM ${this._dbName}.rides
       ${leftJoinForClient} ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
