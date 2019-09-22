@@ -42,7 +42,7 @@ class RideMapper {
               confirmed: ride.confirmed,
               updated_at: ride.updated_at,
               ride_id: ride.id,
-              driver_name: ride.driver_name 
+              driver_name: ride.driver_name
             }
           }
         : {}
