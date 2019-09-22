@@ -171,9 +171,9 @@ class RideRepository {
         .join(' or ');
       where.push(carTypes.length === 1 ? carTypes : `(${carTypes})`);
     }
-    if (jsonQuery.facilitatorId) {
-      where.push(`rides.facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
-    }
+    // if (jsonQuery.facilitatorId) {
+    //   where.push(`rides.facilitatorEmail = ${escape(jsonQuery.facilitatorId)}`);
+    // }
     if (jsonQuery.status) {
       where.push(`rides.status = ${escape(jsonQuery.status)}`);
     }
