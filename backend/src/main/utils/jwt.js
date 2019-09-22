@@ -36,7 +36,7 @@ module.exports.decodeJwt = event => {
       claims.car = decodedToken[`https://${domain}/car`];
     }
 
-    console.log(claims);
+    console.log(decodedToken);
     return claims;
   } catch (err) {
     console.log('catch error. Invalid token', err);
