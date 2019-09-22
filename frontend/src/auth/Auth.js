@@ -11,7 +11,7 @@ export default class Auth {
       redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
       audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo`,
       responseType: 'token id_token',
-      scope: 'openid'
+      scope: 'openid profile email'
     });
 
     const metadataNamespace = process.env.REACT_APP_AUTH_METADATA_NAMESPACE;
