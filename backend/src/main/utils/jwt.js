@@ -18,25 +18,21 @@ module.exports.decodeJwt = event => {
     if (process.env.UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,
-        [`https://${domain}/email`]: 'test-driver@carpal.com',
         [`https://${domain}/gender`]: 'male',
-        // [`https://${domain}/car`]: 'suv',
-        [`https://${domain}/roles`]: ['driver', 'admin', 'facilitator'],
-        [`https://${domain}/name`]: 'Test Driver'
+        [`https://${domain}/roles`]: ['driver', 'admin', 'facilitator']
       };
     }
     const claims = {};
     claims.userId = decodedToken.sub;
-    claims.email = decodedToken[`https://${domain}/email`];
+    claims.email = decodedToken[`email`];
     claims.roles = decodedToken[`https://${domain}/roles`];
-    claims.name = decodedToken[`https://${domain}/name`];
+    claims.name = decodedToken[`name`];
 
     if (claims.roles.indexOf('driver') >= 0) {
       claims.driverGender = decodedToken[`https://${domain}/gender`];
       claims.car = decodedToken[`https://${domain}/car`];
     }
 
-    console.log(decodedToken);
     return claims;
   } catch (err) {
     console.log('catch error. Invalid token', err);
