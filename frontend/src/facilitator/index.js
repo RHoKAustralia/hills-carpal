@@ -105,6 +105,7 @@ class Facilitator extends React.Component {
       row.status = newStatus;
       let newState = this.state;
       newState.drives[row._index].status = newStatus;
+      newState.drives[row._index].driver = null;
       this.setState(newState);
     });
   }

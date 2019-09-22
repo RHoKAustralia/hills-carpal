@@ -19,6 +19,8 @@ class CreateNewRide extends Component {
       locationFrom: '',
       carType: '',
       description: '',
+      status: null,
+      driver: null,
       hasMps: false,
       clients: [],
       selectedClientId: -1,
@@ -184,8 +186,6 @@ class CreateNewRide extends Component {
   }
 
   setNewClient = (clientId, clients = this.state.clients) => {
-    console.log(clients);
-    console.log(clientId);
     const client = clients.find(c => c.id === clientId);
     this.setState({
       selectedClientId: clientId,
@@ -331,6 +331,35 @@ class CreateNewRide extends Component {
               value={this.state.description}
             />
           </div>
+          {this.props.match.params.id && (
+            <React.Fragment>
+              <div className="form-group">
+                <label>Status</label>
+                <select
+                  onChange={e => {
+                    this.setState({ status: e.currentTarget.value });
+                  }}
+                  value={this.state.status}
+                  className="custom-select"
+                >
+                  <option value="OPEN">Open</option>
+                  <option value="CONFIRMED" disabled={!this.state.driver}>
+                    Confirmed
+                  </option>
+                  <option value="ENDED" disabled={!this.state.driver}>
+                    Ended
+                  </option>
+                  <option value="CANCELLED">Cancelled</option>
+                </select>
+              </div>
+              {this.state.driver && (
+                <div className="form-group">
+                  <label>Driver Name</label>
+                  <div>{this.state.driver.driver_name}</div>
+                </div>
+              )}
+            </React.Fragment>
+          )}
           {this.buttons()}
         </form>
       </React.Fragment>

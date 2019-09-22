@@ -75,6 +75,10 @@ class UpdateRideService {
         }
       );
 
+      if (toSave.status === RideStatus.OPEN) {
+        toSave.driver = null;
+      }
+
       let validationError = this._validate(toSave);
       if (validationError) {
         return Promise.reject(validationError);
