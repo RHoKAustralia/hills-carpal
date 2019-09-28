@@ -1,16 +1,38 @@
 ## Initial Setup
 
-### Database
+The steps to getting started are:
+1. Install mySQL or use a docker container
+2. Use a nodeJS package manager (yarn or npm) to build project packages and dependencies 
+3. Create carpal db using included script  (see ./backend/package.json)
+4. Populate capal db using script 
+5. Run dev script to start the ExpressJS server
 
-The project holds sql scripts that can be used to incrementally apply changes to the database.
-You can therefore also use this scripts to initialize your local database.
-To run it:
+
+### Backend Overview
+
+This app uses the mySQL database. There are some scripts that can be used to create and incrementally apply changes to the database. (see ./backend/migrations/sqls/)
+
+A helpful SQL/JavaScript middleware called db-migrate (https://db-migrate.readthedocs.io/en/latest/Getting%20Started/configuration/) is configured to use these scripts. (see /backend/database.json).
+
+This app is built to be "serverless" using AWS λambda and AWS API Gateway. For local development, an expressJS HTTP server called serverless-offline (see /backend/serverless.yml) (https://www.npmjs.com/package/serverless-offline) handles the client requests and routes them to the RESTful "rides API" defined in ./backend/src/main/rides/. 
+
+The ./backend/src/main/database/DatabaseManager.js uses the node package mysql (https://www.npmjs.com/package/mysql) to perform MYSQL commands on the databse.
+
+
+### Running the application locally
+If you have mySQL already installed, you may only need the following commands:
 
 ```
-npm run refresh-db
+yarn
+yarn run create-db
+yarn run refresh-db
+yarn run dev
 ```
 
-By default it will try to connect to a local mysql database with username `root` and password `admin`. If you want to change those configurations you can set as environment variable, for instance:
+
+**Attention**: The application and tests make use of the database, therefore make sure that you have your environment variables set to configure them to run against the right mysql instance. Ensure you are using the correct table.
+
+Node middleware db-migrate uses paramaters in database.json (see above) and tries to connect to a local mysql database with username `root` and password `admin`. If you want to change those configuration settings you can set as environment variable, for instance:
 
 ```
 MYSQL_USER=myuser MYSQL_PW=myPassword MYSQL_HOST=myHost MYSQL_PORT=3316 MYSQL_DB=myDB npm run refresh-db
@@ -18,19 +40,6 @@ MYSQL_USER=myuser MYSQL_PW=myPassword MYSQL_HOST=myHost MYSQL_PORT=3316 MYSQL_DB
 
 You might end up with an error "Client does not support authentication protocol" - to fix refer to https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server.
 
-### Running the application locally
-
-The application was designed to work with AWS lambdas. Although an _expressJs_ layer was added to be able to run the application locally. To start it:
-
-```
-npm start
-```
-
-**or** to be able to debug it:
-
-```
-node ./backend/src/test/expressApis.js
-```
 
 #### Using Docker for the local db
 
@@ -38,15 +47,27 @@ To make this easier if you've got docker installed you can use that for the loca
 
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d mysql:5.7
+yarn
 yarn run create-db
 yarn run refresh-db
+yarn run dev
 ```
-
-**Attention**: The application and tests make use of the database, therefore make sure that you have your environment variables set to configure them to run against the right mysql instance.
 
 #### Bypassing login locally
 
 Run with environment variables `UNSAFE_GOD_MODE=true` locally to make yourself an admin, driver and facilitator.
+
+See difference between:
+
+```
+yarn run dev
+```
+
+```
+yarn run start
+```
+
+in ./backend/package.json
 
 ### Running the tests
 
