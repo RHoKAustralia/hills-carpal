@@ -121,7 +121,7 @@ class Facilitator extends React.Component {
       loading: true
     });
     axiosInstance
-      .get('/rides?listType=facilitator', {
+      .get('/rides?listType=facilitator&includePast=true', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`
         }

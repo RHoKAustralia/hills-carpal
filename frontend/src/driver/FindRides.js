@@ -33,7 +33,8 @@ class FindRides extends Component {
       loading: true
     });
     const url =
-      process.env.REACT_APP_API_URL + '/rides?listType=driver&status=OPEN';
+      process.env.REACT_APP_API_URL +
+      '/rides?listType=driver&status=OPEN&includePast=false';
     axiosInstance
       .get(url, {
         headers: {
