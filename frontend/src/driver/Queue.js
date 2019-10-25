@@ -65,7 +65,7 @@ class FindRides extends Component {
       <React.Fragment>
         <div className="row">
           <div className="col-12 col-sm-6">
-            <h4>Your Upcoming Rides</h4>
+            <h4>Your Rides</h4>
           </div>
         </div>
         {this.state.rides && this.state.rides.length > 0 ? (
