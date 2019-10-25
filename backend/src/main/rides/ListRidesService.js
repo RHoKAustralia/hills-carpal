@@ -31,6 +31,7 @@ class ListRidesService {
 
   _parseParams(query, loginData) {
     const listType = query.listType || 'driver';
+    const includePast = query.includePast === 'true';
     const isAdmin = this._hasRole('admin', loginData);
     const isDriver = this._hasRole('driver', loginData);
     const isFacilitator = this._hasRole('facilitator', loginData);
@@ -54,7 +55,7 @@ class ListRidesService {
           : undefined,
       driverCars:
         driverRoutesOnly && loginData.car ? ['All', loginData.car] : undefined,
-      includePickupTimeInPast: !driverRoutesOnly,
+      includePickupTimeInPast: includePast,
       facilitatorId:
         isFacilitator && !driverRoutesOnly ? loginData.email : undefined,
       driverId: query.driverId && decodeURIComponent(query.driverId),
