@@ -237,7 +237,7 @@ class CreateNewRide extends Component {
             </select>
           </div>
           <div className="form-group">
-            <label>Date</label>
+            <label>Date (all dates and times are in the Sydney timezone)</label>
             <DatePicker
               required
               value={moment.tz(
