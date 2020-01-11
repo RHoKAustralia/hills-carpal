@@ -22,6 +22,13 @@
   dependencies:
     "@turf/helpers" "6.x"
 
+"@types/moment-timezone@^0.5.12":
+  version "0.5.12"
+  resolved "https://registry.yarnpkg.com/@types/moment-timezone/-/moment-timezone-0.5.12.tgz#0fb680c03db194fe8ff4551eaeb1eec8d3d80e9f"
+  integrity sha512-hnHH2+Efg2vExr/dSz+IX860nSiyk9Sk4pJF2EmS11lRpMcNXeB4KBW5xcgw2QPsb9amTXdsVNEe5IoJXiT0uw==
+  dependencies:
+    moment ">=2.14.0"
+
 abab@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -5313,6 +5320,18 @@ mkdirp@0.5.1, mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@
   integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
   dependencies:
     minimist "0.0.8"
+
+moment-timezone@^0.5.27:
+  version "0.5.27"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.27.tgz#73adec8139b6fe30452e78f210f27b1f346b8877"
+  integrity sha512-EIKQs7h5sAsjhPCqN6ggx6cEbs94GK050254TIJySD1bzoM5JTYDwAU1IoVOeTOL6Gm27kYJ51/uuvq1kIlrbw==
+  dependencies:
+    moment ">= 2.9.0"
+
+"moment@>= 2.9.0", moment@>=2.14.0:
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
 moment@^2.22.2:
   version "2.22.2"

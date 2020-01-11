@@ -35,9 +35,9 @@ class RideRepository {
                                     escape(ride.clientId),
                                     escape(ride.facilitatorId),
                                     escape(
-                                      moment(
-                                        ride.pickupTimeAndDateInUTC
-                                      ).format('YYYY-MM-DD HH:mm:ss')
+                                      moment(ride.pickupTimeAndDateInUTC)
+                                        .utc()
+                                        .format('YYYY-MM-DD HH:mm:ss')
                                     ),
                                     locationFrom,
                                     locationTo,
@@ -65,6 +65,12 @@ class RideRepository {
       throw new Error('No id specified when updating ride.');
     }
 
+    console.log(
+      moment(ride.pickupTimeAndDateInUTC)
+        .utc()
+        .format('YYYY-MM-DD HH:mm:ss')
+    );
+
     this._databaseManager.beginTransaction(connection);
 
     const escape = data => connection.escape(data);
@@ -75,7 +81,9 @@ class RideRepository {
     )},
 		facilitatorEmail = ${escape(ride.facilitatorId)},
 		pickupTimeAndDateInUTC = ${escape(
-      moment(ride.pickupTimeAndDateInUTC).format('YYYY-MM-DD HH:mm:ss')
+      moment(ride.pickupTimeAndDateInUTC)
+        .utc()
+        .format('YYYY-MM-DD HH:mm:ss')
     )},
 		locationFrom = ${locationFrom},
 		locationTo = ${locationTo},
@@ -102,12 +110,12 @@ class RideRepository {
       extraQuery = `
         ;insert into ${
           this._dbName
-        }.driver_ride(driver_id, ride_id, driver_name, confirmed) VALUES (${[
+        }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
         escape(ride.driver.driver_id),
         escape(id),
         escape(ride.driver.driver_name),
         escape(ride.driver.confirmed ? 1 : 0)
-      ]}) ON DUPLICATE KEY UPDATE confirmed=${escape(
+      ]}, NOW()) ON DUPLICATE KEY UPDATE confirmed=${escape(
         ride.driver.confirmed ? 1 : 0
       )}`;
     } else {
