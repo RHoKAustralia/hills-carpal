@@ -1,6 +1,6 @@
 import React from 'react';
 import Table from '../components/table';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../auth/api';
 import matchSorter from 'match-sorter';
