@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Link } from 'react-router-dom';
 import LocationInput from '../components/location-input';
 import axiosInstance from '../auth/api';

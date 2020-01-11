@@ -5,7 +5,7 @@ import bboxArray from '@turf/bbox';
 import linestring from 'turf-linestring';
 import L from 'leaflet';
 import isEqual from 'lodash/isEqual';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import 'leaflet/dist/leaflet.css';
 import './DriverMap.css';
 

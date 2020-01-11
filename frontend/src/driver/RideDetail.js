@@ -1,6 +1,6 @@
 import React from 'react';
 import axiosInstance from '../auth/api';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Link } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
