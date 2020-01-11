@@ -10,8 +10,10 @@ export default function DriverList({ rides }) {
       <div className="col-12">
         <ul className="ride-list">
           {rides.map(ride => {
-            const rideMoment = moment(ride.pickupTimeAndDateInUTC);
-            console.log(ride);
+            const rideMoment = moment.tz(
+              ride.pickupTimeAndDateInUTC,
+              'Australia/Sydney'
+            );
             return (
               <li className="ride-list__item">
                 <Link

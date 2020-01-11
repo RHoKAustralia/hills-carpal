@@ -66,7 +66,12 @@ class DriverMap extends Component {
         <Popup>
           <div>
             <a href={ride.fbLink}>Facebook event</a>
-            <p>At: {moment(date).format('dddd hh:mma DD/MM/YYYY ')}</p>
+            <p>
+              At:{' '}
+              {moment
+                .tz(date, 'Australia/Sydney')
+                .format('dddd hh:mma DD/MM/YYYY ')}
+            </p>
           </div>
         </Popup>
       );

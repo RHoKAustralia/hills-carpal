@@ -9,7 +9,9 @@ const columns = [
     Header: 'Pickup Time',
     id: 'pickupTimeAndDateInUTC',
     accessor: cell =>
-      moment(cell.pickupTimeAndDateInUTC).format('dddd hh:mma DD/MM/YYYY'),
+      moment
+        .tz(cell.pickupTimeAndDateInUTC, 'Australia/Sydney')
+        .format('dddd hh:mma DD/MM/YYYY'),
     filterMethod: (filter, rows) =>
       matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
     filterAll: true

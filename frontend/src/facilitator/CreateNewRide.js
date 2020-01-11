@@ -13,7 +13,7 @@ class CreateNewRide extends Component {
     super();
     this.state = {
       clientId: null,
-      pickupTimeAndDateInUTC: moment(),
+      pickupTimeAndDateInUTC: moment().tz('Australia/Sydney'),
       driverGender: '',
       locationTo: '',
       locationFrom: '',
@@ -160,16 +160,15 @@ class CreateNewRide extends Component {
   buttons() {
     if (this.state.updating) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
-    } else if (this.state.updatingError) {
-      return (
-        <span>
-          Failed to update: {this.state.updatingError.message}. Please try
-          again.
-        </span>
-      );
     } else {
       return (
         <React.Fragment>
+          {this.state.updatingError && (
+            <span>
+              Failed to update: {this.state.updatingError.message}. Please try
+              again.
+            </span>
+          )}
           <div className="btn-group mr-2" role="group">
             <button className="btn btn-primary" type="submit">
               Save
@@ -241,8 +240,14 @@ class CreateNewRide extends Component {
             <label>Date</label>
             <DatePicker
               required
-              value={moment(this.state.pickupTimeAndDateInUTC || Date.now())}
-              selected={moment(this.state.pickupTimeAndDateInUTC || Date.now())}
+              value={moment.tz(
+                this.state.pickupTimeAndDateInUTC || Date.now(),
+                'Australia/Sydney'
+              )}
+              selected={moment.tz(
+                this.state.pickupTimeAndDateInUTC || Date.now(),
+                'Australia/Sydney'
+              )}
               onChange={date => this.setState({ pickupTimeAndDateInUTC: date })}
               showTimeSelect
               timeFormat="HH:mm"

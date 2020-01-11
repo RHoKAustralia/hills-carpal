@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 class RideMapper {
   static entityToDto(ride) {
     if (!ride) {
@@ -9,7 +11,7 @@ class RideMapper {
       {
         clientId: ride.clientId,
         client: ride.clientName,
-        pickupTimeAndDateInUTC: new Date(ride.pickupTimeAndDateInUTC),
+        pickupTimeAndDateInUTC: moment(ride.pickupTimeAndDateInUTC).utc(),
         locationFrom: {
           latitude: ride.locationFrom.x,
           longitude: ride.locationFrom.y,
@@ -55,7 +57,7 @@ class RideMapper {
     }
     return {
       clientId: ride.clientId,
-      pickupTimeAndDateInUTC: new Date(ride.pickupTimeAndDateInUTC),
+      pickupTimeAndDateInUTC: moment.utc(ride.pickupTimeAndDateInUTC),
       locationFrom: {
         latitude: ride.locationFrom.latitude,
         longitude: ride.locationFrom.longitude,
