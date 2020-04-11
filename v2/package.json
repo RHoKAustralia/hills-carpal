@@ -12,7 +12,7 @@
     "@types/auth0-js": "^9.12.4",
     "@types/react-select": "^3.0.11",
     "@zeit/next-css": "^1.0.1",
-    "auth0-js": "^9.13.0",
+    "auth0-js": "^9.13.2",
     "bootstrap": "^4.4.1",
     "mysql": "^2.18.1",
     "next": "9.3.2",
