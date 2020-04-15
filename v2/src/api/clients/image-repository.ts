@@ -15,7 +15,7 @@ class ImageRepository {
     mimeType: string,
     clientId: string,
     connection: Connection
-  ) {
+  ): Promise<Image> {
     try {
       await this.databaseManager.beginTransaction(connection);
 
@@ -41,7 +41,7 @@ class ImageRepository {
       return this.databaseManager
         .query(
           `SELECT
-            images.id, images.mime_type, images.caption
+            images.id as id, images.mime_type AS mimeType, images.caption AS caption
           FROM
             ${this.dbName}.images AS images
           WHERE
@@ -107,7 +107,7 @@ class ImageRepository {
     let query = `
       UPDATE ${this.dbName}.images
       SET 
-        mime_type = ${escape(image.mime_type)},
+        mime_type = ${escape(image.mimeType)},
         caption = ${escape(image.caption)}
       WHERE
         id = ${escape(id)};`;

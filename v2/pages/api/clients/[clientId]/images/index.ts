@@ -20,7 +20,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json(images);
 
         break;
-      case 'POST':
       // await imageRepository.create(body, connection);
       // res.status(200).json(body);
 
@@ -31,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       //   res.status(200).json({ id, name: name || `User ${id}` });
       //   break;
       default:
-        res.setHeader('Allow', ['GET', 'POST', 'PUT']);
+        res.setHeader('Allow', ['GET']);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (e) {
