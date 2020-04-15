@@ -44,6 +44,7 @@ export interface Client {
 }
 
 export interface Image {
-  mime_type: string;
-  caption: string
+  mimeType: string;
+  caption?: string;
+  content?: string;
 }
