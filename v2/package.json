@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "REACT_APP_API_URL='http://localhost:8080' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' next dev",
+    "dev": "REACT_APP_API_URL='http://localhost:3000' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' next dev",
     "build": "next build",
     "start": "next start"
   },
@@ -14,6 +14,8 @@
     "@zeit/next-css": "^1.0.1",
     "auth0-js": "^9.13.0",
     "bootstrap": "^4.4.1",
+    "busboy": "^0.3.1",
+    "formidable": "^1.2.2",
     "mysql": "^2.18.1",
     "next": "9.3.2",
     "react": "16.13.1",
@@ -24,6 +26,8 @@
     "turf-linestring": "^1.0.2"
   },
   "devDependencies": {
+    "@types/busboy": "^0.2.3",
+    "@types/formidable": "^1.0.31",
     "@types/mysql": "^2.15.9",
     "@types/react": "^16.9.27",
     "@types/react-dropzone": "^5.1.0",

@@ -50,8 +50,8 @@ class ImageRepository {
         )
         .then((images) => images[0]);
     } catch (e) {
-      await this.databaseManager.rollback(connection);
       console.error(e);
+      await this.databaseManager.rollback(connection);
       throw e;
     }
   }
@@ -61,7 +61,7 @@ class ImageRepository {
 
     let query = `
       SELECT
-        images.id, images.mime_type, images.caption
+        images.id, images.mime_type AS mimeType, images.caption
       FROM
         ${this.dbName}.images AS images 
       INNER JOIN
@@ -75,15 +75,28 @@ class ImageRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  get(connection: Connection, imageId: string) {
+  async get(
+    connection: Connection,
+    imageId: string
+  ): Promise<Image | undefined> {
     const escape = (data) => connection.escape(data);
 
-    let query = `
-      SELECT *
-      FROM ${this.dbName}.images AS images
-      WHERE images.id = ${escape(imageId)};`;
+    const query = `
+      SELECT 
+        images.content as content, images.mime_type as mimeType
+      FROM 
+        ${this.dbName}.images AS images
+      WHERE 
+        images.id = ${escape(imageId)};
+    `;
 
-    return this.databaseManager.query(query, connection);
+    const images = await this.databaseManager.query(query, connection);
+
+    if (images.length > 0) {
+      return images[0];
+    } else {
+      return;
+    }
   }
 
   update(id: string, image: Image, connection: Connection) {

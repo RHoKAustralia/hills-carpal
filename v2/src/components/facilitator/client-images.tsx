@@ -43,7 +43,7 @@ function Image({ image, deleteImage, onSave }) {
         key={image.id}
         src={
           process.env.REACT_APP_API_URL +
-          image.url +
+          `/api/images/${image.id}` +
           `?access_token=${localStorage.getItem('id_token')}`
         }
         alt={caption}
@@ -91,12 +91,11 @@ export default function ClientImages({ images, onChange, clientId }) {
     formData.append(file.name, file);
 
     try {
-      const res = await fetch(`/clients/${clientId}/images`, {
+      const res = await fetch(`/api/clients/${clientId}/images/upload`, {
         method: 'POST',
-        body: JSON.stringify(formData),
+        body: formData,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-          'Content-Type': 'multipart/form-data',
         },
       });
 
