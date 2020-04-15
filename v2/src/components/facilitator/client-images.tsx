@@ -14,7 +14,7 @@ function Image({ image, deleteImage, onSave }) {
   const saveCaption = async (image) => {
     setSaving(true);
     try {
-      const res = await fetch(`/images/${image.id}`, {
+      const res = await fetch(`/api/images/${image.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ export default function ClientImages({ images, onChange, clientId }) {
     setDeleting(true);
 
     try {
-      const res = await fetch(`/images/${imageId}`, {
+      const res = await fetch(`/api/images/${imageId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,

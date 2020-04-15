@@ -24,9 +24,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.end(binaryContent, 'binary');
 
         break;
-      case 'POST':
+      case 'PUT':
+        await imageRepository.update(
+          req.query.imageId as string,
+          req.body,
+          connection
+        );
+
+        res.status(200).send(req.body);
+
+        break;
+      case 'DELETE':
+        await imageRepository.delete(req.query.imageId as string, connection);
+
+        res.status(200).send({
+          status: 'OK',
+        });
+
+        break;
       default:
-        res.setHeader('Allow', ['GET']);
+        res.setHeader('Allow', ['GET', 'DELETE']);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (e) {
