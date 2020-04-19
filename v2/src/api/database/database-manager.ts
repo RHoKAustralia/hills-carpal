@@ -66,7 +66,7 @@ export default class DatabaseManager {
     );
   }
 
-  closeConnection(connection) {
+  closeConnection(connection): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.end(function (error) {
         if (error) {
@@ -77,7 +77,7 @@ export default class DatabaseManager {
     });
   }
 
-  beginTransaction(connection) {
+  beginTransaction(connection): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.beginTransaction(function (error) {
         if (error) {

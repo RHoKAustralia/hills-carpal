@@ -6,7 +6,7 @@ export interface Location {
   latitude: string;
   longitude: string;
   suburb: string;
-  postcode: string;
+  postCode: string;
   placeName: string;
 }
 
@@ -21,27 +21,28 @@ export interface Ride {
   carType: string;
   status: string;
   deleted: boolean;
-  suburbFrom: string;
-  placeNameFrom: string;
-  postCodeFrom: string;
-  suburbTo: string;
-  placeNameTo: string;
-  postCodeTo: string;
   hasMps: boolean;
   description: string;
 }
 
-export interface Client {
-  id: number;
-  name: string;
-  description: string;
-  phoneNumber: string;
-  preferredDriverGender: Gender;
-  preferredCarType: CarType;
-  locationHome: Location;
-  placeNameHome: string;
-  hasMps: boolean;
+export interface OptionalClient {
+  id?: number;
+  name?: string;
+  description?: string;
+  phoneNumber?: string;
+  preferredDriverGender?: Gender;
+  preferredCarType?: CarType;
+  homeLocation?: Location;
+  hasMps?: boolean;
 }
+
+type Complete<T> = {
+  [P in keyof Required<T>]: Pick<T, P> extends Required<Pick<T, P>>
+    ? T[P]
+    : T[P] | undefined;
+};
+
+export type Client = Complete<OptionalClient>;
 
 export interface Image {
   mimeType: string;

@@ -18,8 +18,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         break;
       case 'POST':
-        await clientRepository.create(body, connection);
-        res.status(200).json(body);
+        const result = await clientRepository.create(body, connection);
+
+        console.log(result);
+
+        res.status(200).json({
+          ...body,
+          id: result,
+        });
 
         break;
 
@@ -35,6 +41,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(e);
     res.status(500).json({ status: 'Error' });
   } finally {
-    databaseManager.closeConnection(connection);
+    await databaseManager.closeConnection(connection);
   }
 };

@@ -6,16 +6,16 @@ import ClientImages from '../../src/components/facilitator/client-images';
 import auth from '../../src/auth/Auth';
 
 import './clients.css';
+import { Client, OptionalClient, Gender } from '../../src/model';
 
-const defaultClient = {
-  id: NaN,
+const defaultClient: OptionalClient = {
   name: '',
   description: '',
   phoneNumber: '',
-  driverGender: 'any',
-  carType: 'All',
+  preferredDriverGender: undefined,
+  preferredCarType: undefined,
+  homeLocation: undefined,
   hasMps: false,
-  locationHome: {},
 };
 
 const clientSort = (lhs, rhs) => {
@@ -34,8 +34,8 @@ interface Props {
 
 interface State {
   id?: string;
-  currentClient: any;
-  clients: any[];
+  currentClient: OptionalClient;
+  clients: OptionalClient[];
   clientImages: any[] | null;
   loading: boolean;
   loadingError: Error | null;
@@ -100,6 +100,14 @@ class Clients extends Component<Props, State> {
       savingError: null,
     });
 
+    if (!this.state.currentClient.homeLocation) {
+      this.setState({
+        saving: false,
+        savingError: new Error('Please enter a location'),
+      });
+      return;
+    }
+
     let promise;
     if (!isNaN(this.state.currentClient.id)) {
       promise = fetch('/api/clients/' + this.state.currentClient.id, {
@@ -126,15 +134,15 @@ class Clients extends Component<Props, State> {
         body: JSON.stringify(this.state.currentClient),
       })
         .then((res) => {
-          if (res.status !== 200) {
+          if (res.status === 200) {
             return res.json();
           } else {
-            throw new Error('Could not post client');
+            throw new Error('Failed to send the client to the server.');
           }
         })
         .then((result) => {
           let client = this.state.currentClient;
-          client.id = result.data.insertId;
+          client.id = result.insertId;
           let clients = this.state.clients;
           clients.push(client);
           clients.sort(clientSort);
@@ -194,10 +202,10 @@ class Clients extends Component<Props, State> {
     client.name = this.state.currentClient.name;
     client.description = this.state.currentClient.description;
     client.phoneNumber = this.state.currentClient.phoneNumber;
-    client.driverGender = this.state.currentClient.driverGender;
-    client.carType = this.state.currentClient.carType;
+    client.driverGender = this.state.currentClient.preferredDriverGender;
+    client.carType = this.state.currentClient.preferredCarType;
     client.hasMps = this.state.currentClient.hasMps;
-    client.locationHome = this.state.currentClient.locationHome;
+    client.locationHome = this.state.currentClient.homeLocation;
     clients.sort(clientSort);
     this.setState({ clients: clients });
   }
@@ -349,10 +357,10 @@ class Clients extends Component<Props, State> {
                   <label>Home Address</label>
                   <LocationInput
                     required
-                    value={this.state.currentClient.locationHome}
+                    value={this.state.currentClient.homeLocation}
                     onChange={(value) => {
                       let curr = { ...this.state.currentClient };
-                      curr.locationHome = value;
+                      curr.homeLocation = value;
                       this.setState({ currentClient: curr });
                     }}
                   />
@@ -363,10 +371,13 @@ class Clients extends Component<Props, State> {
                     required
                     onChange={(e) => {
                       let curr = { ...this.state.currentClient };
-                      curr.driverGender = e.currentTarget.value;
+                      curr.preferredDriverGender =
+                        e.currentTarget.value === 'any'
+                          ? undefined
+                          : (e.currentTarget.value as Gender);
                       this.setState({ currentClient: curr });
                     }}
-                    value={this.state.currentClient.driverGender}
+                    value={this.state.currentClient.preferredDriverGender}
                     className="custom-select"
                   >
                     <option value="any">Any</option>
@@ -380,10 +391,16 @@ class Clients extends Component<Props, State> {
                     required
                     onChange={(e) => {
                       let curr = { ...this.state.currentClient };
-                      curr.carType = e.currentTarget.value;
+
+                      if (e.currentTarget.value === 'All') {
+                        curr.preferredCarType = undefined;
+                      } else if (curr.preferredCarType === 'noSUV') {
+                        curr.preferredCarType = 'noSUV';
+                      }
+
                       this.setState({ currentClient: curr });
                     }}
-                    value={this.state.currentClient.carType}
+                    value={this.state.currentClient.preferredCarType}
                     className="custom-select"
                   >
                     <option>Car Type</option>
