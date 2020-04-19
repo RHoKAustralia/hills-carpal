@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Async from 'react-select/async';
+import { Location } from '../../model';
 // import 'react-select/dist/react-select.css';
 
 // New south wales coordinates
@@ -12,14 +12,6 @@ const baseUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/{text}.json?c
 const getUrl = (text) => {
   return baseUrl.replace('{text}', text.replace(/\s/g, '+'));
 };
-
-interface Location {
-  placeName: string;
-  longitude: number;
-  latitude: number;
-  postcode: string;
-  suburb: string;
-}
 
 interface Props {
   onChange: (location: Location) => void;
@@ -69,7 +61,7 @@ class LocationInput extends Component<Props> {
       placeName: value.place_name,
       longitude: value.center[0],
       latitude: value.center[1],
-      postcode: getValueFromContext('postcode'),
+      postCode: getValueFromContext('postcode'),
       suburb: getValueFromContext('suburb'),
     });
   };
