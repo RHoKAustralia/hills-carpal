@@ -22,6 +22,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json(body);
 
         break;
+      case 'DELETE':
+        await clientRepository.delete(
+          parseInt(req.query.clientId as string),
+          connection
+        );
+        res.status(200).json(body);
+
+        break;
       default:
         res.setHeader('Allow', ['PUT', 'DELETE']);
         res.status(405).end(`Method ${method} Not Allowed`);

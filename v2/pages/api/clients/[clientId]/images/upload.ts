@@ -29,6 +29,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           connection
         );
 
+        console.log(image);
+
         res.status(200).send(image);
         break;
     }

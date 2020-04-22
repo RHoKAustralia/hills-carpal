@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import './client-images.css';
+import { Image } from '../../model';
 
-function Image({ image, deleteImage, onSave }) {
+function ImageComponent({ image, deleteImage, onSave }) {
   const [caption, setCaption] = useState(image.caption || '');
   const [saving, setSaving] = useState(false);
 
@@ -76,7 +77,17 @@ function Image({ image, deleteImage, onSave }) {
   );
 }
 
-export default function ClientImages({ images, onChange, clientId }) {
+type Props = {
+  images: Image[];
+  onChange: (images: Image[]) => void;
+  clientId: number;
+};
+
+export default function ClientImages({
+  images = [],
+  onChange,
+  clientId,
+}: Props) {
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -102,7 +113,7 @@ export default function ClientImages({ images, onChange, clientId }) {
       if (res.status >= 300) {
         throw new Error('Failed to upload client image');
       } else {
-        onChange([...images, await res.json()]);
+        onChange([...(images || []), await res.json()]);
       }
     } catch (e) {
       console.error(e);
@@ -159,7 +170,7 @@ export default function ClientImages({ images, onChange, clientId }) {
           ? 'Deleting...'
           : images &&
             images.map((image) => (
-              <Image
+              <ImageComponent
                 image={image}
                 deleteImage={deleteImage}
                 onSave={saveCaption(image)}

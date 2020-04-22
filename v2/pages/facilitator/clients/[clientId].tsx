@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
+import Link from 'next/link';
 
-import LocationInput from '../../src/components/driver/location-input';
-import ClientImages from '../../src/components/facilitator/client-images';
-import auth from '../../src/auth/Auth';
+import LocationInput from '../../../src/components/driver/location-input';
+import ClientImages from '../../../src/components/facilitator/client-images';
+import auth from '../../../src/auth/Auth';
 
 import './clients.css';
-import { Client, OptionalClient, Gender } from '../../src/model';
+import { Client, OptionalClient, Gender } from '../../../src/model';
 
 const defaultClient: OptionalClient = {
   name: '',
@@ -33,7 +34,6 @@ interface Props {
 }
 
 interface State {
-  id?: string;
   currentClient: OptionalClient;
   clients: OptionalClient[];
   clientImages: any[] | null;
@@ -56,7 +56,7 @@ class Clients extends Component<Props, State> {
 
   static getInitialProps({ query }) {
     return {
-      id: query.id,
+      id: query.clientId && Number.parseInt(query.clientId),
     };
   }
 
@@ -67,6 +67,16 @@ class Clients extends Component<Props, State> {
       return false;
     }
 
+    this.fetchClients();
+  }
+
+  componentDidUpdate = (prevProps: Props, prevState: State) => {
+    if (this.props.id !== prevProps.id) {
+      this.setCurrent(this.props.id);
+    }
+  };
+
+  fetchClients = () => {
     this.setState({ loading: true, loadingError: null });
 
     fetch('/api/clients', {
@@ -80,17 +90,21 @@ class Clients extends Component<Props, State> {
         }
 
         const data = await res.json();
-        this.setState({ clients: data, loading: false });
-
-        if (data.length > 0) {
-          this.setCurrent(data[0].id);
-        }
+        this.setState({ clients: data, loading: false }, () => {
+          if (data.length > 0) {
+            if (this.props.id) {
+              this.setCurrent(this.props.id);
+            } else {
+              this.setCurrent(data[0].id);
+            }
+          }
+        });
       })
       .catch((e) => {
         console.error(e);
         this.setState({ loadingError: e, loading: false });
       });
-  }
+  };
 
   saveClient(e) {
     e.preventDefault();
@@ -142,7 +156,7 @@ class Clients extends Component<Props, State> {
         })
         .then((result) => {
           let client = this.state.currentClient;
-          client.id = result.insertId;
+          client.id = result.id;
           let clients = this.state.clients;
           clients.push(client);
           clients.sort(clientSort);
@@ -193,7 +207,7 @@ class Clients extends Component<Props, State> {
   }
 
   newClient() {
-    this.setState({ currentClient: defaultClient });
+    this.setState({ currentClient: defaultClient, clientImages: null });
   }
 
   updateClientsWithCurrent() {
@@ -210,27 +224,35 @@ class Clients extends Component<Props, State> {
     this.setState({ clients: clients });
   }
 
-  deleteCurrent() {
+  deleteCurrent = (event: React.FormEvent) => {
+    event.preventDefault();
+
     if (isNaN(this.state.currentClient.id)) {
       return;
     }
 
-    fetch('/api/clients/' + this.state.currentClient.id, {
-      method: 'delete',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-      },
-    }).then((_) => {
-      let clients = this.state.clients;
-      const idx = clients.findIndex(
-        (c) => c.id === this.state.currentClient.id
-      );
-      if (idx >= 0) {
-        clients.splice(idx, 1);
-        this.setState({ clients: clients, currentClient: defaultClient });
-      }
-    });
-  }
+    const promptResult = confirm(
+      `Are you sure you want to delete ${this.state.currentClient.name}?`
+    );
+
+    if (promptResult) {
+      fetch('/api/clients/' + this.state.currentClient.id, {
+        method: 'delete',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        },
+      }).then((_) => {
+        let clients = this.state.clients;
+        const idx = clients.findIndex(
+          (c) => c.id === this.state.currentClient.id
+        );
+        if (idx >= 0) {
+          clients.splice(idx, 1);
+          this.setState({ clients: clients, currentClient: defaultClient });
+        }
+      });
+    }
+  };
 
   onImagesChanged = (images) => {
     this.setState((state) => ({
@@ -250,28 +272,24 @@ class Clients extends Component<Props, State> {
             </span>
           )}
 
-          <div className="btn-group mr-2" role="group">
-            <button className="btn btn-primary" type="submit">
-              Save
-            </button>
+          <button className="btn btn-primary" type="submit">
+            Save
+          </button>
 
-            {/* {!isNaN(this.state.currentClient.id) && (
-              <button
-                className="btn btn-danger"
-                type="button"
-                onClick={() => this.deleteCurrent()}
-              >
-                Delete
-              </button>
-            )} */}
-          </div>
+          <button
+            className="btn btn-danger ml-2"
+            type="submit"
+            onClick={this.deleteCurrent}
+          >
+            Delete
+          </button>
         </React.Fragment>
       );
     }
   };
 
   render() {
-    if (this.state.loading || (this.props.id && this.state.id === undefined)) {
+    if (this.state.loading) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
     }
     if (this.state.loadingError) {
@@ -306,14 +324,19 @@ class Clients extends Component<Props, State> {
               {this.state.clients.map((c) => {
                 return (
                   <li key={c.id} className={`nav-item`}>
-                    <a
-                      className={`nav-link ${
-                        c.id === this.state.currentClient.id ? 'active' : ''
-                      }`}
-                      onClick={() => this.setCurrent(c.id)}
+                    <Link
+                      scroll={false}
+                      href={`/facilitator/clients/[clientId]`}
+                      as={`/facilitator/clients/${c.id}`}
                     >
-                      {c.name}
-                    </a>
+                      <a
+                        className={`nav-link ${
+                          c.id === this.state.currentClient.id ? 'active' : ''
+                        }`}
+                      >
+                        {c.name}
+                      </a>
+                    </Link>
                   </li>
                 );
               })}
