@@ -45,6 +45,7 @@ type Complete<T> = {
 export type Client = Complete<OptionalClient>;
 
 export interface Image {
+  id?: string;
   mimeType: string;
   caption?: string;
   content?: string;

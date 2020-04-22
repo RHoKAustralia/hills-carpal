@@ -28,27 +28,34 @@ class ImageRepository {
 
       await this.databaseManager.query(addImageQuery, connection);
 
+      const imageIds = await this.databaseManager.query(
+        'SELECT LAST_INSERT_ID() AS lastId',
+        connection
+      );
+
+      const imageId = imageIds[0].lastId;
+
       const addJoinQuery = `
         INSERT INTO ${this.dbName}.client_images(images_id, clients_id) 
         VALUES (
-          (SELECT LAST_INSERT_ID()),  
+          ${imageId},  
           ${[connection.escape(clientId)].join(',')}
         )`;
 
       await this.databaseManager.query(addJoinQuery, connection);
       await this.databaseManager.commit(connection);
 
-      return this.databaseManager
-        .query(
-          `SELECT
+      const images = await this.databaseManager.query(
+        `SELECT
             images.id as id, images.mime_type AS mimeType, images.caption AS caption
           FROM
             ${this.dbName}.images AS images
           WHERE
-            images.id = (SELECT LAST_INSERT_ID());`,
-          connection
-        )
-        .then((images) => images[0]);
+            images.id = ${imageId};`,
+        connection
+      );
+
+      return images[0];
     } catch (e) {
       console.error(e);
       await this.databaseManager.rollback(connection);
