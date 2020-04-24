@@ -18,7 +18,7 @@ class Home extends Component {
 
   facilitatorLink() {
     const isAuthorised =
-      auth.hasFacilitatorPriviledge() || auth.hasAdminPriviledge();
+      auth.hasFacilitatorPrivilege() || auth.hasAdminPriviledge();
     if (isAuthorised) {
       return (
         <Link href="/facilitator">

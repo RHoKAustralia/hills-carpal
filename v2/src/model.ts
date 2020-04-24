@@ -16,11 +16,9 @@ export interface Ride {
   pickupTimeAndDate: Date;
   locationFrom: Location;
   locationTo: Location;
-  fbLink: string;
-  driverGender: string;
-  carType: string;
-  status: string;
-  deleted: boolean;
+  driverGender: Gender;
+  carType: CarType;
+  status: RideStatus;
   hasMps: boolean;
   description: string;
 }

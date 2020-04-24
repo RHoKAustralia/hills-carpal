@@ -113,7 +113,7 @@ export class Auth {
     }
   }
 
-  hasFacilitatorPriviledge() {
+  hasFacilitatorPrivilege() {
     const userRoles = localStorage.getItem(KEY_USER_ROLE);
     return userRoles.indexOf('facilitator') > -1 || this.hasAdminPriviledge();
   }

@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import DatabaseManager from '../database/database-manager';
 import { Connection } from 'mysql';
-import { Gender, CarType, RideStatus } from '../../model';
+import { Gender, CarType, RideStatus, Ride } from '../../model';
 
 interface ListQuery {
   fromNow?: boolean;
@@ -147,11 +147,15 @@ export default class RideRepository {
     );
   }
 
-  listForDriver(driverId: string, connection: Connection) {
+  listForDriver(driverId: string, connection: Connection): Promise<Ride[]> {
     return this.list({ driverId }, connection);
   }
 
-  list(jsonQuery: ListQuery, connection: Connection) {
+  listForFacilitator(connection: Connection): Promise<Ride[]> {
+    return this.list({ fromNow: false }, connection);
+  }
+
+  async list(jsonQuery: ListQuery, connection: Connection): Promise<Ride[]> {
     const escape = (data) => connection.escape(data);
     let where = [];
 
@@ -183,12 +187,19 @@ export default class RideRepository {
     const leftJoinForClient = `LEFT JOIN ${this.dbName}.clients clients ON clients.id = rides.clientId`;
 
     const query = `
-      SELECT rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.placeNameFrom, rides.postCodeFrom,
-        rides.locationFrom, rides.placeNameTo, rides.postCodeTo, rides.locationTo, rides.description, rides.hasMps, rides.clientId,
+      SELECT 
+        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.description, rides.hasMps, rides.clientId,
         clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at,
-        dr.driver_name, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription
-      FROM 
-        ${this.dbName}.rides
+        dr.driver_name, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
+        locationFrom.name AS placeNameFrom, locationFrom.postCode AS postCodeFrom, locationFrom.point AS locationFrom, locationFrom.suburb AS suburbFrom,
+        locationTo.name AS placeNameTo, locationTo.postCode AS postCodeTo, locationTo.point AS locationTo, locationTo.suburb AS suburbTo
+      FROM ${this.dbName}.rides
+      INNER JOIN ${
+        this.dbName
+      }.locations locationFrom ON rides.locationFrom = locationFrom.id
+      INNER JOIN ${
+        this.dbName
+      }.locations locationTo ON rides.locationTo = locationTo.id
       ${leftJoinForClient}
       ${leftJoinForDriver}
       ${where.length ? ' WHERE ' + where.join(' AND ') : ''}
@@ -196,7 +207,32 @@ export default class RideRepository {
 
     console.log(query);
 
-    return this.databaseManager.query(query, connection);
+    const rides = await this.databaseManager.query(query, connection);
+
+    return rides.map((sqlRide) => ({
+      clientId: sqlRide.clientId,
+      facilitatorEmail: sqlRide.facilitatorEmail,
+      pickupTimeAndDate: sqlRide.pickupTimeAndDateInUTC,
+      locationFrom: {
+        latitude: sqlRide.locationFrom.y,
+        longitude: sqlRide.locationFrom.x,
+        suburb: sqlRide.suburbFrom,
+        postCode: sqlRide.postCodeFrom,
+        placeName: sqlRide.placeNameFrom,
+      },
+      locationTo: {
+        latitude: sqlRide.locationTo.y,
+        longitude: sqlRide.locationTo.x,
+        suburb: sqlRide.suburbTo,
+        postCode: sqlRide.postCodeTo,
+        placeName: sqlRide.placeNameTo,
+      },
+      driverGender: sqlRide.driverGender,
+      carType: sqlRide.carType,
+      status: sqlRide.status,
+      hasMps: sqlRide.hasMps,
+      description: sqlRide.description,
+    }));
   }
 }
 
