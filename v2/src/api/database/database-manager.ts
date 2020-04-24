@@ -17,7 +17,7 @@ export default class DatabaseManager {
     };
   }
 
-  createConnection() {
+  createConnection(): mysql.Connection {
     return mysql.createConnection(this.databaseConfig);
   }
 
@@ -66,7 +66,7 @@ export default class DatabaseManager {
     );
   }
 
-  closeConnection(connection): Promise<void> {
+  closeConnection(connection: mysql.Connection): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.end(function (error) {
         if (error) {
@@ -77,7 +77,7 @@ export default class DatabaseManager {
     });
   }
 
-  beginTransaction(connection): Promise<void> {
+  beginTransaction(connection: mysql.Connection): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.beginTransaction(function (error) {
         if (error) {
@@ -88,7 +88,7 @@ export default class DatabaseManager {
     });
   }
 
-  rollback(connection) {
+  rollback(connection: mysql.Connection) {
     return new Promise((resolve, reject) => {
       connection.rollback(function (error) {
         if (error) {
@@ -99,7 +99,7 @@ export default class DatabaseManager {
     });
   }
 
-  commit(connection) {
+  commit(connection: mysql.Connection) {
     return new Promise((resolve, reject) => {
       connection.commit(function (error) {
         if (error) {

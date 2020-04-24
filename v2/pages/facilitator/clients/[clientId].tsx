@@ -61,7 +61,7 @@ class Clients extends Component<Props, State> {
   }
 
   componentDidMount() {
-    const { isAuthenticated, hasFacilitatorPriviledge } = auth;
+    const { isAuthenticated, hasFacilitatorPrivilege: hasFacilitatorPriviledge } = auth;
     if (!isAuthenticated() || !hasFacilitatorPriviledge()) {
       Router.replace('/');
       return false;

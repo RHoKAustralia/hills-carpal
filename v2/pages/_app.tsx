@@ -121,7 +121,7 @@ class App extends Component<AppProps> {
   getLogoHref = () => {
     if (typeof window === 'undefined' || !auth || !auth.isAuthenticated()) {
       return '/';
-    } else if (auth.hasFacilitatorPriviledge()) {
+    } else if (auth.hasFacilitatorPrivilege()) {
       return '/facilitator';
     } else if (auth.hasDriverPriviledge()) {
       return '/driver';
