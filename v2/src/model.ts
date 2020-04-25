@@ -10,17 +10,25 @@ export interface Location {
   placeName: string;
 }
 
+export interface RideDriver {
+  id: string;
+  confirmed: boolean;
+  name: string;
+  updatedAt: Date;
+}
+
 export interface Ride {
-  clientId: string;
-  facilitatorEmail: string;
-  pickupTimeAndDate: Date;
+  client: OptionalClient;
+  status: RideStatus;
   locationFrom: Location;
   locationTo: Location;
+  driver: RideDriver;
   driverGender: Gender;
   carType: CarType;
-  status: RideStatus;
   hasMps: boolean;
   description: string;
+  facilitatorEmail: string;
+  pickupTimeAndDate: Date;
 }
 
 export interface OptionalClient {

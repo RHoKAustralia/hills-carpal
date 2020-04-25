@@ -183,14 +183,12 @@ export default class RideRepository {
       where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
     }
 
-    const leftJoinForDriver = `LEFT JOIN ${this.dbName}.driver_ride dr ON dr.ride_id = rides.id`;
-    const leftJoinForClient = `LEFT JOIN ${this.dbName}.clients clients ON clients.id = rides.clientId`;
-
     const query = `
       SELECT 
-        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.description, rides.hasMps, rides.clientId,
-        clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at,
-        dr.driver_name, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
+        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.description, rides.hasMps,
+        rides.driverGender, rides.carType, rides.status,
+        dr.driver_id AS driverId, dr.confirmed AS driverConfirmed, dr.updated_at AS updatedAt, dr.driver_name AS driverName,
+        rides.clientId, clients.name AS clientName, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
         locationFrom.name AS placeNameFrom, locationFrom.postCode AS postCodeFrom, locationFrom.point AS locationFrom, locationFrom.suburb AS suburbFrom,
         locationTo.name AS placeNameTo, locationTo.postCode AS postCodeTo, locationTo.point AS locationTo, locationTo.suburb AS suburbTo
       FROM ${this.dbName}.rides
@@ -200,8 +198,8 @@ export default class RideRepository {
       INNER JOIN ${
         this.dbName
       }.locations locationTo ON rides.locationTo = locationTo.id
-      ${leftJoinForClient}
-      ${leftJoinForDriver}
+      LEFT JOIN ${this.dbName}.driver_ride dr ON dr.ride_id = rides.id
+      LEFT JOIN ${this.dbName}.clients clients ON clients.id = rides.clientId
       ${where.length ? ' WHERE ' + where.join(' AND ') : ''}
       ORDER BY pickupTimeAndDateInUTC ASC;`;
 
@@ -209,30 +207,44 @@ export default class RideRepository {
 
     const rides = await this.databaseManager.query(query, connection);
 
-    return rides.map((sqlRide) => ({
-      clientId: sqlRide.clientId,
-      facilitatorEmail: sqlRide.facilitatorEmail,
-      pickupTimeAndDate: sqlRide.pickupTimeAndDateInUTC,
-      locationFrom: {
-        latitude: sqlRide.locationFrom.y,
-        longitude: sqlRide.locationFrom.x,
-        suburb: sqlRide.suburbFrom,
-        postCode: sqlRide.postCodeFrom,
-        placeName: sqlRide.placeNameFrom,
-      },
-      locationTo: {
-        latitude: sqlRide.locationTo.y,
-        longitude: sqlRide.locationTo.x,
-        suburb: sqlRide.suburbTo,
-        postCode: sqlRide.postCodeTo,
-        placeName: sqlRide.placeNameTo,
-      },
-      driverGender: sqlRide.driverGender,
-      carType: sqlRide.carType,
-      status: sqlRide.status,
-      hasMps: sqlRide.hasMps,
-      description: sqlRide.description,
-    }));
+    return rides.map(
+      (sqlRide) =>
+        ({
+          client: {
+            id: sqlRide.clientId,
+            name: sqlRide.clientName,
+            phoneNumber: sqlRide.clientPhoneNumber,
+            clientDescription: sqlRide.clientDescription,
+          },
+          driver: {
+            id: sqlRide.driverId,
+            confirmed: sqlRide.driverConfirmed,
+            updatedAt: sqlRide.updatedAt,
+            name: sqlRide.driverName,
+          },
+          facilitatorEmail: sqlRide.facilitatorEmail,
+          pickupTimeAndDate: sqlRide.pickupTimeAndDateInUTC,
+          locationFrom: {
+            latitude: sqlRide.locationFrom.y,
+            longitude: sqlRide.locationFrom.x,
+            suburb: sqlRide.suburbFrom,
+            postCode: sqlRide.postCodeFrom,
+            placeName: sqlRide.placeNameFrom,
+          },
+          locationTo: {
+            latitude: sqlRide.locationTo.y,
+            longitude: sqlRide.locationTo.x,
+            suburb: sqlRide.suburbTo,
+            postCode: sqlRide.postCodeTo,
+            placeName: sqlRide.placeNameTo,
+          },
+          driverGender: sqlRide.driverGender,
+          carType: sqlRide.carType,
+          status: sqlRide.status,
+          hasMps: sqlRide.hasMps,
+          description: sqlRide.description,
+        } as Ride)
+    );
   }
 }
 

@@ -2,3 +2,8 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.rt-th,
+.ReactTable .rt-td {
+  white-space: normal;
+}
