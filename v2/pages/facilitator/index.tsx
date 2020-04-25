@@ -8,17 +8,18 @@ import Table from '../../src/components/table';
 import auth from '../../src/auth/Auth';
 
 import './index.css';
+import { Ride } from '../../src/model';
 
 const getColumns = (table) => {
   return [
-    { accessor: 'client', Header: 'Client' },
+    { accessor: 'client.name', Header: 'Client' },
     {
       Header: 'Pickup Time',
       id: 'pickupTimeAndDateInUTC',
-      accessor: (cell) =>
+      accessor: (cell: Ride) =>
         moment
-          .tz(cell.pickupTimeAndDateInUTC, 'Australia/Sydney')
-          .format('dddd hh:mma DD/MM/YYYY'),
+          .tz(cell.pickupTimeAndDate, 'Australia/Sydney')
+          .format('ddd h:mma DD/MM/YYYY'),
       filterMethod: (filter, rows) =>
         matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
       filterAll: true,
@@ -48,7 +49,7 @@ const getColumns = (table) => {
       filterAll: true,
     },
     {
-      accessor: 'driver.driver_name',
+      accessor: 'driver.name',
       Header: 'Driver',
       filterMethod: (filter, rows) =>
         matchSorter(rows, filter.value, { keys: ['driver.driver_name'] }),
