@@ -16,6 +16,7 @@
     "bootstrap": "^4.4.1",
     "busboy": "^0.3.1",
     "formidable": "^1.2.2",
+    "lodash": "^4.17.15",
     "match-sorter": "^4.1.0",
     "mysql": "^2.18.1",
     "next": "9.3.2",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/busboy": "^0.2.3",
     "@types/formidable": "^1.0.31",
+    "@types/lodash": "^4.14.150",
     "@types/match-sorter": "^4.0.0",
     "@types/mysql": "^2.15.9",
     "@types/react": "^16.9.27",

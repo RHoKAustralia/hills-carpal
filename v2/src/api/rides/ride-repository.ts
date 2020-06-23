@@ -1,7 +1,8 @@
 import moment from 'moment';
+import _ from 'lodash';
+import { Connection } from 'mysql';
 
 import DatabaseManager from '../database/database-manager';
-import { Connection } from 'mysql';
 import { Gender, CarType, RideStatus, Ride } from '../../model';
 
 interface ListQuery {
@@ -12,7 +13,23 @@ interface ListQuery {
     carType?: CarType;
   };
   status?: RideStatus;
+  sort?: string[];
+  sortDirection?: 'asc' | 'desc';
 }
+
+const validSorts = [
+  'clientName',
+  'pickupTime',
+  'locationFrom',
+  'locationTo',
+  'status',
+  'driver',
+];
+
+export const validSortLookup = _(validSorts)
+  .keyBy()
+  .mapValues((x) => true)
+  .value();
 
 export default class RideRepository {
   private dbName: string;
@@ -151,38 +168,48 @@ export default class RideRepository {
     return this.list({ driverId }, connection);
   }
 
-  listForFacilitator(connection: Connection): Promise<Ride[]> {
-    return this.list({ fromNow: false }, connection);
+  listForFacilitator(
+    connection: Connection,
+    sort?: string[],
+    sortDirection?: 'asc' | 'desc'
+  ): Promise<Ride[]> {
+    return this.list({ fromNow: false, sort, sortDirection }, connection);
   }
 
-  async list(jsonQuery: ListQuery, connection: Connection): Promise<Ride[]> {
+  async list(
+    { fromNow = false, sort, sortDirection = 'asc' }: ListQuery,
+    connection: Connection
+  ): Promise<Ride[]> {
     const escape = (data) => connection.escape(data);
     let where = [];
 
-    if (jsonQuery.fromNow) {
+    if (fromNow) {
       where.push('rides.pickupTimeAndDateInUTC >= NOW()');
     }
 
-    if (jsonQuery.driverRestrictions?.gender) {
-      where.push(
-        `rides.driverGender = '${escape(jsonQuery.driverRestrictions?.gender)}'`
-      );
-    }
+    // if (sort) {
+    //   _.every(sort, column => column.)
+    // }
 
-    if (jsonQuery.driverRestrictions?.carType) {
-      where.push(
-        `rides.carType = '${escape(jsonQuery.driverRestrictions?.carType)}'`
-      );
-    }
+    // if (jsonQuery.driverRestrictions?.gender) {
+    //   where.push(
+    //     `rides.driverGender = '${escape(jsonQuery.driverRestrictions?.gender)}'`
+    //   );
+    // }
 
-    if (jsonQuery.status) {
-      where.push(`rides.status = ${escape(jsonQuery.status)}`);
-    }
+    // if (jsonQuery.driverRestrictions?.carType) {
+    //   where.push(
+    //     `rides.carType = '${escape(jsonQuery.driverRestrictions?.carType)}'`
+    //   );
+    // }
 
-    if (jsonQuery.driverId) {
-      where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
-    }
+    // if (jsonQuery.status) {
+    //   where.push(`rides.status = ${escape(jsonQuery.status)}`);
+    // }
 
+    // if (jsonQuery.driverId) {
+    //   where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
+    // }
     const query = `
       SELECT 
         rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.description, rides.hasMps,
@@ -201,7 +228,14 @@ export default class RideRepository {
       LEFT JOIN ${this.dbName}.driver_ride dr ON dr.ride_id = rides.id
       LEFT JOIN ${this.dbName}.clients clients ON clients.id = rides.clientId
       ${where.length ? ' WHERE ' + where.join(' AND ') : ''}
-      ORDER BY pickupTimeAndDateInUTC ASC;`;
+      ${
+        sort
+          ? `ORDER BY ${sort
+              .map((sortColumn) => sortColumn)
+              .join(', ')} ${sortDirection.toUpperCase()}`
+          : ''
+      }
+    `;
 
     console.log(query);
 
@@ -247,5 +281,3 @@ export default class RideRepository {
     );
   }
 }
-
-module.exports = RideRepository;
