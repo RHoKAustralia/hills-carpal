@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import _ from 'lodash';
 
-import RideRepository from '../../../src/api/rides/ride-repository';
+import RideRepository, {
+  validSortLookup,
+} from '../../../src/api/rides/ride-repository';
 import DatabaseManager from '../../../src/api/database/database-manager';
 import { requireFacilitatorPermissions } from '../../../src/auth/jwt';
 
@@ -15,8 +18,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'GET':
-          const rides = await rideRepository.listForFacilitator(connection);
-          res.status(200).json(rides);
+          // page=${state.page}&pageSize=${state.pageSize}&${state.sorted}&${state.filtered}
+          const { page, pageSize, sort, filtered, sortDirection } = req.query;
+
+          let sortArray: string[] | undefined;
+          if (sort) {
+            sortArray = _.isArray(sort) ? sort : [sort];
+            const validSort = _.every(
+              sortArray,
+              (sort) => validSortLookup[sort]
+            );
+
+            if (!validSort) {
+              res.status(400).send({
+                message: 'Invalid sort',
+              });
+              return;
+            }
+          }
+
+          const rides = await rideRepository.listForFacilitator(
+            connection,
+            sortArray,
+            sortDirection && sortDirection === 'asc' ? 'asc' : 'desc'
+          );
+          res.status(200).json({ rides });
           break;
         // case 'PUT':
         //   // Update or create data in your database

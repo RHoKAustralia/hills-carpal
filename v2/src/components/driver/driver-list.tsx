@@ -20,7 +20,7 @@ export default function DriverList({ rides }) {
                   <a className="ride-list__link">
                     <div className="ride-list__content">
                       <div className="ride-list__client-name">
-                        {ride.client}
+                        {ride.client.name}
                       </div>
                       <div className="ride-list__time">
                         {rideMoment.format('dddd DD/MM/YYYY hh:mma')} (

@@ -12,52 +12,34 @@ import { Ride } from '../../src/model';
 
 const getColumns = (table) => {
   return [
-    { accessor: 'client.name', Header: 'Client' },
+    { accessor: 'client.name', id: 'clientName', Header: 'Client' },
     {
       Header: 'Pickup Time',
-      id: 'pickupTimeAndDateInUTC',
+      id: 'pickupTimeAndDate',
       accessor: (cell: Ride) =>
         moment
           .tz(cell.pickupTimeAndDate, 'Australia/Sydney')
           .format('ddd h:mma DD/MM/YYYY'),
-      filterMethod: (filter, rows) =>
-        matchSorter(rows, filter.value, { keys: ['pickupTimeAndDateInUTC'] }),
-      filterAll: true,
     },
     {
       Header: 'Location from',
       id: 'locationFrom',
       accessor: (cell) => cell.locationFrom.placeName,
-      filterMethod: (filter, rows) => {
-        return matchSorter(rows, filter.value, { keys: ['locationFrom'] });
-      },
-      filterAll: true,
     },
     {
       id: 'locationTo',
       Header: 'Location to',
       accessor: (cell) => cell.locationTo.placeName,
-      filterMethod: (filter, rows) =>
-        matchSorter(rows, filter.value, { keys: ['locationTo'] }),
-      filterAll: true,
     },
     {
-      accessor: 'status',
-      Header: 'Status',
-      filterMethod: (filter, rows) =>
-        matchSorter(rows, filter.value, { keys: ['status'] }),
-      filterAll: true,
-    },
-    {
+      id: 'driverName',
       accessor: 'driver.name',
       Header: 'Driver',
-      filterMethod: (filter, rows) =>
-        matchSorter(rows, filter.value, { keys: ['driver.driver_name'] }),
-      filterAll: true,
     },
     {
-      Header: 'Change status',
-      id: 'statusChanger',
+      id: 'status',
+      accessor: 'status',
+      Header: 'Status',
       Cell: ({ row }) => {
         return (
           <div onClick={(e) => e.stopPropagation()} className="form-group">
@@ -88,10 +70,11 @@ interface State {
   drives: any[];
   loading: boolean;
   error?: Error;
+  pages: number;
 }
 
 class Facilitator extends React.Component<Props, State> {
-  state: State = { drives: null, loading: false };
+  state: State = { drives: [], loading: false, pages: -1 };
 
   async handleStatusChange(e, row) {
     // This is a work around for a backend incinsistency.  It still gives us back pickupTime instead of pickupTimeAndDateInUTC
@@ -128,30 +111,6 @@ class Facilitator extends React.Component<Props, State> {
       router.replace('/');
       return false;
     }
-
-    this.setState({
-      loading: true,
-    });
-
-    try {
-      const res = await fetch('/api/rides/facilitator', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-        },
-      });
-
-      if (res.status === 200) {
-        this.setState({ loading: false, drives: await res.json() });
-      } else {
-        throw new Error('Could not list rides');
-      }
-    } catch (e) {
-      console.error(e);
-      this.setState({
-        loading: false,
-        error: e,
-      });
-    }
   }
 
   handleRowClick(row) {
@@ -159,9 +118,6 @@ class Facilitator extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.state.loading) {
-      return <img alt="loader" className="loader" src="/loader.svg" />;
-    }
     if (this.state.error) {
       return (
         <span>
@@ -188,19 +144,79 @@ class Facilitator extends React.Component<Props, State> {
         </div>
         <div className="row">
           <div className="col-12">
-            {this.state.drives && (
-              <Table
-                getTrProps={function (state, rowInfo, column) {
-                  return {
-                    onClick() {
-                      handleRowClick(rowInfo.row);
-                    },
-                  };
-                }}
-                data={this.state.drives}
-                columns={getColumns(this)}
-              />
-            )}
+            <Table
+              getTrProps={function (state, rowInfo, column) {
+                return {
+                  onClick() {
+                    handleRowClick(rowInfo.row);
+                  },
+                };
+              }}
+              pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
+              loading={this.state.loading}
+              data={this.state.drives}
+              manual
+              columns={getColumns(this)}
+              onFetchData={async (state, instance) => {
+                // show the loading overlay
+                this.setState({ loading: true });
+
+                try {
+                  const sorted = state.sorted
+                    .map(
+                      (sortColumn) =>
+                        `&sort=${sortColumn.id}&sortDirection=${
+                          sortColumn.desc ? 'desc' : 'asc'
+                        }`
+                    )
+                    .join('');
+
+                  const res = await fetch(
+                    `/api/rides/facilitator?page=${state.page}&pageSize=${state.pageSize}${sorted}&filtered=${state.filtered}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                          'id_token'
+                        )}`,
+                      },
+                    }
+                  );
+
+                  if (res.status === 200) {
+                    const data = await res.json();
+
+                    this.setState({
+                      loading: false,
+                      drives: data.rides,
+                      pages: data.pages,
+                    });
+                  } else {
+                    throw new Error('Could not list rides');
+                  }
+                } catch (e) {
+                  console.error(e);
+                  this.setState({
+                    loading: false,
+                    error: e,
+                  });
+                }
+
+                // fetch your data
+                // Axios.post('mysite.com/data', {
+                //   page: state.page,
+                //   pageSize: state.pageSize,
+                //   sorted: state.sorted,
+                //   filtered: state.filtered,
+                // }).then((res) => {
+                //   // Update react-table
+                //   this.setState({
+                //     data: res.data.rows,
+                //     pages: res.data.pages,
+                //     loading: false,
+                //   });
+                // });
+              }}
+            />
           </div>
         </div>
       </React.Fragment>
