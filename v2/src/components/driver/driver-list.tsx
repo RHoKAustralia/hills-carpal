@@ -11,7 +11,7 @@ export default function DriverList({ rides }) {
         <ul className="ride-list">
           {rides.map((ride) => {
             const rideMoment = moment.tz(
-              ride.pickupTimeAndDateInUTC,
+              ride.pickupTimeAndDate,
               'Australia/Sydney'
             );
             return (

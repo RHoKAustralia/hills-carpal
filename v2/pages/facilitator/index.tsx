@@ -80,7 +80,7 @@ class Facilitator extends React.Component<Props, State> {
     // This is a work around for a backend incinsistency.  It still gives us back pickupTime instead of pickupTimeAndDateInUTC
     const newStatus = e.currentTarget.value;
     const pickupTimeAndDateInUTC =
-      row._original.pickupTimeAndDateInUTC || row._original.pickupTime;
+      row._original.pickupTimeAndDate || row._original.pickupTime;
     const res = await fetch('/rides/' + row._original.id, {
       method: 'PUT',
       headers: {
