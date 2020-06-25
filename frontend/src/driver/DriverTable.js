@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 const columns = [
   {
     Header: 'Pickup Time',
-    id: 'pickupTimeAndDateInUTC',
+    id: 'pickupTimeAndDate',
     accessor: cell =>
       moment
         .tz(cell.pickupTimeAndDateInUTC, 'Australia/Sydney')

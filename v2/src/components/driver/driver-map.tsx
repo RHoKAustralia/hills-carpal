@@ -84,7 +84,7 @@ class DriverMap extends Component<Props> {
     const { driverCoords, rides } = this.props;
     const allRides = driverCoords ? rides.concat(driverCoords) : rides;
     const markers = allRides.map(ride => {
-      const date = ride.pickupTimeAndDateInUTC || ride.pickupTime;
+      const date = ride.pickupTimeAndDate || ride.pickupTime;
       const popup = (
         <Popup>
           <div>

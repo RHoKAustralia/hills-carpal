@@ -19,11 +19,11 @@ interface ListQuery {
 
 const validSorts = [
   'clientName',
-  'pickupTime',
+  'pickupTimeAndDate',
   'locationFrom',
   'locationTo',
   'status',
-  'driver',
+  'driverName',
 ];
 
 export const validSortLookup = _(validSorts)
@@ -65,7 +65,7 @@ export default class RideRepository {
                                     escape(ride.clientId),
                                     escape(ride.facilitatorId),
                                     escape(
-                                      moment(ride.pickupTimeAndDateInUTC)
+                                      moment(ride.pickupTimeAndDate)
                                         .utc()
                                         .format('YYYY-MM-DD HH:mm:ss')
                                     ),
@@ -96,7 +96,7 @@ export default class RideRepository {
     }
 
     console.log(
-      moment(ride.pickupTimeAndDateInUTC).utc().format('YYYY-MM-DD HH:mm:ss')
+      moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
     );
 
     this.databaseManager.beginTransaction(connection);
@@ -212,7 +212,7 @@ export default class RideRepository {
     // }
     const query = `
       SELECT 
-        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.description, rides.hasMps,
+        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC AS pickupTimeAndDate, rides.description, rides.hasMps,
         rides.driverGender, rides.carType, rides.status,
         dr.driver_id AS driverId, dr.confirmed AS driverConfirmed, dr.updated_at AS updatedAt, dr.driver_name AS driverName,
         rides.clientId, clients.name AS clientName, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
@@ -257,7 +257,7 @@ export default class RideRepository {
             name: sqlRide.driverName,
           },
           facilitatorEmail: sqlRide.facilitatorEmail,
-          pickupTimeAndDate: sqlRide.pickupTimeAndDateInUTC,
+          pickupTimeAndDate: sqlRide.pickupTimeAndDate,
           locationFrom: {
             latitude: sqlRide.locationFrom.y,
             longitude: sqlRide.locationFrom.x,

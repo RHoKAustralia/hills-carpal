@@ -35,7 +35,7 @@ class RideRepository {
                                     escape(ride.clientId),
                                     escape(ride.facilitatorId),
                                     escape(
-                                      moment(ride.pickupTimeAndDateInUTC)
+                                      moment(ride.pickupTimeAndDate)
                                         .utc()
                                         .format('YYYY-MM-DD HH:mm:ss')
                                     ),
@@ -66,7 +66,7 @@ class RideRepository {
     }
 
     console.log(
-      moment(ride.pickupTimeAndDateInUTC)
+      moment(ride.pickupTimeAndDate)
         .utc()
         .format('YYYY-MM-DD HH:mm:ss')
     );
@@ -81,7 +81,7 @@ class RideRepository {
     )},
 		facilitatorEmail = ${escape(ride.facilitatorId)},
 		pickupTimeAndDateInUTC = ${escape(
-      moment(ride.pickupTimeAndDateInUTC)
+      moment(ride.pickupTimeAndDate)
         .utc()
         .format('YYYY-MM-DD HH:mm:ss')
     )},
@@ -195,7 +195,7 @@ class RideRepository {
     const query = `SELECT rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC, rides.placeNameFrom, rides.postCodeFrom,
       rides.locationFrom, rides.placeNameTo, rides.postCodeTo, rides.locationTo, rides.description, rides.hasMps, rides.clientId,
       clients.name AS clientName, rides.driverGender, rides.carType, rides.status, dr.driver_id, dr.confirmed, dr.updated_at,
-      dr.driver_name, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription
+      dr.driver_name AS driverName, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription
       FROM ${this._dbName}.rides
       ${leftJoinForClient} ${leftJoinForDriver} ${
       where.length ? ' WHERE ' + where.join(' AND ') : ''
