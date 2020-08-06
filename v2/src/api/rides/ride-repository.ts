@@ -15,6 +15,8 @@ interface ListQuery {
   status?: RideStatus;
   sort?: string[];
   sortDirection?: 'asc' | 'desc';
+  size?: number;
+  page?: number;
 }
 
 const validSorts = [
@@ -171,45 +173,36 @@ export default class RideRepository {
   listForFacilitator(
     connection: Connection,
     sort?: string[],
-    sortDirection?: 'asc' | 'desc'
+    sortDirection?: 'asc' | 'desc',
+    size?: number,
+    page?: number
   ): Promise<Ride[]> {
-    return this.list({ fromNow: false, sort, sortDirection }, connection);
+    return this.list(
+      { fromNow: false, sort, sortDirection, size, page },
+      connection
+    );
+  }
+
+  countForFacilitator(connection: Connection): Promise<number> {
+    return this.count({ fromNow: false }, connection);
   }
 
   async list(
-    { fromNow = false, sort, sortDirection = 'asc' }: ListQuery,
+    {
+      fromNow = false,
+      sort,
+      sortDirection = 'asc',
+      size = 10,
+      page = 0,
+    }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
-    const escape = (data) => connection.escape(data);
     let where = [];
 
     if (fromNow) {
       where.push('rides.pickupTimeAndDateInUTC >= NOW()');
     }
 
-    // if (sort) {
-    //   _.every(sort, column => column.)
-    // }
-
-    // if (jsonQuery.driverRestrictions?.gender) {
-    //   where.push(
-    //     `rides.driverGender = '${escape(jsonQuery.driverRestrictions?.gender)}'`
-    //   );
-    // }
-
-    // if (jsonQuery.driverRestrictions?.carType) {
-    //   where.push(
-    //     `rides.carType = '${escape(jsonQuery.driverRestrictions?.carType)}'`
-    //   );
-    // }
-
-    // if (jsonQuery.status) {
-    //   where.push(`rides.status = ${escape(jsonQuery.status)}`);
-    // }
-
-    // if (jsonQuery.driverId) {
-    //   where.push(`dr.driver_id = ${escape(jsonQuery.driverId)}`);
-    // }
     const query = `
       SELECT 
         rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC AS pickupTimeAndDate, rides.description, rides.hasMps,
@@ -235,6 +228,8 @@ export default class RideRepository {
               .join(', ')} ${sortDirection.toUpperCase()}`
           : ''
       }
+      LIMIT ${size}
+      OFFSET ${page * size}
     `;
 
     console.log(query);
@@ -279,5 +274,29 @@ export default class RideRepository {
           description: sqlRide.description,
         } as Ride)
     );
+  }
+
+  async count(
+    { fromNow = false }: ListQuery,
+    connection: Connection
+  ): Promise<number> {
+    let where = [];
+
+    if (fromNow) {
+      where.push('rides.pickupTimeAndDateInUTC >= NOW()');
+    }
+
+    const query = `
+      SELECT 
+        count(rides.id) AS count
+      FROM ${this.dbName}.rides
+      ${where.length ? ' WHERE ' + where.join(' AND ') : ''}
+    `;
+
+    console.log(query);
+
+    const rides = await this.databaseManager.query(query, connection);
+
+    return rides[0].count;
   }
 }
