@@ -19,7 +19,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       switch (method) {
         case 'GET':
           // page=${state.page}&pageSize=${state.pageSize}&${state.sorted}&${state.filtered}
-          const { page, pageSize, sort, filtered, sortDirection } = req.query;
+          const {
+            page,
+            pageSize,
+            sort = 'pickupTimeAndDate',
+            // filtered,
+            sortDirection = 'desc',
+          } = req.query;
 
           let sortArray: string[] | undefined;
           if (sort) {
@@ -37,12 +43,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             }
           }
 
-          const rides = await rideRepository.listForFacilitator(
+          const parsedPageSize =
+            pageSize && !_.isArray(pageSize) && Number.parseInt(pageSize);
+          const ridesPromise = rideRepository.listForFacilitator(
             connection,
             sortArray,
-            sortDirection && sortDirection === 'asc' ? 'asc' : 'desc'
+            sortDirection && sortDirection === 'asc' ? 'asc' : 'desc',
+            parsedPageSize,
+            page && !_.isArray(page) && Number.parseInt(page)
           );
-          res.status(200).json({ rides });
+          const countPromise = rideRepository.countForFacilitator(connection);
+          const [rides, count] = await Promise.all([
+            ridesPromise,
+            countPromise,
+          ]);
+
+          res
+            .status(200)
+            .json({ rides, pages: Math.ceil(count / parsedPageSize) });
           break;
         // case 'PUT':
         //   // Update or create data in your database
