@@ -1,12 +1,15 @@
 import DatabaseManager from '../database/database-manager';
 import { Client } from '../../model';
 import { Connection } from 'mysql';
+import LocationRepository from '../location-repository';
 
 export default class ClientRepository {
   private dbName: string;
+  private locationRepository: LocationRepository;
 
   constructor(private readonly databaseManager: DatabaseManager) {
     this.dbName = databaseManager.databaseConfig.database;
+    this.locationRepository = new LocationRepository(databaseManager);
   }
 
   async create(client: Client, connection: Connection): Promise<number> {
@@ -15,20 +18,8 @@ export default class ClientRepository {
     try {
       await this.databaseManager.beginTransaction(connection);
 
-      const homeLocationPoint = `POINT(${escape(
-        client.homeLocation.latitude
-      )}, ${escape(client.homeLocation.longitude)})`;
-
-      await this.databaseManager.query(
-        `INSERT INTO locations (
-          point, name, suburb, postCode
-        ) VALUES (
-          ${homeLocationPoint},
-          ${escape(client.homeLocation.placeName)},
-          ${escape(client.homeLocation.suburb)},
-          ${escape(client.homeLocation.postCode)}
-        );
-      `,
+      const homeLocationId = await this.locationRepository.create(
+        client.homeLocation,
         connection
       );
 
@@ -48,7 +39,7 @@ export default class ClientRepository {
           escape(client.phoneNumber),
           escape(client.preferredDriverGender),
           escape(client.preferredCarType),
-          'LAST_INSERT_ID()',
+          escape(homeLocationId),
           client.hasMps ? 'true' : 'false',
         ].join(',')})`;
 

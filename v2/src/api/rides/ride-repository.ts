@@ -4,6 +4,7 @@ import { Connection } from 'mysql';
 
 import DatabaseManager from '../database/database-manager';
 import { Gender, CarType, RideStatus, Ride } from '../../model';
+import LocationRepository from '../location-repository';
 
 interface ListQuery {
   fromNow?: boolean;
@@ -35,16 +36,29 @@ export const validSortLookup = _(validSorts)
 
 export default class RideRepository {
   private dbName: string;
+  private locationRepository: LocationRepository;
 
   constructor(private readonly databaseManager: DatabaseManager) {
     this.dbName = databaseManager.databaseConfig.database;
+    this.locationRepository = new LocationRepository(databaseManager);
   }
 
-  create(ride, connection) {
+  async create(ride: any, connection: Connection) {
     const escape = (data) => connection.escape(data);
-    const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
-    const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
-    let query = `INSERT INTO ${this.dbName}.rides(clientId,
+
+    try {
+      connection.beginTransaction();
+
+      const locationFromId = await this.locationRepository.create(
+        ride.locationFrom,
+        connection
+      );
+      const locationToId = await this.locationRepository.create(
+        ride.locationTo,
+        connection
+      );
+
+      let query = `INSERT INTO ${this.dbName}.rides(clientId,
                                   facilitatorEmail,
                                   pickupTimeAndDateInUTC,
                                   locationFrom,
@@ -54,12 +68,6 @@ export default class RideRepository {
                                   carType,
                                   status,
                                   deleted,
-                                  suburbFrom,
-                                  placeNameFrom,
-                                  postCodeFrom,
-                                  suburbTo,
-                                  placeNameTo,
-                                  postCodeTo,
                                   hasMps,
                                   description) 
                          VALUES 
@@ -71,25 +79,24 @@ export default class RideRepository {
                                         .utc()
                                         .format('YYYY-MM-DD HH:mm:ss')
                                     ),
-                                    locationFrom,
-                                    locationTo,
+                                    locationFromId,
+                                    locationToId,
                                     escape(ride.fbLink),
                                     escape(ride.driverGender),
                                     escape(ride.carType),
                                     escape(ride.status),
                                     escape(ride.deleted),
-                                    escape(ride.locationFrom.suburb),
-                                    escape(ride.locationFrom.placeName),
-                                    escape(ride.locationFrom.postcode),
-                                    escape(ride.locationTo.suburb),
-                                    escape(ride.locationTo.placeName),
-                                    escape(ride.locationTo.postcode),
                                     escape(ride.hasMps),
                                     escape(ride.description),
                                   ].join(',')})`;
-    console.log(query);
+      console.log(query);
 
-    return this.databaseManager.query(query, connection);
+      await this.databaseManager.query(query, connection);
+
+      connection.commit();
+    } catch (e) {
+      connection.rollback();
+    }
   }
 
   update(id, ride, connection) {

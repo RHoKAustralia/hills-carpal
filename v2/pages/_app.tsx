@@ -7,6 +7,7 @@ import auth from '../src/auth/Auth';
 import './app.css';
 import './document.css';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface LinkData {
   type: string;

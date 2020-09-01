@@ -62,10 +62,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             .status(200)
             .json({ rides, pages: Math.ceil(count / parsedPageSize) });
           break;
-        // case 'PUT':
-        //   // Update or create data in your database
-        //   res.status(200).json({ id, name: name || `User ${id}` });
-        //   break;
         default:
           res.setHeader('Allow', ['GET']);
           res.status(405).end(`Method ${method} Not Allowed`);

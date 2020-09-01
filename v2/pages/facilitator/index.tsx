@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment-timezone';
-import matchSorter from 'match-sorter';
 import Link from 'next/link';
 import router from 'next/router';
 
@@ -137,7 +136,7 @@ class Facilitator extends React.Component<Props, State> {
             <Link href={'/facilitator/clients'}>
               <a className="btn btn-primary create-button">Clients</a>
             </Link>
-            <Link href={'/facilitator/create'}>
+            <Link href={'/facilitator/rides/create'}>
               <a className="btn btn-primary create-button">Create new</a>
             </Link>
           </div>
