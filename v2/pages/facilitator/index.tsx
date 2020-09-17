@@ -66,28 +66,28 @@ const getColumns = (table) => {
 interface Props {}
 
 interface State {
-  drives: any[];
+  rides: Ride[];
   loading: boolean;
   error?: Error;
   pages: number;
 }
 
 class Facilitator extends React.Component<Props, State> {
-  state: State = { drives: [], loading: false, pages: -1 };
+  state: State = { rides: [], loading: false, pages: -1 };
 
   async handleStatusChange(e, row) {
     // This is a work around for a backend incinsistency.  It still gives us back pickupTime instead of pickupTimeAndDateInUTC
     const newStatus = e.currentTarget.value;
-    const pickupTimeAndDateInUTC =
+    const pickupTimeAndDate =
       row._original.pickupTimeAndDate || row._original.pickupTime;
-    const res = await fetch('/rides/' + row._original.id, {
+    const res = await fetch('/facilitator/rides/' + row._original.id, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
       },
       body: JSON.stringify({
         ...row._original,
-        pickupTimeAndDateInUTC,
+        pickupTimeAndDate,
         status: newStatus,
         driver: newStatus !== 'OPEN' ? row._original.driver : null,
       }),
@@ -96,8 +96,8 @@ class Facilitator extends React.Component<Props, State> {
     if (res.status === 200) {
       row.status = newStatus;
       let newState = this.state;
-      newState.drives[row._index].status = newStatus;
-      newState.drives[row._index].driver = null;
+      newState.rides[row._index].status = newStatus;
+      newState.rides[row._index].driver = null;
       this.setState(newState);
     } else {
       throw new Error('Could not change status');
@@ -112,9 +112,9 @@ class Facilitator extends React.Component<Props, State> {
     }
   }
 
-  handleRowClick(row) {
-    router.push('/facilitator/' + row._original.id);
-  }
+  handleRowClick = (id: number) => {
+    router.push('/facilitator/rides/' + id);
+  };
 
   render() {
     if (this.state.error) {
@@ -125,7 +125,9 @@ class Facilitator extends React.Component<Props, State> {
         </span>
       );
     }
+
     const handleRowClick = this.handleRowClick;
+
     return (
       <React.Fragment>
         <div className="row">
@@ -144,17 +146,15 @@ class Facilitator extends React.Component<Props, State> {
         <div className="row">
           <div className="col-12">
             <Table
-              getTrProps={function (state, rowInfo, column) {
-                return {
-                  onClick() {
-                    handleRowClick(rowInfo.row);
-                  },
-                };
-              }}
+              getTrProps={(state, rowInfo, column) => ({
+                onClick() {
+                  handleRowClick((rowInfo.row._original as Ride).id);
+                },
+              })}
               pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
               loading={this.state.loading}
               filterable={false}
-              data={this.state.drives}
+              data={this.state.rides}
               manual
               columns={getColumns(this)}
               onFetchData={async (state, instance) => {
@@ -187,7 +187,7 @@ class Facilitator extends React.Component<Props, State> {
 
                     this.setState({
                       loading: false,
-                      drives: data.rides,
+                      rides: data.rides,
                       pages: data.pages,
                     });
                   } else {

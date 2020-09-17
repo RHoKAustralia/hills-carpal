@@ -36,4 +36,31 @@ export default class LocationRepository {
       )
     )[0]['lastInsertId'];
   }
+
+  async update(
+    id: number,
+    location: Location,
+    connection: Connection
+  ): Promise<void> {
+    const escape = (data) => connection.escape(data);
+
+    const point = `POINT(${escape(location.latitude)}, ${escape(
+      location.longitude
+    )})`;
+
+    const sql = `
+      UPDATE ${this.dbName}.locations 
+      SET
+        point = ${point},
+        name = ${escape(location.placeName)},
+        suburb = ${escape(location.suburb)},
+        postCode = ${escape(location.postCode)}
+      WHERE
+        id = ${id};
+   `;
+
+    console.log(sql);
+
+    await this.databaseManager.query(sql, connection);
+  }
 }

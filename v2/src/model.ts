@@ -3,6 +3,7 @@ export type CarType = 'suv' | 'noSUV';
 export type RideStatus = 'OPEN' | 'CONFIRMED' | 'ENDED' | 'CANCELLED';
 
 export interface Location {
+  id?: number;
   latitude: string;
   longitude: string;
   suburb: string;
@@ -17,8 +18,8 @@ export interface RideDriver {
   updatedAt: Date;
 }
 
-export interface Ride {
-  client: OptionalClient;
+interface RideCommon {
+  id?: number;
   status: RideStatus;
   locationFrom: Location;
   locationTo: Location;
@@ -28,7 +29,11 @@ export interface Ride {
   hasMps: boolean;
   description: string;
   facilitatorEmail: string;
-  pickupTimeAndDate: Date;
+  pickupTimeAndDate: string;
+}
+
+export interface Ride extends RideCommon {
+  client: OptionalClient;
 }
 
 export interface OptionalClient {
@@ -55,4 +60,8 @@ export interface Image {
   mimeType: string;
   caption?: string;
   content?: string;
+}
+
+export interface RideInput extends RideCommon {
+  clientId: number;
 }

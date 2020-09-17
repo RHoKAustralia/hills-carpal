@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Connection } from 'mysql';
 
 import DatabaseManager from '../database/database-manager';
-import { Gender, CarType, RideStatus, Ride } from '../../model';
+import { Gender, CarType, RideStatus, Ride, RideInput } from '../../model';
 import LocationRepository from '../location-repository';
 
 interface ListQuery {
@@ -18,6 +18,7 @@ interface ListQuery {
   sortDirection?: 'asc' | 'desc';
   size?: number;
   page?: number;
+  rideId?: number;
 }
 
 const validSorts = [
@@ -43,7 +44,7 @@ export default class RideRepository {
     this.locationRepository = new LocationRepository(databaseManager);
   }
 
-  async create(ride: any, connection: Connection) {
+  async create(ride: RideInput, connection: Connection) {
     const escape = (data) => connection.escape(data);
 
     try {
@@ -60,20 +61,18 @@ export default class RideRepository {
 
       let query = `INSERT INTO ${this.dbName}.rides(clientId,
                                   facilitatorEmail,
-                                  pickupTimeAndDateInUTC,
+                                  pickupTimeAndDateInUTC AS pickupTimeAndDate,
                                   locationFrom,
                                   locationTo,
-                                  fbLink,
                                   driverGender,
                                   carType,
                                   status,
-                                  deleted,
                                   hasMps,
                                   description) 
                          VALUES 
                                   (${[
                                     escape(ride.clientId),
-                                    escape(ride.facilitatorId),
+                                    escape(ride.facilitatorEmail),
                                     escape(
                                       moment(ride.pickupTimeAndDate)
                                         .utc()
@@ -81,11 +80,9 @@ export default class RideRepository {
                                     ),
                                     locationFromId,
                                     locationToId,
-                                    escape(ride.fbLink),
                                     escape(ride.driverGender),
                                     escape(ride.carType),
                                     escape(ride.status),
-                                    escape(ride.deleted),
                                     escape(ride.hasMps),
                                     escape(ride.description),
                                   ].join(',')})`;
@@ -99,40 +96,37 @@ export default class RideRepository {
     }
   }
 
-  update(id, ride, connection) {
+  async update(id: number, ride: RideInput, connection: Connection) {
     if (!id) {
       throw new Error('No id specified when updating ride.');
     }
 
-    console.log(
-      moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
-    );
-
     this.databaseManager.beginTransaction(connection);
 
     const escape = (data) => connection.escape(data);
-    const locationFrom = `POINT(${ride.locationFrom.latitude}, ${ride.locationFrom.longitude})`;
-    const locationTo = `POINT(${ride.locationTo.latitude}, ${ride.locationTo.longitude})`;
+
+    const existing = await this.get(id, connection);
+
+    await this.locationRepository.update(
+      existing.locationFrom.id,
+      ride.locationFrom,
+      connection
+    );
+    await this.locationRepository.update(
+      existing.locationTo.id,
+      ride.locationTo,
+      connection
+    );
     let query = `UPDATE ${this.dbName}.rides SET clientId = ${escape(
       ride.clientId
     )},
-		facilitatorEmail = ${escape(ride.facilitatorId)},
+		facilitatorEmail = ${escape(ride.facilitatorEmail)},
 		pickupTimeAndDateInUTC = ${escape(
-      moment(ride.pickupTimeAndDateInUTC).utc().format('YYYY-MM-DD HH:mm:ss')
+      moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
     )},
-		locationFrom = ${locationFrom},
-		locationTo = ${locationTo},
-		fbLink = ${escape(ride.fbLink)},
 		driverGender = ${escape(ride.driverGender)},
 		carType = ${escape(ride.carType)},
 		status = ${escape(ride.status)},
-		deleted = ${ride.deleted},
-		suburbFrom = ${escape(ride.locationFrom.suburb)},
-		placeNameFrom = ${escape(ride.locationFrom.placeName)},
-		postCodeFrom = ${escape(ride.locationFrom.postcode)},
-		suburbTo = ${escape(ride.locationTo.suburb)},
-		placeNameTo = ${escape(ride.locationTo.placeName)},
-		postCodeTo = ${escape(ride.locationTo.postcode)},
 		hasMps = ${escape(ride.hasMps)},
 		description = ${escape(ride.description)} 
 	WHERE
@@ -141,14 +135,14 @@ export default class RideRepository {
     let extraQuery = '';
 
     //Check if driver has interacted with a ride
-    if (ride.driver) {
+    if (ride?.driver?.id) {
       extraQuery = `
         ;insert into ${
           this.dbName
         }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
-        escape(ride.driver.driver_id),
+        escape(ride.driver.id),
         escape(id),
-        escape(ride.driver.driver_name),
+        escape(ride.driver.name),
         escape(ride.driver.confirmed ? 1 : 0),
       ]}, NOW()) ON DUPLICATE KEY UPDATE confirmed=${escape(
         ride.driver.confirmed ? 1 : 0
@@ -161,16 +155,14 @@ export default class RideRepository {
 
     console.log(query + extraQuery);
 
-    return this.databaseManager
-      .query(query + extraQuery, connection)
-      .then(() => this.databaseManager.commit(connection))
-      .catch(() => this.databaseManager.rollback(connection));
-  }
-
-  findOne(jsonQuery, connection) {
-    return this.list(jsonQuery, connection).then(
-      (results) => results[0] || null
-    );
+    try {
+      await this.databaseManager.query(query + extraQuery, connection);
+      this.databaseManager.commit(connection);
+      return ride;
+    } catch (e) {
+      this.databaseManager.rollback(connection);
+      throw e;
+    }
   }
 
   listForDriver(driverId: string, connection: Connection): Promise<Ride[]> {
@@ -194,6 +186,12 @@ export default class RideRepository {
     return this.count({ fromNow: false }, connection);
   }
 
+  async get(rideId: number, connection: Connection): Promise<Ride | undefined> {
+    const rides = await this.list({ rideId }, connection);
+
+    return rides.length > 0 ? rides[0] : undefined;
+  }
+
   async list(
     {
       fromNow = false,
@@ -201,6 +199,7 @@ export default class RideRepository {
       sortDirection = 'asc',
       size = 10,
       page = 0,
+      rideId,
     }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
@@ -210,14 +209,18 @@ export default class RideRepository {
       where.push('rides.pickupTimeAndDateInUTC >= NOW()');
     }
 
+    if (rideId) {
+      where.push(`rides.id = ${escape(rideId.toString())}`);
+    }
+
     const query = `
       SELECT 
         rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC AS pickupTimeAndDate, rides.description, rides.hasMps,
         rides.driverGender, rides.carType, rides.status,
         dr.driver_id AS driverId, dr.confirmed AS driverConfirmed, dr.updated_at AS updatedAt, dr.driver_name AS driverName,
         rides.clientId, clients.name AS clientName, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
-        locationFrom.name AS placeNameFrom, locationFrom.postCode AS postCodeFrom, locationFrom.point AS locationFrom, locationFrom.suburb AS suburbFrom,
-        locationTo.name AS placeNameTo, locationTo.postCode AS postCodeTo, locationTo.point AS locationTo, locationTo.suburb AS suburbTo
+        locationFrom.id AS locationIdFrom, locationFrom.name AS placeNameFrom, locationFrom.postCode AS postCodeFrom, locationFrom.point AS locationFrom, locationFrom.suburb AS suburbFrom,
+        locationTo.id AS locationIdTo, locationTo.name AS placeNameTo, locationTo.postCode AS postCodeTo, locationTo.point AS locationTo, locationTo.suburb AS suburbTo
       FROM ${this.dbName}.rides
       INNER JOIN ${
         this.dbName
@@ -239,13 +242,16 @@ export default class RideRepository {
       OFFSET ${page * size}
     `;
 
-    console.log(query);
+    // console.log(query);
 
     const rides = await this.databaseManager.query(query, connection);
+
+    // console.log(rides);
 
     return rides.map(
       (sqlRide) =>
         ({
+          id: sqlRide.id,
           client: {
             id: sqlRide.clientId,
             name: sqlRide.clientName,
@@ -261,6 +267,7 @@ export default class RideRepository {
           facilitatorEmail: sqlRide.facilitatorEmail,
           pickupTimeAndDate: sqlRide.pickupTimeAndDate,
           locationFrom: {
+            id: sqlRide.locationIdFrom,
             latitude: sqlRide.locationFrom.y,
             longitude: sqlRide.locationFrom.x,
             suburb: sqlRide.suburbFrom,
@@ -268,6 +275,7 @@ export default class RideRepository {
             placeName: sqlRide.placeNameFrom,
           },
           locationTo: {
+            id: sqlRide.locationIdTo,
             latitude: sqlRide.locationTo.y,
             longitude: sqlRide.locationTo.x,
             suburb: sqlRide.suburbTo,
