@@ -13,6 +13,27 @@ interface Claims {
   carType?: CarType;
 }
 
+export function requireDriverPermissions(
+  claims: Claims,
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const driver = hasRole(claims, 'driver');
+
+  if (!driver) {
+    console.log(
+      'WARNING: unauthorised attempt to access driver-only api: ' +
+        req.method +
+        ' ' +
+        req.url
+    );
+    res.status(403).send('Unauthorized');
+    return false;
+  }
+
+  return true;
+}
+
 export function requireFacilitatorPermissions(
   req: NextApiRequest,
   res: NextApiResponse
@@ -21,7 +42,12 @@ export function requireFacilitatorPermissions(
   const isAdmin = hasRole(claims, 'admin');
   const isFacilitator = hasRole(claims, 'facilitator');
   if (!isAdmin && !isFacilitator) {
-    console.log('WARNING: unauthorised attempt to upload image');
+    console.log(
+      'WARNING: unauthorised attempt to access facilitator-only api: ' +
+        req.method +
+        ' ' +
+        req.url
+    );
     res.status(403).send('Unauthorized');
     return false;
   }
@@ -47,6 +73,7 @@ export function decodeJwt(req: NextApiRequest): Claims {
     const domain = process.env.DOMAIN || 'carpal.org.au';
     const authHeaderParts = (authHeader as string).split(' ');
     const tokenValue = authHeaderParts[1] || authHeaderParts[0];
+    // FIXME: This needs to be verify
     let decodedToken = jsonwebtoken.decode(tokenValue);
     if (process.env.UNSAFE_GOD_MODE === 'true') {
       decodedToken = {

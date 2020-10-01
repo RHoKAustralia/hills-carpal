@@ -10,8 +10,8 @@ interface ListQuery {
   fromNow?: boolean;
   driverId?: string;
   driverRestrictions?: {
-    gender?: Gender;
-    carType?: CarType;
+    gender?: Gender[];
+    carType?: CarType[];
   };
   status?: RideStatus;
   sort?: string[];
@@ -200,6 +200,7 @@ export default class RideRepository {
       size = 10,
       page = 0,
       rideId,
+      driverRestrictions: { carType, gender } = {},
     }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
@@ -211,6 +212,26 @@ export default class RideRepository {
 
     if (rideId) {
       where.push(`rides.id = ${escape(rideId.toString())}`);
+    }
+
+    if (carType) {
+      where.push(
+        '(' +
+          carType
+            .map((thisCarType) => `rides.carType = '${escape(thisCarType)}'`)
+            .join(' OR ') +
+          ')'
+      );
+    }
+
+    if (gender) {
+      where.push(
+        '(' +
+          gender
+            .map((thisGender) => `rides.driverGender = '${escape(thisGender)}'`)
+            .join(' OR ') +
+          ')'
+      );
     }
 
     const query = `
