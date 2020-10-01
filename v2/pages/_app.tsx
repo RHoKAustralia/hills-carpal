@@ -92,7 +92,7 @@ const loggedInLinks: LinkData[] = [
   },
   {
     type: 'internal',
-    route: '/driver/find-rides',
+    route: '/driver/rides/find',
     caption: 'find a ride',
     role: 'driver'
   },

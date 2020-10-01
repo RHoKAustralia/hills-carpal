@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import LocationInput from '../components/location-input';
 
-class LocationSearch extends Component {
-  state = {
-    locationTo: '',
-    locationFrom: ''
+import { Location } from '../../model';
+import LocationInput from './location-input';
+
+interface Props {
+  clearable: boolean;
+  onLocationSearch: (locations: State) => void;
+}
+
+interface State {
+  locationTo?: Location;
+  locationFrom?: Location;
+}
+
+class LocationSearch extends Component<Props, State> {
+  state: State = {
+    locationTo: null,
+    locationFrom: null,
   };
 
   render() {
@@ -14,7 +25,7 @@ class LocationSearch extends Component {
         <h4 style={{ marginTop: '10px' }}>Search Trips</h4>
         <p>Carpal will then use this trip to find nearby ride requests</p>
         <form
-          onSubmit={e => {
+          onSubmit={(e) => {
             e.preventDefault();
             this.props.onLocationSearch(this.state);
           }}
@@ -26,7 +37,7 @@ class LocationSearch extends Component {
                 required={true}
                 clearable={this.props.clearable}
                 value={this.state.locationFrom}
-                onChange={value => {
+                onChange={(value) => {
                   this.setState({ locationFrom: value });
                 }}
               />
@@ -37,7 +48,7 @@ class LocationSearch extends Component {
                 clearable={this.props.clearable}
                 required={true}
                 value={this.state.locationTo}
-                onChange={value => {
+                onChange={(value) => {
                   this.setState({ locationTo: value });
                 }}
               />
@@ -51,10 +62,5 @@ class LocationSearch extends Component {
     );
   }
 }
-
-LocationSearch.propTypes = {
-  onLocationSearch: PropTypes.func.isRequired,
-  clearable: PropTypes.bool
-};
 
 export default LocationSearch;

@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
 import bboxArray from '@turf/bbox';
 import linestring from 'turf-linestring';
-import L from 'leaflet';
+// import L from 'leaflet';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment-timezone';
-import 'leaflet/dist/leaflet.css';
+// import 'leaflet/dist/leaflet.css';
 import './driver-map.css';
 
 const token =
   'pk.eyJ1Ijoic21hbGxtdWx0aXBsZXMiLCJhIjoiRk4xSUp6OCJ9.GilBdBaV0oKMZgBwBqRMWA';
-export const getBoundsFromLngLatArray = latlng => {
+export const getBoundsFromLngLatArray = (latlng: number[][]) => {
   const bounds = bboxArray(linestring(latlng));
   return [
     [bounds[1], bounds[0]],
-    [bounds[3], bounds[2]]
-  ];
+    [bounds[3], bounds[2]],
+  ] as [[number, number], [number, number]];
 };
 
-const rideToDirectionUrl = ride => {
+const rideToDirectionUrl = (ride) => {
   const from = `${ride.locationFrom.longitude},${ride.locationFrom.latitude}`;
   const to = `${ride.locationTo.longitude},${ride.locationTo.latitude}`;
   return `https://api.mapbox.com/directions/v5/mapbox/driving/${from};${to}.json?access_token=${token}&geometries=geojson`;
@@ -27,32 +26,39 @@ const rideToDirectionUrl = ride => {
 interface Props {
   rides: any[];
   driverCoords: any;
+  onViewTableClick: () => void;
 }
 
 class DriverMap extends Component<Props> {
+  L: any;
+  ReactLeaflet: any;
+
   state = {
     directionsById: null,
     driverRoute: null,
     directionsGeojsonById: null,
-    driverRouteKey: null
+    driverRouteKey: null,
   };
 
   componentDidMount() {
-    const directionsP = this.props.rides.map(ride => {
+    this.L = import('leaflet');
+    this.ReactLeaflet = import('react-leaflet');
+
+    const directionsP = this.props.rides.map((ride) => {
       return fetch(rideToDirectionUrl(ride))
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             return response.json();
           } else {
             throw new Error('Failed to get directions');
           }
         })
-        .then(data => {
+        .then((data) => {
           return { id: ride.id, directionResponse: data };
         });
     });
 
-    Promise.all(directionsP).then(directionsWithId => {
+    Promise.all(directionsP).then((directionsWithId) => {
       const directionsGeojsonById = directionsWithId.reduce((acc, val) => {
         acc[val.id] = val.directionResponse.routes[0].geometry;
         return acc;
@@ -65,7 +71,7 @@ class DriverMap extends Component<Props> {
   componentDidUpdate(prevProps) {
     if (!isEqual(prevProps.driverCoords, this.props.driverCoords)) {
       return fetch(rideToDirectionUrl(this.props.driverCoords))
-        .then(res => {
+        .then((res) => {
           if (res.status === 200) {
             res.json();
           } else {
@@ -75,7 +81,7 @@ class DriverMap extends Component<Props> {
         .then((data: any) => {
           this.setState({
             driverRoute: data.routes[0].geometry,
-            driverRouteKey: data.uuid
+            driverRouteKey: data.uuid,
           });
         });
     }
@@ -83,10 +89,10 @@ class DriverMap extends Component<Props> {
   renderMarkers() {
     const { driverCoords, rides } = this.props;
     const allRides = driverCoords ? rides.concat(driverCoords) : rides;
-    const markers = allRides.map(ride => {
+    const markers = allRides.map((ride) => {
       const date = ride.pickupTimeAndDate || ride.pickupTime;
       const popup = (
-        <Popup>
+        <this.ReactLeaflet.Popup>
           <div>
             <a href={ride.fbLink}>Facebook event</a>
             <p>
@@ -96,31 +102,31 @@ class DriverMap extends Component<Props> {
                 .format('dddd hh:mma DD/MM/YYYY ')}
             </p>
           </div>
-        </Popup>
+        </this.ReactLeaflet.Popup>
       );
       return [
-        <Marker
+        <this.ReactLeaflet.Popup
           key={ride.id + 'from'}
-          icon={L.icon({
+          icon={this.L.icon({
             iconUrl: '/marker-start.svg',
             iconSize: [18, 23.5], // size of the icon
-            iconAnchor: [9, 23.5]
+            iconAnchor: [9, 23.5],
           })}
           position={[ride.locationFrom.latitude, ride.locationFrom.longitude]}
         >
           {popup}
-        </Marker>,
-        <Marker
+        </this.ReactLeaflet.Popup>,
+        <this.ReactLeaflet.Marker
           key={ride.id + 'to'}
-          icon={L.icon({
+          icon={this.L.icon({
             iconUrl: '/marker-end.svg',
             iconSize: [18, 23.5], // size of the icon
-            iconAnchor: [9, 23.5]
+            iconAnchor: [9, 23.5],
           })}
           position={[ride.locationTo.latitude, ride.locationTo.longitude]}
         >
           {popup}
-        </Marker>
+        </this.ReactLeaflet.Marker>,
       ];
     });
     return markers.reduce((acc, val) => acc.concat(val), []);
@@ -128,9 +134,9 @@ class DriverMap extends Component<Props> {
   renderClientsDirections() {
     const { directionsGeojsonById } = this.state;
     if (!directionsGeojsonById) return;
-    return this.props.rides.map(ride => {
+    return this.props.rides.map((ride) => {
       return (
-        <GeoJSON
+        <this.ReactLeaflet.GeoJSON
           key={ride.id}
           onEachFeature={(feature, layer) => {
             (layer as any).setStyle({ color: '#6610f2' });
@@ -144,7 +150,7 @@ class DriverMap extends Component<Props> {
     if (!this.state.driverRoute) return;
 
     return (
-      <GeoJSON
+      <this.ReactLeaflet.GeoJSON
         key={this.state.driverRouteKey}
         onEachFeature={(feature, layer) => {
           (layer as any).setStyle({ color: '#007bff' });
@@ -157,17 +163,17 @@ class DriverMap extends Component<Props> {
     const { driverCoords, rides } = this.props;
     const allRides = driverCoords ? rides.concat(driverCoords) : rides;
 
-    const lnglats: [number, number][] = allRides
-      .map(ride => {
+    const lnglats: number[][] = allRides
+      .map((ride) => {
         return [
           [
             ride.locationFrom.longitude as number,
-            ride.locationFrom.latitude as number
+            ride.locationFrom.latitude as number,
           ],
           [
             ride.locationTo.longitude as number,
-            ride.locationTo.latitude as number
-          ]
+            ride.locationTo.latitude as number,
+          ],
         ];
       })
       .reduce((acc, val) => acc.concat(val), [] as [number, number][]);
@@ -178,7 +184,7 @@ class DriverMap extends Component<Props> {
       lnglats.push([151.058, -34.0331]);
     }
 
-    return new L.LatLngBounds(getBoundsFromLngLatArray(lnglats));
+    return new this.L.LatLngBounds(getBoundsFromLngLatArray(lnglats));
   }
 
   renderYourRouteLegendItem() {
@@ -218,21 +224,21 @@ class DriverMap extends Component<Props> {
             </div>
           </div>
         </div>
-        <Map
+        <this.ReactLeaflet.Map
           style={{ height: '500px' }}
           center={[-24.554411, 133.865766]}
           zoom={5}
           bounds={this.getBounds()}
           useFlyTo={true}
         >
-          <TileLayer
+          <this.ReactLeaflet.TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {this.renderMarkers()}
           {this.renderClientsDirections()}
           {this.renderDriverDirections()}
-        </Map>
+        </this.ReactLeaflet.Map>
       </div>
     );
   }

@@ -1,5 +1,5 @@
-export type Gender = 'male' | 'female';
-export type CarType = 'suv' | 'noSUV';
+export type Gender = 'male' | 'female' | 'any';
+export type CarType = 'suv' | 'noSUV' | 'All';
 export type RideStatus = 'OPEN' | 'CONFIRMED' | 'ENDED' | 'CANCELLED';
 
 export interface Location {
