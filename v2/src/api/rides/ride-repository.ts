@@ -3,7 +3,14 @@ import _ from 'lodash';
 import { Connection } from 'mysql';
 
 import DatabaseManager from '../database/database-manager';
-import { Gender, CarType, RideStatus, Ride, RideInput } from '../../model';
+import {
+  Gender,
+  CarType,
+  RideStatus,
+  Ride,
+  RideInput,
+  RideDriver,
+} from '../../model';
 import LocationRepository from '../location-repository';
 
 interface ListQuery {
@@ -96,66 +103,114 @@ export default class RideRepository {
     }
   }
 
+  async setStatus(
+    id: number,
+    status: RideStatus,
+    driverId: string,
+    driverName: string,
+    connection: Connection
+  ) {
+    if (!id) {
+      throw new Error('No id specified when updating ride.');
+    }
+
+    const escape = (data) => connection.escape(data);
+
+    try {
+      await this.databaseManager.beginTransaction(connection);
+      let extraQuery: string | null = null;
+      let query = `UPDATE ${this.dbName}.rides 
+      SET 
+        status = ${escape(status)}
+      WHERE
+        id = ${id};`;
+
+      if (status === 'CONFIRMED') {
+        extraQuery = `
+            insert into ${
+              this.dbName
+            }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
+          escape(driverId),
+          escape(id),
+          escape(driverName),
+          escape(1),
+        ]}, NOW()) ON DUPLICATE KEY UPDATE confirmed=${escape(1)};`;
+      } else if (status === 'OPEN') {
+        extraQuery = `delete from ${
+          this.dbName
+        }.driver_ride WHERE ride_id = ${escape(id)};`;
+      }
+      console.log(query + extraQuery);
+
+      await this.databaseManager.query(query, connection);
+      extraQuery && (await this.databaseManager.query(extraQuery, connection));
+      this.databaseManager.commit(connection);
+    } catch (e) {
+      this.databaseManager.rollback(connection);
+      throw e;
+    }
+  }
+
   async update(id: number, ride: RideInput, connection: Connection) {
     if (!id) {
       throw new Error('No id specified when updating ride.');
     }
 
-    this.databaseManager.beginTransaction(connection);
-
-    const escape = (data) => connection.escape(data);
-
-    const existing = await this.get(id, connection);
-
-    await this.locationRepository.update(
-      existing.locationFrom.id,
-      ride.locationFrom,
-      connection
-    );
-    await this.locationRepository.update(
-      existing.locationTo.id,
-      ride.locationTo,
-      connection
-    );
-    let query = `UPDATE ${this.dbName}.rides SET clientId = ${escape(
-      ride.clientId
-    )},
-		facilitatorEmail = ${escape(ride.facilitatorEmail)},
-		pickupTimeAndDateInUTC = ${escape(
-      moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
-    )},
-		driverGender = ${escape(ride.driverGender)},
-		carType = ${escape(ride.carType)},
-		status = ${escape(ride.status)},
-		hasMps = ${escape(ride.hasMps)},
-		description = ${escape(ride.description)} 
-	WHERE
-		id = ${id}`;
-
-    let extraQuery = '';
-
-    //Check if driver has interacted with a ride
-    if (ride?.driver?.id) {
-      extraQuery = `
-        ;insert into ${
-          this.dbName
-        }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
-        escape(ride.driver.id),
-        escape(id),
-        escape(ride.driver.name),
-        escape(ride.driver.confirmed ? 1 : 0),
-      ]}, NOW()) ON DUPLICATE KEY UPDATE confirmed=${escape(
-        ride.driver.confirmed ? 1 : 0
-      )}`;
-    } else {
-      extraQuery = `;delete from ${
-        this.dbName
-      }.driver_ride WHERE ride_id = ${escape(id)}`;
-    }
-
-    console.log(query + extraQuery);
-
     try {
+      await this.databaseManager.beginTransaction(connection);
+
+      const escape = (data) => connection.escape(data);
+
+      const existing = await this.get(id, connection);
+
+      await this.locationRepository.update(
+        existing.locationFrom.id,
+        ride.locationFrom,
+        connection
+      );
+      await this.locationRepository.update(
+        existing.locationTo.id,
+        ride.locationTo,
+        connection
+      );
+      let query = `UPDATE ${this.dbName}.rides 
+        SET 
+          clientId = ${escape(ride.clientId)},
+          facilitatorEmail = ${escape(ride.facilitatorEmail)},
+          pickupTimeAndDateInUTC = ${escape(
+            moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
+          )},
+          driverGender = ${escape(ride.driverGender)},
+          carType = ${escape(ride.carType)},
+          status = ${escape(ride.status)},
+          hasMps = ${escape(ride.hasMps)},
+          description = ${escape(ride.description)} 
+        WHERE
+          id = ${id}`;
+
+      let extraQuery = '';
+
+      //Check if driver has interacted with a ride
+      if (ride?.driver?.id) {
+        extraQuery = `
+              ;insert into ${
+                this.dbName
+              }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
+          escape(ride.driver.id),
+          escape(id),
+          escape(ride.driver.name),
+          escape(ride.driver.confirmed ? 1 : 0),
+        ]}, NOW()) ON DUPLICATE KEY UPDATE confirmed=${escape(
+          ride.driver.confirmed ? 1 : 0
+        )}`;
+      } else {
+        extraQuery = `;delete from ${
+          this.dbName
+        }.driver_ride WHERE ride_id = ${escape(id)}`;
+      }
+
+      console.log(query + extraQuery);
+
       await this.databaseManager.query(query + extraQuery, connection);
       this.databaseManager.commit(connection);
       return ride;

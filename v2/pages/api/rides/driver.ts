@@ -5,11 +5,7 @@ import RideRepository, {
   validSortLookup,
 } from '../../../src/api/rides/ride-repository';
 import DatabaseManager from '../../../src/api/database/database-manager';
-import {
-  requireFacilitatorPermissions,
-  decodeJwt,
-  requireDriverPermissions,
-} from '../../../src/auth/jwt';
+import { decodeJwt, requireDriverPermissions } from '../../../src/auth/jwt';
 import { CarType, Gender } from '../../../src/model';
 
 const databaseManager = new DatabaseManager();
