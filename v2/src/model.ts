@@ -4,8 +4,8 @@ export type RideStatus = 'OPEN' | 'CONFIRMED' | 'ENDED' | 'CANCELLED';
 
 export interface Location {
   id?: number;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   suburb: string;
   postCode: string;
   placeName: string;

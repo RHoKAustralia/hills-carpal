@@ -1,0 +1,30 @@
+.ride-detail__footer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-gallery-image {
+  background: #000;
+  text-align: center;
+}
+
+.image-gallery-image img {
+  max-height: 15em;
+  max-width: 100%;
+  width: inherit;
+}
+
+.fullscreen .image-gallery-image img {
+  max-height: 100vh;
+  max-width: 100vw;
+}
+
+.leaflet-container {
+  z-index: 1;
+}
+
+.title-case {
+  text-transform: capitalize;
+}

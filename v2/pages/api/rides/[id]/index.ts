@@ -1,11 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import _ from 'lodash';
 
-import RideRepository, {
-  validSortLookup,
-} from '../../../src/api/rides/ride-repository';
-import DatabaseManager from '../../../src/api/database/database-manager';
-import { requireFacilitatorPermissions } from '../../../src/auth/jwt';
+import RideRepository from '../../../../src/api/rides/ride-repository';
+import DatabaseManager from '../../../../src/api/database/database-manager';
+import { requireFacilitatorPermissions } from '../../../../src/auth/jwt';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -35,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           res.status(200).json(ride);
           break;
         default:
-          res.setHeader('Allow', ['POST']);
+          res.setHeader('Allow', ['PUT', 'GET']);
           res.status(405).end(`Method ${method} Not Allowed`);
       }
     }

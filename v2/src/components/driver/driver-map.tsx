@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import bboxArray from '@turf/bbox';
 import linestring from 'turf-linestring';
-// import L from 'leaflet';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment-timezone';
-// import 'leaflet/dist/leaflet.css';
+import Head from 'next/head';
+
+import { Ride } from '../../model';
+
 import './driver-map.css';
 
 const token =
@@ -24,9 +26,9 @@ const rideToDirectionUrl = (ride) => {
 };
 
 interface Props {
-  rides: any[];
-  driverCoords: any;
-  onViewTableClick: () => void;
+  rides: Ride[];
+  driverCoords?: any;
+  onViewTableClick?: () => void;
 }
 
 class DriverMap extends Component<Props> {
@@ -40,9 +42,9 @@ class DriverMap extends Component<Props> {
     driverRouteKey: null,
   };
 
-  componentDidMount() {
-    this.L = import('leaflet');
-    this.ReactLeaflet = import('react-leaflet');
+  async componentDidMount() {
+    this.L = await import('leaflet');
+    this.ReactLeaflet = await import('react-leaflet');
 
     const directionsP = this.props.rides.map((ride) => {
       return fetch(rideToDirectionUrl(ride))
@@ -73,7 +75,7 @@ class DriverMap extends Component<Props> {
       return fetch(rideToDirectionUrl(this.props.driverCoords))
         .then((res) => {
           if (res.status === 200) {
-            res.json();
+            return res.json();
           } else {
             throw new Error('Could not get directions');
           }
@@ -90,11 +92,10 @@ class DriverMap extends Component<Props> {
     const { driverCoords, rides } = this.props;
     const allRides = driverCoords ? rides.concat(driverCoords) : rides;
     const markers = allRides.map((ride) => {
-      const date = ride.pickupTimeAndDate || ride.pickupTime;
+      const date = ride.pickupTimeAndDate;
       const popup = (
         <this.ReactLeaflet.Popup>
           <div>
-            <a href={ride.fbLink}>Facebook event</a>
             <p>
               At:{' '}
               {moment
@@ -105,17 +106,20 @@ class DriverMap extends Component<Props> {
         </this.ReactLeaflet.Popup>
       );
       return [
-        <this.ReactLeaflet.Popup
+        <this.ReactLeaflet.Marker
           key={ride.id + 'from'}
           icon={this.L.icon({
             iconUrl: '/marker-start.svg',
             iconSize: [18, 23.5], // size of the icon
             iconAnchor: [9, 23.5],
           })}
-          position={[ride.locationFrom.latitude, ride.locationFrom.longitude]}
+          position={this.L.latLng(
+            ride.locationFrom.latitude,
+            ride.locationFrom.longitude
+          )}
         >
           {popup}
-        </this.ReactLeaflet.Popup>,
+        </this.ReactLeaflet.Marker>,
         <this.ReactLeaflet.Marker
           key={ride.id + 'to'}
           icon={this.L.icon({
@@ -123,12 +127,16 @@ class DriverMap extends Component<Props> {
             iconSize: [18, 23.5], // size of the icon
             iconAnchor: [9, 23.5],
           })}
-          position={[ride.locationTo.latitude, ride.locationTo.longitude]}
+          position={this.L.latLng(
+            ride.locationTo.latitude,
+            ride.locationTo.longitude
+          )}
         >
           {popup}
         </this.ReactLeaflet.Marker>,
       ];
     });
+    console.log(markers);
     return markers.reduce((acc, val) => acc.concat(val), []);
   }
   renderClientsDirections() {
@@ -166,14 +174,8 @@ class DriverMap extends Component<Props> {
     const lnglats: number[][] = allRides
       .map((ride) => {
         return [
-          [
-            ride.locationFrom.longitude as number,
-            ride.locationFrom.latitude as number,
-          ],
-          [
-            ride.locationTo.longitude as number,
-            ride.locationTo.latitude as number,
-          ],
+          [ride.locationFrom.longitude, ride.locationFrom.latitude],
+          [ride.locationTo.longitude, ride.locationTo.latitude],
         ];
       })
       .reduce((acc, val) => acc.concat(val), [] as [number, number][]);
@@ -201,8 +203,15 @@ class DriverMap extends Component<Props> {
   }
 
   render() {
+    if (!this.ReactLeaflet) {
+      return 'Loading...';
+    }
+
     return (
       <div>
+        <Head>
+          <link rel="stylesheet" href="/leaflet/leaflet.css" />
+        </Head>
         <div className="legend-back-btn-row">
           <div className="legend">
             {this.renderYourRouteLegendItem()}
@@ -224,6 +233,7 @@ class DriverMap extends Component<Props> {
             </div>
           </div>
         </div>
+
         <this.ReactLeaflet.Map
           style={{ height: '500px' }}
           center={[-24.554411, 133.865766]}

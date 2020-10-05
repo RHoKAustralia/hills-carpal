@@ -38,7 +38,7 @@ function Links(props: LinksProps) {
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav ml-auto">
-          {props.links.map(link => (
+          {props.links.map((link) => (
             <li className="nav-item hcp-nav-item">
               {link.type === 'external' ? (
                 <a
@@ -64,23 +64,23 @@ const loggedOutLinks: LinkData[] = [
   {
     type: 'external',
     href: 'http://www.hillscarpal.org.au/',
-    caption: 'about us'
+    caption: 'about us',
   },
   {
     type: 'external',
     href: 'http://www.hillscarpal.org.au/',
-    caption: 'contribute'
+    caption: 'contribute',
   },
   {
     type: 'external',
     href: 'http://www.hillscarpal.org.au/donate/',
-    caption: 'donate'
+    caption: 'donate',
   },
   {
     type: 'external',
     href: 'http://www.hillscarpal.org.au/contact-us/',
-    caption: 'contact us'
-  }
+    caption: 'contact us',
+  },
 ];
 
 const loggedInLinks: LinkData[] = [
@@ -88,30 +88,32 @@ const loggedInLinks: LinkData[] = [
     type: 'internal',
     route: '/driver/queue',
     caption: 'your rides',
-    role: 'driver'
+    role: 'driver',
   },
   {
     type: 'internal',
     route: '/driver/rides/find',
     caption: 'find a ride',
-    role: 'driver'
+    role: 'driver',
   },
   {
     type: 'internal',
     route: '/facilitator',
     caption: 'edit rides',
-    role: 'facilitator'
+    role: 'facilitator',
   },
   {
     type: 'internal',
     route: '/facilitator/clients',
     caption: 'edit clients',
-    role: 'facilitator'
-  }
+    role: 'facilitator',
+  },
 ];
 
 function getLinksForRoles(roles) {
-  return loggedInLinks.filter(link => roles.some(role => link.role === role));
+  return loggedInLinks.filter((link) =>
+    roles.some((role) => link.role === role)
+  );
 }
 
 class App extends Component<AppProps> {
