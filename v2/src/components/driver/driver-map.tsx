@@ -109,7 +109,7 @@ class DriverMap extends Component<Props> {
         <this.ReactLeaflet.Marker
           key={ride.id + 'from'}
           icon={this.L.icon({
-            iconUrl: '/marker-start.svg',
+            iconUrl: '/leaflet/marker-start.svg',
             iconSize: [18, 23.5], // size of the icon
             iconAnchor: [9, 23.5],
           })}
@@ -123,7 +123,7 @@ class DriverMap extends Component<Props> {
         <this.ReactLeaflet.Marker
           key={ride.id + 'to'}
           icon={this.L.icon({
-            iconUrl: '/marker-end.svg',
+            iconUrl: '/leaflet/marker-end.svg',
             iconSize: [18, 23.5], // size of the icon
             iconAnchor: [9, 23.5],
           })}
@@ -136,7 +136,7 @@ class DriverMap extends Component<Props> {
         </this.ReactLeaflet.Marker>,
       ];
     });
-    console.log(markers);
+
     return markers.reduce((acc, val) => acc.concat(val), []);
   }
   renderClientsDirections() {
@@ -226,10 +226,10 @@ class DriverMap extends Component<Props> {
               </svg>
             </div>
             <div className="legend-col">
-              Start <img src="/marker-start.svg" alt="" />
+              Start <img src="/leaflet/marker-start.svg" alt="" />
             </div>
             <div className="legend-col">
-              End <img src="/marker-end.svg" alt="" />
+              End <img src="/leaflet/marker-end.svg" alt="" />
             </div>
           </div>
         </div>
