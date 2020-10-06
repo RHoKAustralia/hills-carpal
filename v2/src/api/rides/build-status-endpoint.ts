@@ -22,15 +22,19 @@ export default (rideStatus: RideStatus) => async (
     if (requireDriverPermissions(jwt, req, res)) {
       switch (method) {
         case 'PUT':
+          const id = Number.parseInt(req.query.id as string);
+
           await rideRepository.setStatus(
-            Number.parseInt(req.query.id as string),
+            id,
             rideStatus,
             jwt.userId,
             jwt.name,
             connection
           );
 
-          res.status(200).send('');
+          const newRide = await rideRepository.get(id, connection);
+
+          res.status(200).json(newRide);
           break;
         default:
           res.setHeader('Allow', ['PUT']);
