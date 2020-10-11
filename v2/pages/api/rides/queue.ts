@@ -16,16 +16,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'GET':
       const connection = databaseManager.createConnection();
-      const rides = await rideRepository.listForDriver(
-        parsed.driverId as string,
-        connection
-      );
-      res.status(200).json(rides);
+
+      try {
+        const rides = await rideRepository.listForDriver(
+          parsed.driverId as string,
+          'CONFIRMED',
+          connection
+        );
+        res.status(200).json(rides);
+      } catch (e) {
+        res.status(500).json({ status: 'Error' });
+      } finally {
+        databaseManager.closeConnection(connection);
+      }
       break;
-    // case 'PUT':
-    //   // Update or create data in your database
-    //   res.status(200).json({ id, name: name || `User ${id}` });
-    //   break;
     default:
       res.setHeader('Allow', ['GET']);
       res.status(405).end(`Method ${method} Not Allowed`);

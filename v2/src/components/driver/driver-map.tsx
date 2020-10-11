@@ -60,14 +60,18 @@ class DriverMap extends Component<Props> {
         });
     });
 
-    Promise.all(directionsP).then((directionsWithId) => {
-      const directionsGeojsonById = directionsWithId.reduce((acc, val) => {
-        acc[val.id] = val.directionResponse.routes[0].geometry;
-        return acc;
-      }, {});
+    Promise.all(directionsP)
+      .then((directionsWithId) => {
+        const directionsGeojsonById = directionsWithId.reduce((acc, val) => {
+          acc[val.id] = val.directionResponse.routes[0].geometry;
+          return acc;
+        }, {});
 
-      this.setState({ directionsGeojsonById });
-    });
+        this.setState({ directionsGeojsonById });
+      })
+      .catch(() => {
+        // eh
+      });
   }
 
   componentDidUpdate(prevProps) {
