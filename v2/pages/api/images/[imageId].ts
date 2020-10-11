@@ -2,6 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import ImageRepository from '../../../src/api/clients/image-repository';
 import DatabaseManager from '../../../src/api/database/database-manager';
+import {
+  requireDriverPermissions,
+  decodeJwt,
+  requireFacilitatorPermissions,
+} from '../../../src/auth/jwt';
 
 const databaseManager = new DatabaseManager();
 const imageRepository = new ImageRepository(databaseManager);
@@ -13,33 +18,40 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'GET':
-        const image = await imageRepository.get(
-          connection,
-          req.query.imageId as string
-        );
+        const claims = decodeJwt(req);
+        if (requireDriverPermissions(claims, req, res)) {
+          const image = await imageRepository.get(
+            connection,
+            req.query.imageId as string
+          );
 
-        const binaryContent = new Buffer(image.content, 'base64');
-        res.setHeader('Content-Type', image.mimeType);
-        res.status(200);
-        res.end(binaryContent, 'binary');
+          const binaryContent = new Buffer(image.content, 'base64');
+          res.setHeader('Content-Type', image.mimeType);
+          res.status(200);
+          res.end(binaryContent, 'binary');
+        }
 
         break;
       case 'PUT':
-        await imageRepository.update(
-          req.query.imageId as string,
-          req.body,
-          connection
-        );
+        if (requireFacilitatorPermissions(req, res)) {
+          await imageRepository.update(
+            req.query.imageId as string,
+            req.body,
+            connection
+          );
 
-        res.status(200).send(req.body);
+          res.status(200).send(req.body);
+        }
 
         break;
       case 'DELETE':
-        await imageRepository.delete(req.query.imageId as string, connection);
+        if (requireFacilitatorPermissions(req, res)) {
+          await imageRepository.delete(req.query.imageId as string, connection);
 
-        res.status(200).send({
-          status: 'OK',
-        });
+          res.status(200).send({
+            status: 'OK',
+          });
+        }
 
         break;
       default:

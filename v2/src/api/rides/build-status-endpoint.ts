@@ -27,8 +27,8 @@ export default (rideStatus: RideStatus) => async (
           await rideRepository.setStatus(
             id,
             rideStatus,
-            jwt.userId,
-            jwt.name,
+            rideStatus !== 'OPEN' ? jwt.userId : null,
+            rideStatus !== 'OPEN' ? jwt.name : null,
             connection
           );
 

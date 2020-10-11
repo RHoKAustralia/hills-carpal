@@ -220,8 +220,12 @@ export default class RideRepository {
     }
   }
 
-  listForDriver(driverId: string, connection: Connection): Promise<Ride[]> {
-    return this.list({ driverId }, connection);
+  listForDriver(
+    driverId: string,
+    status: RideStatus,
+    connection: Connection
+  ): Promise<Ride[]> {
+    return this.list({ driverId, status }, connection);
   }
 
   listForFacilitator(
@@ -256,6 +260,7 @@ export default class RideRepository {
       page = 0,
       rideId,
       driverRestrictions: { carType, gender } = {},
+      status,
     }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
@@ -287,6 +292,10 @@ export default class RideRepository {
             .join(' OR ') +
           ')'
       );
+    }
+
+    if (status) {
+      where.push(`( rides.status = '${escape(status)}' )`);
     }
 
     const query = `
