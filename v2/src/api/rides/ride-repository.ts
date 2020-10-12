@@ -51,7 +51,7 @@ export default class RideRepository {
     this.locationRepository = new LocationRepository(databaseManager);
   }
 
-  async create(ride: RideInput, connection: Connection) {
+  async create(ride: RideInput, connection: Connection): Promise<number> {
     const escape = (data) => connection.escape(data);
 
     try {
@@ -68,7 +68,7 @@ export default class RideRepository {
 
       let query = `INSERT INTO ${this.dbName}.rides(clientId,
                                   facilitatorEmail,
-                                  pickupTimeAndDateInUTC AS pickupTimeAndDate,
+                                  pickupTimeAndDateInUTC,
                                   locationFrom,
                                   locationTo,
                                   driverGender,
@@ -93,11 +93,18 @@ export default class RideRepository {
                                     escape(ride.hasMps),
                                     escape(ride.description),
                                   ].join(',')})`;
-      console.log(query);
+      // console.log(query);
 
       await this.databaseManager.query(query, connection);
 
       connection.commit();
+
+      return (
+        await this.databaseManager.query(
+          'SELECT LAST_INSERT_ID() AS lastInsertId',
+          connection
+        )
+      )[0]['lastInsertId'];
     } catch (e) {
       connection.rollback();
     }
@@ -140,7 +147,7 @@ export default class RideRepository {
           this.dbName
         }.driver_ride WHERE ride_id = ${escape(id)};`;
       }
-      console.log(query + extraQuery);
+      // console.log(query + extraQuery);
 
       await this.databaseManager.query(query, connection);
       extraQuery && (await this.databaseManager.query(extraQuery, connection));
@@ -209,7 +216,7 @@ export default class RideRepository {
         }.driver_ride WHERE ride_id = ${escape(id)}`;
       }
 
-      console.log(query + extraQuery);
+      // console.log(query + extraQuery);
 
       await this.databaseManager.query(query + extraQuery, connection);
       this.databaseManager.commit(connection);
@@ -393,7 +400,7 @@ export default class RideRepository {
       ${where.length ? ' WHERE ' + where.join(' AND ') : ''}
     `;
 
-    console.log(query);
+    // console.log(query);
 
     const rides = await this.databaseManager.query(query, connection);
 

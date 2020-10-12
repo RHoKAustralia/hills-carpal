@@ -40,7 +40,7 @@ class FindRides extends Component<{}, State> {
     this.setState({
       loading: true,
     });
-    const url = process.env.REACT_APP_API_URL + '/api/rides/driver';
+    const url = '/api/rides/driver';
 
     try {
       const res = await fetch(url, {

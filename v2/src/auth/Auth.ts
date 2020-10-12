@@ -10,7 +10,7 @@ export class Auth {
     redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
     audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo`,
     responseType: 'token id_token',
-    scope: 'openid profile email'
+    scope: 'openid profile email',
   });
 
   metadataKeyUserRole =
@@ -21,7 +21,7 @@ export class Auth {
 
   handleAuthentication() {
     this.auth0.parseHash((err, authResult) => {
-      console.log(authResult);
+      // console.log(authResult);
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
       } else if (err) {
@@ -70,6 +70,8 @@ export class Auth {
       userRoles = ['driver', 'facilitator', 'admin'];
     }
 
+    // console.log(profile);
+
     localStorage.setItem(KEY_USER_ROLE, userRoles || ['']);
 
     const firstUserRole = userRoles[0];
@@ -100,7 +102,7 @@ export class Auth {
     localStorage.removeItem('expires_at');
     localStorage.removeItem(KEY_USER_ROLE);
     this.auth0.logout({
-      returnTo: window.location.origin + '/'
+      returnTo: window.location.origin + '/',
     });
   }
 

@@ -36,9 +36,9 @@ export function requireDriverPermissions(
 
 export function requireFacilitatorPermissions(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
+  claims: Claims = decodeJwt(req)
 ) {
-  const claims = decodeJwt(req);
   const isAdmin = hasRole(claims, 'admin');
   const isFacilitator = hasRole(claims, 'facilitator');
   if (!isAdmin && !isFacilitator) {
@@ -93,8 +93,6 @@ export function decodeJwt(req: NextApiRequest): Claims {
       claims.driverGender = decodedToken[`https://${domain}/gender`];
       claims.carType = decodedToken[`https://${domain}/car`];
     }
-
-    console.log(claims);
 
     return claims;
   } catch (err) {

@@ -72,7 +72,6 @@ export default class Poll extends React.Component<Props, State> {
                   width="100%"
                   height="600"
                   onLoad={() => {
-                    console.log('onLoad');
                     this.setState((state) => ({
                       loadCount: state.loadCount + 1,
                     }));

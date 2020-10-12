@@ -89,7 +89,7 @@ export default class ClientRepository {
         clients.id = ${escape(id)};
     `;
 
-    console.log(query);
+    // console.log(query);
 
     return this.databaseManager.query(query, connection);
   }
@@ -116,7 +116,7 @@ export default class ClientRepository {
       ORDER BY name ASC;
     `;
 
-    console.log(query);
+    // console.log(query);
 
     const results = await this.databaseManager.query(query, connection);
 

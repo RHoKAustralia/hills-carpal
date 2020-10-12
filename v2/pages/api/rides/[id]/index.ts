@@ -21,7 +21,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             req.body,
             connection
           );
-          console.log(updatedRide);
           res.status(200).json(updatedRide);
           break;
         case 'GET':
@@ -29,7 +28,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             Number.parseInt(req.query.id as string),
             connection
           );
-          console.log(ride);
           res.status(200).json(ride);
           break;
         default:
