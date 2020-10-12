@@ -8,7 +8,7 @@ import LocationInput from '../driver/location-input';
 import auth from '../../auth/Auth';
 
 import './Ride.css';
-import { Location, RideDriver } from '../../model';
+import { Location, RideDriver, Ride as ModelRide } from '../../model';
 import Client from '../../../pages/facilitator/clients';
 
 interface Props {
@@ -43,7 +43,7 @@ class Ride extends Component<Props, State> {
     locationFrom: undefined,
     carType: '',
     description: '',
-    status: null,
+    status: 'OPEN',
     driver: null,
     hasMps: false,
     clients: [],
@@ -153,9 +153,9 @@ class Ride extends Component<Props, State> {
     e.preventDefault();
 
     //hack remove non-ride props
-    let ride = { ...this.state };
-    delete ride.clients;
-    delete ride.selectedClientId;
+    const rideFromState = { ...this.state };
+    delete rideFromState.clients;
+    delete rideFromState.selectedClientId;
 
     this.setState({
       updating: true,
@@ -170,7 +170,7 @@ class Ride extends Component<Props, State> {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(ride),
+        body: JSON.stringify(rideFromState),
       }).then((res) => {
         if (res.ok) {
           router.push('/facilitator');
@@ -187,7 +187,7 @@ class Ride extends Component<Props, State> {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(ride),
+        body: JSON.stringify(rideFromState),
       }).then((res) => {
         if (res.ok) {
           router.push('/facilitator');

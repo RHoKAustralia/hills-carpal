@@ -46,7 +46,7 @@ export default class DatabaseManager {
         new Promise((resolve, reject) => {
           connection.query(queryString, (error, results, fields) => {
             if (error) {
-              console.log('Error executing', queryString, error);
+              console.error('Error executing', queryString, error);
               return reject(error);
             } else if (closeConnection) {
               // Only close the connection if there's no error - otherwise we

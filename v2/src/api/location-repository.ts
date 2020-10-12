@@ -59,7 +59,7 @@ export default class LocationRepository {
         id = ${id};
    `;
 
-    console.log(sql);
+    // console.log(sql);
 
     await this.databaseManager.query(sql, connection);
   }

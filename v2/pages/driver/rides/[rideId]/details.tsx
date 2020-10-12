@@ -100,6 +100,10 @@ export default class RideDetail extends React.Component<Props, State> {
   };
 
   async acceptRide() {
+    if (!confirm('Are you sure you want to provide this ride?')) {
+      return;
+    }
+
     this.setState({
       updating: true,
       updateError: null,
@@ -203,9 +207,9 @@ export default class RideDetail extends React.Component<Props, State> {
     }
 
     return this.state.clientImages.map((image) => ({
-      original: `${process.env.REACT_APP_API_URL}/api/images/${
-        image.id
-      }?access_token=${localStorage.getItem('id_token')}`,
+      original: `/api/images/${image.id}?access_token=${localStorage.getItem(
+        'id_token'
+      )}`,
       description: image.caption,
     }));
   };

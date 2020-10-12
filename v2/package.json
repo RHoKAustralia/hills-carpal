@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prestart": "npm install && npm create-db && npm run refresh-db",
+    "create-db": "MYSQL_FLAGS=\"-CONNECT_WITH_DB\" db-migrate db:create carpal",
+    "refresh-db": "db-migrate up",
     "dev": "REACT_APP_API_URL='http://localhost:3000' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' next dev",
     "build": "next build",
     "start": "next start"

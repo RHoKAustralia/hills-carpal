@@ -1,0 +1,35 @@
+{
+  "defaultEnv": "local",
+  "sql-file": true,
+
+  "local": {
+    "database": "carpal",
+    "driver": "mysql",
+    "host": "localhost",
+    "user": "root",
+    "password": "admin",
+    "flags": { "ENV": "MYSQL_FLAGS" },
+    "multipleStatements": true
+  },
+
+  "test": {
+    "database": "carpal",
+    "driver": "mysql",
+    "host": "localhost",
+    "user": "admin",
+    "password": "admin",
+    "flags": { "ENV": "MYSQL_FLAGS" },
+    "multipleStatements": true
+  },
+
+  "prod": {
+    "database": "carpal",
+    "driver": "mysql",
+    "host": "ec2-52-65-116-111.ap-southeast-2.compute.amazonaws.com",
+    "port": { "ENV": "MYSQL_PORT" },
+    "user": "admin",
+    "password": { "ENV": "SERVICE_MYSQL_PWD" },
+    "flags": { "ENV": "MYSQL_FLAGS" },
+    "multipleStatements": true
+  }
+}

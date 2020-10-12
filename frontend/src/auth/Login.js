@@ -49,6 +49,8 @@ class Login extends Component {
                 <React.Fragment>
                   <div className="quote">Share the ride, share the life</div>
 
+                  <div>Please log into Facebook before logging in here.</div>
+
                   <button
                     className="btn btn-success btn-block"
                     id="loginButton"

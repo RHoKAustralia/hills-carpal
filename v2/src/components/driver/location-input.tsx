@@ -35,7 +35,7 @@ class LocationInput extends Component<Props> {
             value: x,
           };
         });
-        console.log(options);
+        
         return options;
       })
       .catch((e) => {
