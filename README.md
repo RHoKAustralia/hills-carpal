@@ -1,8 +1,12 @@
-# hills-carpal
+# Hills Carpal
+Hill Carpal is an application to organise Hills Community Aids' programme to provide rides for seniors. It allows facilitators to recieve ride requests over the phone from riders and enter them into the system, and for drivers to find rides to give.
 
-[![CircleCI](https://circleci.com/gh/RHoKAustralia/hills-carpal.svg?style=svg)](https://circleci.com/gh/RHoKAustralia/hills-carpal)
+## Architecture
+The app is a next.js monolith that uses mysql as a database. It also integrates with Auth0 for authentication.
 
-# How to get set up for local dev
+The current version hasn't been deployed yet, but eventually it'll sit on AWS.
+
+## Running locally
 1. First get a local db running, which is easiest with docker
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d -v hillscarpaldb:/var/lib/mysql mysql:5.7
@@ -10,24 +14,28 @@ yarn run create-db
 yarn run refresh-db
 ```
 
-2. Run the backend locally
+By default it will try to connect to a local mysql database with username `root` and password `admin`. If you want to change those configurations you can set as environment variable, for instance:
+
 ```
-cd backend
-yarn start
+MYSQL_USER=myuser MYSQL_PW=myPassword MYSQL_HOST=myHost MYSQL_PORT=3316 MYSQL_DB=myDB npm run refresh-db
 ```
 
-It _should_ reload the code every time it's run, so there's no need to stop it and start it again when you make changes.
+You might end up with an error "Client does not support authentication protocol" - to fix refer to https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server.
 
-3. Run the frontend (in another tab)
+2. Install
 ```
-cd frontend
-yarn run local
+yarn install
 ```
+
+3. Run for development
+```
+yarn run dev
+```
+
+It'll be available at http://localhost:3000.
 
 4. Huzzah!
 
-# How to deploy
-- There's actually a working CI setup! Refer to .circleci/config.yml
 
 
 
