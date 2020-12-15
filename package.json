@@ -9,7 +9,7 @@
     "build:training": "",
     "build:prod": "REACT_APP_AUTH0_CALLBACK_URL=https://ride.carpal.org.au npm run build",
     "build": "next build",
-    "start": "next start -p $PORT"
+    "start": "next start"
   },
   "dependencies": {
     "@turf/bbox": "^6.0.1",
@@ -50,6 +50,8 @@
     "@types/react-datepicker": "^3.1.1",
     "@types/react-dropzone": "^5.1.0",
     "@types/react-leaflet": "^2.5.1",
+    "db-migrate": "^0.11.11",
+    "db-migrate-mysql": "^2.1.1",
     "typescript": "^3.8.3"
   }
 }
