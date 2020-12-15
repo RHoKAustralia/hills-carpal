@@ -25,9 +25,9 @@
   "prod": {
     "database": "carpal",
     "driver": "mysql",
-    "host": "ec2-52-65-116-111.ap-southeast-2.compute.amazonaws.com",
+    "host": "terraform-20201214143959354100000001.cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com",
     "port": { "ENV": "MYSQL_PORT" },
-    "user": "admin",
+    "user": "foo",
     "password": { "ENV": "SERVICE_MYSQL_PWD" },
     "flags": { "ENV": "MYSQL_FLAGS" },
     "multipleStatements": true
