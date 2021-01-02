@@ -3,9 +3,12 @@ import Link from 'next/link';
 import Router from 'next/router';
 
 import DriverList from '../../src/components/driver/driver-list';
-import auth from '../../src/auth/Auth';
+import { AuthContext, hasDriverPrivilege } from '../../src/auth/auth';
 
 class Queue extends Component {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state = {
     loading: false,
     error: null,
@@ -13,8 +16,9 @@ class Queue extends Component {
   };
 
   componentDidMount() {
-    const { isAuthenticated, hasDriverPriviledge } = auth;
-    if (!isAuthenticated() || !hasDriverPriviledge()) {
+    const { authState } = this.context;
+
+    if (!authState || !hasDriverPrivilege(authState)) {
       Router.replace('/');
       return false;
     }

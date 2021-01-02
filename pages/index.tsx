@@ -1,24 +1,31 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
 
-import auth from '../src/auth/Auth';
+import auth, {
+  AuthContext,
+  hasAdminPrivilege,
+  hasDriverPrivilege,
+  hasFacilitatorPrivilege,
+  login,
+} from '../src/auth/auth';
 
 import './login.css';
 
 class Home extends Component {
-  componentDidMount() {
-    if (/access_token|id_token|error/.test(window.location.hash)) {
-      auth.handleAuthentication();
-    }
-  }
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
 
-  login() {
-    auth.login();
+  async componentDidMount() {
+    if (/access_token|id_token|error/.test(window.location.hash)) {
+      await this.context.handleAuthentication();
+    }
   }
 
   facilitatorLink() {
     const isAuthorised =
-      auth.hasFacilitatorPrivilege() || auth.hasAdminPriviledge();
+      hasFacilitatorPrivilege(this.context.authState) ||
+      hasAdminPrivilege(this.context.authState);
+
     if (isAuthorised) {
       return (
         <Link href="/facilitator">
@@ -32,7 +39,9 @@ class Home extends Component {
 
   driverLink() {
     const isAuthorised =
-      auth.hasDriverPriviledge() || auth.hasAdminPriviledge();
+      hasDriverPrivilege(this.context.authState) ||
+      hasAdminPrivilege(this.context.authState);
+
     if (isAuthorised) {
       return (
         <Link href="/driver">
@@ -45,14 +54,13 @@ class Home extends Component {
   }
 
   render() {
-    const { isAuthenticated } = auth;
     return (
       <div className="container">
         <div className="hcp-background" />
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-9 col-md-8 text-center">
             <div className="outerForm">
-              {!isAuthenticated() && (
+              {!this.context.authState && (
                 <React.Fragment>
                   <div className="quote">Share the ride, share the life</div>
 
@@ -61,13 +69,13 @@ class Home extends Component {
                   <button
                     className="btn btn-success btn-block"
                     id="loginButton"
-                    onClick={this.login.bind(this)}
+                    onClick={login}
                   >
                     Log In
                   </button>
                 </React.Fragment>
               )}
-              {isAuthenticated() && (
+              {this.context.authState && (
                 <React.Fragment>
                   Pick your action:{' '}
                   <div className="btn-group" role="group">

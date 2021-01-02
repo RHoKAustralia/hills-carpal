@@ -5,7 +5,7 @@ import router from 'next/router';
 import Link from 'next/link';
 
 import DriverMap from '../../../../src/components/driver/driver-map';
-import auth from '../../../../src/auth/Auth';
+import auth, { AuthContext } from '../../../../src/auth/auth';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
 import '../../../../src/components/driver/ride-detail.css';
@@ -25,6 +25,9 @@ interface State {
 }
 
 export default class RideDetail extends React.Component<Props, State> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state: State = {
     loading: true,
     updating: false,
@@ -39,8 +42,7 @@ export default class RideDetail extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const { isAuthenticated } = auth;
-    if (!isAuthenticated()) {
+    if (!auth) {
       router.replace('/');
       return false;
     }
@@ -180,7 +182,7 @@ export default class RideDetail extends React.Component<Props, State> {
   }
 
   RideOfferedButtons() {
-    return this.state.ride.driver.id === auth.getUserId() ? (
+    return this.state.ride.driver.id === this.context.authState.userId ? (
       <div className="btn-group" role="group">
         <button
           onClick={this.declineRide.bind(this)}
