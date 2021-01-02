@@ -4,7 +4,10 @@ import Link from 'next/link';
 
 import LocationInput from '../../../src/components/driver/location-input';
 import ClientImages from '../../../src/components/facilitator/client-images';
-import auth from '../../../src/auth/Auth';
+import auth, {
+  AuthContext,
+  hasFacilitatorPrivilege,
+} from '../../../src/auth/auth';
 
 import './clients.css';
 import { Client, OptionalClient, Gender } from '../../../src/model';
@@ -44,6 +47,9 @@ interface State {
 }
 
 class Clients extends Component<Props, State> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state: State = {
     currentClient: defaultClient,
     clients: [],
@@ -61,8 +67,8 @@ class Clients extends Component<Props, State> {
   }
 
   componentDidMount() {
-    const { isAuthenticated, hasFacilitatorPrivilege: hasFacilitatorPriviledge } = auth;
-    if (!isAuthenticated() || !hasFacilitatorPriviledge()) {
+    const { authState } = this.context;
+    if (!authState || !hasFacilitatorPrivilege(authState)) {
       Router.replace('/');
       return false;
     }

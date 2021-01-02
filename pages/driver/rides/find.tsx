@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import history from 'next/router';
 import qs from 'qs';
 
-import auth from '../../../src/auth/Auth';
+import auth, { AuthContext, hasDriverPrivilege } from '../../../src/auth/auth';
 import LocationSearch from '../../../src/components/driver/location-search';
 import DriverList from '../../../src/components/driver/driver-list';
 import DriverMap from '../../../src/components/driver/driver-map';
@@ -18,6 +18,9 @@ interface State {
 }
 
 class FindRides extends Component<{}, State> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state: State = {
     loading: false,
     rides: null,
@@ -27,8 +30,8 @@ class FindRides extends Component<{}, State> {
   };
 
   componentDidMount() {
-    const { isAuthenticated, hasDriverPriviledge } = auth;
-    if (!isAuthenticated() || !hasDriverPriviledge()) {
+    const { authState } = this.context;
+    if (!authState || !hasDriverPrivilege(authState)) {
       history.replace('/');
       return false;
     }

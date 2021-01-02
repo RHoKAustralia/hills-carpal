@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import Link from 'next/link';
 import { AppProps } from 'next/app';
 
-import auth from '../src/auth/Auth';
+import AuthProvider, {
+  AuthContext,
+  hasDriverPrivilege,
+  hasFacilitatorPrivilege,
+} from '../src/auth/auth';
 
 import './app.css';
 import './document.css';
@@ -116,63 +120,68 @@ function getLinksForRoles(roles) {
   );
 }
 
-class App extends Component<AppProps> {
-  logout() {
-    auth.logout();
-  }
+const Nav = () => {
+  const { authState, logout } = React.useContext(AuthContext);
 
-  getLogoHref = () => {
-    if (typeof window === 'undefined' || !auth || !auth.isAuthenticated()) {
+  const getLogoHref = () => {
+    if (typeof window === 'undefined' || !authState) {
       return '/';
-    } else if (auth.hasFacilitatorPrivilege()) {
+    } else if (hasFacilitatorPrivilege(authState)) {
       return '/facilitator';
-    } else if (auth.hasDriverPriviledge()) {
+    } else if (hasDriverPrivilege(authState)) {
       return '/driver';
     } else {
       return '/';
     }
   };
 
+  return (
+    <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
+      <a className="navbar-brand" href={getLogoHref()}>
+        <img
+          src="/styles/CarPal-Logo-emma-transparent.png"
+          width="100"
+          height="106"
+          alt="HillsCarPal"
+          id="icon"
+        />
+      </a>
+      {typeof window !== 'undefined' ? (
+        <>
+          {!authState && <Links links={loggedOutLinks} />}
+          {authState && (
+            <React.Fragment>
+              <Links links={getLinksForRoles(authState.roles)} />
+              <div>
+                <button
+                  className="btn btn-success"
+                  id="logOutButton"
+                  onClick={logout}
+                >
+                  Log Out
+                </button>
+              </div>
+            </React.Fragment>
+          )}
+        </>
+      ) : (
+        'Loading...'
+      )}
+    </nav>
+  );
+};
+
+class App extends Component<AppProps> {
   render() {
     return (
-      <div className="hcp-app">
-        <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
-          <a className="navbar-brand" href={this.getLogoHref()}>
-            <img
-              src="/styles/CarPal-Logo-emma-transparent.png"
-              width="100"
-              height="106"
-              alt="HillsCarPal"
-              id="icon"
-            />
-          </a>
-          {typeof window !== 'undefined' ? (
-            <>
-              {!auth.isAuthenticated() && <Links links={loggedOutLinks} />}
-              {auth.isAuthenticated() && (
-                <React.Fragment>
-                  <Links links={getLinksForRoles(auth.getRoles())} />
-                  <div>
-                    <button
-                      className="btn btn-success"
-                      id="logOutButton"
-                      onClick={this.logout.bind(this)}
-                    >
-                      Log Out
-                    </button>
-                  </div>
-                </React.Fragment>
-              )}
-            </>
-          ) : (
-            'Loading...'
-          )}
-        </nav>
-
-        <div className="container">
-          <this.props.Component {...this.props.pageProps} />
+      <AuthProvider>
+        <div className="hcp-app">
+          <Nav />
+          <div className="container">
+            <this.props.Component {...this.props.pageProps} />
+          </div>
         </div>
-      </div>
+      </AuthProvider>
     );
   }
 }

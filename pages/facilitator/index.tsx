@@ -4,7 +4,7 @@ import Link from 'next/link';
 import router from 'next/router';
 
 import Table from '../../src/components/table';
-import auth from '../../src/auth/Auth';
+import { hasFacilitatorPrivilege } from '../../src/auth/auth';
 
 import './index.css';
 import { Ride } from '../../src/model';
@@ -105,8 +105,8 @@ class Facilitator extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const { isAuthenticated, hasFacilitatorPrivilege } = auth;
-    if (!isAuthenticated() || !hasFacilitatorPrivilege()) {
+    const { authState } = this.context;
+    if (!authState || !hasFacilitatorPrivilege(authState)) {
       router.replace('/');
       return false;
     }

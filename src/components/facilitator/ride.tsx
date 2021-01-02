@@ -5,7 +5,7 @@ import router from 'next/router';
 import Link from 'next/link';
 
 import LocationInput from '../driver/location-input';
-import auth from '../../auth/Auth';
+import auth, { hasFacilitatorPrivilege } from '../../auth/auth';
 
 import './Ride.css';
 import { Location, RideDriver, Ride as ModelRide } from '../../model';
@@ -61,8 +61,8 @@ class Ride extends Component<Props, State> {
   }
 
   async componentDidMount() {
-    const { isAuthenticated, hasFacilitatorPrivilege } = auth;
-    if (!isAuthenticated() || !hasFacilitatorPrivilege()) {
+    const { authState } = this.context;
+    if (!authState || !hasFacilitatorPrivilege(authState)) {
       router.replace('/');
       return false;
     }
