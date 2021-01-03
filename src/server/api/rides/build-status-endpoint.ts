@@ -5,6 +5,7 @@ import RideRepository from './ride-repository';
 import DatabaseManager from '../database/database-manager';
 import { requireDriverPermissions, decodeJwt } from '../jwt';
 import { RideStatus } from '../../../common/model';
+import notifyDeclined from '../../notifications/notify-declined';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -24,6 +25,8 @@ export default (rideStatus: RideStatus) => async (
         case 'PUT':
           const id = Number.parseInt(req.query.id as string);
 
+          const oldRide = await rideRepository.get(id, connection);
+
           await rideRepository.setStatus(
             id,
             rideStatus,
@@ -31,6 +34,10 @@ export default (rideStatus: RideStatus) => async (
             rideStatus !== 'OPEN' ? jwt.name : null,
             connection
           );
+
+          if (rideStatus === 'OPEN') {
+            notifyDeclined(oldRide);
+          }
 
           const newRide = await rideRepository.get(id, connection);
 

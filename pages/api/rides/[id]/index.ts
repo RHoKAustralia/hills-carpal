@@ -4,6 +4,7 @@ import _ from 'lodash';
 import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
 import { requireFacilitatorPermissions } from '../../../../src/server/api/jwt';
+import notifyCancelled from '../../../../src/server/notifications/notify-cancelled';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -16,12 +17,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'PUT':
+          const existingRide = await rideRepository.get(
+            Number.parseInt(req.query.id as string),
+            connection
+          );
+
           const updatedRide = await rideRepository.update(
             Number.parseInt(req.query.id as string),
             req.body,
             connection
           );
-          
+
+          if (
+            updatedRide.status === 'CANCELLED' &&
+            existingRide.status !== 'CANCELLED' &&
+            updatedRide.driver.id
+          ) {
+            // Ride has just been cancelled - notify the driver
+            notifyCancelled(updatedRide);
+          }
+
           res.status(200).json(updatedRide);
           break;
         case 'GET':
