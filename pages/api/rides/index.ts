@@ -32,7 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const rideId = await rideRepository.create(rideInput, connection);
           const newRide = await rideRepository.get(rideId, connection);
 
-          await notifyNewRides(newRide);
+          notifyNewRides(newRide);
 
           res.status(200).json(newRide);
           break;

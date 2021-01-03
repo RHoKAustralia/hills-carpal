@@ -225,7 +225,8 @@ export default class RideRepository {
 
       await this.databaseManager.query(query + extraQuery, connection);
       this.databaseManager.commit(connection);
-      return ride;
+
+      return this.get(id, connection);
     } catch (e) {
       this.databaseManager.rollback(connection);
       throw e;

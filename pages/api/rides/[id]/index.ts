@@ -21,6 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             req.body,
             connection
           );
+          
           res.status(200).json(updatedRide);
           break;
         case 'GET':

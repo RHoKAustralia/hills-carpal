@@ -18,9 +18,10 @@ type Email = {
 
 export default async function sendEmail(email: Email) {
   // console.log(email);
-  // await transporter.sendMail({
-  //   to: email.to,
-  //   html: email.html,
-  //   from: 'no-reply@ride.carpal.org.au',
-  // });
+  await transporter.sendMail({
+    to: email.to,
+    subject: email.subject,
+    html: email.html,
+    from: 'no-reply@ride.carpal.org.au',
+  });
 }
