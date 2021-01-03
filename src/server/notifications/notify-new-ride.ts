@@ -11,7 +11,6 @@ export default async function notifyNewRides(ride: Ride) {
 
   const drivers = await managementClient.getUsersInRole({
     id: roleIdLookup['driver'].id,
-    // id: roleIds.driver
   });
 
   const driverRoleGetters = drivers.map((driver) => () =>
@@ -27,13 +26,8 @@ export default async function notifyNewRides(ride: Ride) {
     driversAndRoles.push([drivers[i], driverRoles]);
   }
 
-  // console.log(driversAndRoles);
-  console.log(ride);
-
   for (let [driver, roles] of driversAndRoles) {
     const roleLookup = _.keyBy(roles, (role) => role.name);
-    // console.log(driver.name);
-    // console.log(roleLookup);
 
     /** Does the driver's car match the suv preference */
     const suvOk =
@@ -62,6 +56,13 @@ export default async function notifyNewRides(ride: Ride) {
         <strong>From:</strong> ${ride.locationFrom.placeName} 
         <strong>To:</strong> ${ride.locationTo.placeName} 
         <strong>Time:</strong> ${ride.pickupTimeAndDate}
+
+        <p>To view and accept this ride, <a href="${process.env.EXTERNAL_URL}/driver/rides/${ride.id}">click here</a>.</p>
+
+        <p>
+          Thanks,<br>
+          Hills Carpal
+        </p>
       `,
       });
     } else {

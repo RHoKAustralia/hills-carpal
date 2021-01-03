@@ -5,7 +5,7 @@
   "scripts": {
     "create-db": "MYSQL_FLAGS=\"-CONNECT_WITH_DB\" db-migrate db:create carpal",
     "refresh-db": "db-migrate up",
-    "dev": "REACT_APP_API_URL='http://localhost:3000' REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' next dev",
+    "dev": "REACT_APP_AUTH0_CALLBACK_URL='http://localhost:3000/' REACT_APP_UNSAFE_GOD_MODE='true' next dev",
     "build:training": "",
     "build:prod": "REACT_APP_AUTH0_CALLBACK_URL=https://ride.carpal.org.au npm run build",
     "build": "next build",

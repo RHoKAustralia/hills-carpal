@@ -8,7 +8,7 @@ import { AuthContext, hasFacilitatorPrivilege } from '../../src/client/auth';
 
 import './index.css';
 import { Ride } from '../../src/common/model';
-import redirectIfNoRole from '../../src/common/redirect-if-no-role';
+import isAuthedWithRole from '../../src/common/redirect-if-no-role';
 
 const getColumns = (table) => {
   return [
@@ -109,7 +109,7 @@ class Facilitator extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    redirectIfNoRole(this.context, 'facilitator');
+    isAuthedWithRole(this.context, 'facilitator');
   }
 
   handleRowClick = (id: number) => {

@@ -4,7 +4,7 @@ import Router from 'next/router';
 
 import DriverList from '../../src/common/components/driver/driver-list';
 import { AuthContext, hasDriverPrivilege } from '../../src/client/auth';
-import redirectIfNoRole from '../../src/common/redirect-if-no-role';
+import isAuthedWithRole from '../../src/common/redirect-if-no-role';
 
 class Queue extends Component {
   static contextType = AuthContext;
@@ -17,7 +17,9 @@ class Queue extends Component {
   };
 
   componentDidMount() {
-    redirectIfNoRole(this.context, 'driver');
+    if (!isAuthedWithRole(this.context, 'driver')) {
+      return;
+    }
 
     this.getQueue();
   }
