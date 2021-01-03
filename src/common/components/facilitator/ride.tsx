@@ -5,11 +5,15 @@ import router from 'next/router';
 import Link from 'next/link';
 
 import LocationInput from '../driver/location-input';
-import auth, { hasFacilitatorPrivilege } from '../../auth/auth';
+import auth, {
+  AuthContext,
+  hasFacilitatorPrivilege,
+} from '../../../client/auth';
 
 import './Ride.css';
 import { Location, RideDriver, Ride as ModelRide } from '../../model';
-import Client from '../../../pages/facilitator/clients';
+import Client from '../../../../pages/facilitator/clients';
+import redirectIfNoRole from '../../redirect-if-no-role';
 
 interface Props {
   id?: number;
@@ -35,6 +39,9 @@ interface State {
 }
 
 class Ride extends Component<Props, State> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state = {
     clientId: null,
     pickupTimeAndDate: moment().tz('Australia/Sydney').toDate(),
@@ -61,11 +68,8 @@ class Ride extends Component<Props, State> {
   }
 
   async componentDidMount() {
-    const { authState } = this.context;
-    if (!authState || !hasFacilitatorPrivilege(authState)) {
-      router.replace('/');
-      return false;
-    }
+    redirectIfNoRole(this.context, 'facilitator');
+
     this.setState({ loading: true, loadingError: null });
 
     const ridePromise = (async () => {

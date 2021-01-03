@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
 
-import DriverList from '../../src/components/driver/driver-list';
-import { AuthContext, hasDriverPrivilege } from '../../src/auth/auth';
+import DriverList from '../../src/common/components/driver/driver-list';
+import { AuthContext, hasDriverPrivilege } from '../../src/client/auth';
+import redirectIfNoRole from '../../src/common/redirect-if-no-role';
 
 class Queue extends Component {
   static contextType = AuthContext;
@@ -16,12 +17,7 @@ class Queue extends Component {
   };
 
   componentDidMount() {
-    const { authState } = this.context;
-
-    if (!authState || !hasDriverPrivilege(authState)) {
-      Router.replace('/');
-      return false;
-    }
+    redirectIfNoRole(this.context, 'driver');
 
     this.getQueue();
   }

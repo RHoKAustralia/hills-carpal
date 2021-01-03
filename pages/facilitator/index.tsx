@@ -3,11 +3,12 @@ import moment from 'moment-timezone';
 import Link from 'next/link';
 import router from 'next/router';
 
-import Table from '../../src/components/table';
-import { hasFacilitatorPrivilege } from '../../src/auth/auth';
+import Table from '../../src/common/components/table';
+import { AuthContext, hasFacilitatorPrivilege } from '../../src/client/auth';
 
 import './index.css';
-import { Ride } from '../../src/model';
+import { Ride } from '../../src/common/model';
+import redirectIfNoRole from '../../src/common/redirect-if-no-role';
 
 const getColumns = (table) => {
   return [
@@ -73,6 +74,9 @@ interface State {
 }
 
 class Facilitator extends React.Component<Props, State> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state: State = { rides: [], loading: false, pages: -1 };
 
   async handleStatusChange(e, row) {
@@ -105,15 +109,11 @@ class Facilitator extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const { authState } = this.context;
-    if (!authState || !hasFacilitatorPrivilege(authState)) {
-      router.replace('/');
-      return false;
-    }
+    redirectIfNoRole(this.context, 'facilitator');
   }
 
   handleRowClick = (id: number) => {
-    router.push('/facilitator/rides/' + id);
+    router.push(`/facilitator/rides/[id]`, '/facilitator/rides/' + id);
   };
 
   render() {

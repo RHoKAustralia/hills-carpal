@@ -6,7 +6,7 @@ import AuthProvider, {
   AuthContext,
   hasDriverPrivilege,
   hasFacilitatorPrivilege,
-} from '../src/auth/auth';
+} from '../src/client/auth';
 
 import './app.css';
 import './document.css';

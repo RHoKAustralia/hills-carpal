@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import ImageRepository from '../../../../../src/api/clients/image-repository';
-import busboyParse from '../../../../../src/api/clients/busboy-parse';
-import DatabaseManager from '../../../../../src/api/database/database-manager';
+import ImageRepository from '../../../../../src/server/api/clients/image-repository';
+import busboyParse from '../../../../../src/server/api/clients/busboy-parse';
+import DatabaseManager from '../../../../../src/server/api/database/database-manager';
 import {
   hasRole,
   decodeJwt,
   requireFacilitatorPermissions,
-} from '../../../../../src/auth/jwt';
+} from '../../../../../src/server/api/jwt';
 
 export const config = {
   api: {

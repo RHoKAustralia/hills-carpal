@@ -1,5 +1,5 @@
 import DatabaseManager from '../database/database-manager';
-import { Client } from '../../model';
+import { Client } from '../../../common/model';
 import { Connection } from 'mysql';
 import LocationRepository from '../location-repository';
 

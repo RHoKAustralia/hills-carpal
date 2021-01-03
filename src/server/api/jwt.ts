@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
-import { Gender, CarType } from '../model';
+import { Gender, CarType } from '../../common/model';
 
 type Role = 'admin' | 'driver' | 'facilitator';
 
@@ -75,7 +75,7 @@ export function decodeJwt(req: NextApiRequest): Claims {
     const tokenValue = authHeaderParts[1] || authHeaderParts[0];
     // FIXME: This needs to be verify
     let decodedToken = jsonwebtoken.decode(tokenValue);
-    console.log(decodedToken);
+    
     if (process.env.UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,

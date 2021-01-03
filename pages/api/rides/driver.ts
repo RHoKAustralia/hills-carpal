@@ -3,10 +3,10 @@ import _ from 'lodash';
 
 import RideRepository, {
   validSortLookup,
-} from '../../../src/api/rides/ride-repository';
-import DatabaseManager from '../../../src/api/database/database-manager';
-import { decodeJwt, requireDriverPermissions } from '../../../src/auth/jwt';
-import { CarType, Gender } from '../../../src/model';
+} from '../../../src/server/api/rides/ride-repository';
+import DatabaseManager from '../../../src/server/api/database/database-manager';
+import { decodeJwt, requireDriverPermissions } from '../../../src/server/api/jwt';
+import { CarType, Gender } from '../../../src/common/model';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);

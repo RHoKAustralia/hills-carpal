@@ -59,7 +59,7 @@ function getProfile(accessToken: string) {
 }
 
 function getFromStorage(): AuthState | undefined {
-  return !localStorage.getItem('user_id')
+  return typeof window === 'undefined' || !localStorage.getItem('user_id')
     ? undefined
     : {
         userId: localStorage.getItem('user_id'),
@@ -129,14 +129,14 @@ export function hasAdminPrivilege(auth: AuthState | undefined) {
 
 export const AuthContext = React.createContext<Auth | undefined>(undefined);
 
-type AuthState = {
+export type AuthState = {
   userId: string;
   accessToken: string;
   expiresAt: number;
   roles: string[];
 };
 
-type Auth = {
+export type Auth = {
   authState: AuthState;
   logout: () => void;
   handleAuthentication: () => Promise<void>;
@@ -147,11 +147,9 @@ export type WrappedComponentProps = {
 };
 
 const AuthProvider: FunctionComponent<{}> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthState | undefined>();
-
-  useEffect(() => {
-    setAuthState(getFromStorage());
-  }, []);
+  const [authState, setAuthState] = useState<AuthState | undefined>(() =>
+    getFromStorage()
+  );
 
   const value = {
     authState: authState && isAuthenticated(authState) ? authState : undefined,

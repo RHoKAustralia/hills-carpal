@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import ClientRepository from '../../../src/api/clients/client-repository';
-import DatabaseManager from '../../../src/api/database/database-manager';
-import { requireFacilitatorPermissions } from '../../../src/auth/jwt';
+import ClientRepository from '../../../src/server/api/clients/client-repository';
+import DatabaseManager from '../../../src/server/api/database/database-manager';
+import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
 const clientRepository = new ClientRepository(databaseManager);

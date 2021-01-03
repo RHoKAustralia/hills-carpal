@@ -3,9 +3,9 @@ import _ from 'lodash';
 
 import RideRepository, {
   validSortLookup,
-} from '../../../src/api/rides/ride-repository';
-import DatabaseManager from '../../../src/api/database/database-manager';
-import { requireFacilitatorPermissions } from '../../../src/auth/jwt';
+} from '../../../src/server/api/rides/ride-repository';
+import DatabaseManager from '../../../src/server/api/database/database-manager';
+import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
