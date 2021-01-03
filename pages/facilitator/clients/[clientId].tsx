@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Router from 'next/router';
 import Link from 'next/link';
 
 import LocationInput from '../../../src/common/components/driver/location-input';

@@ -1,10 +1,8 @@
-import { AppMetadata, Role, User, UserMetadata } from 'auth0';
 import _ from 'lodash';
 import { managementClient } from '../auth/node-auth0';
 import roleIdsPromise from '../auth/role-ids';
 import { Ride } from '../../common/model';
 import sendEmail from './send-email';
-// import sendEmail from './send-email';
 
 export default async function notifyNewRides(ride: Ride) {
   const roleIdLookup = await roleIdsPromise;
@@ -13,25 +11,15 @@ export default async function notifyNewRides(ride: Ride) {
     id: roleIdLookup['driver'].id,
   });
 
-  const driverRoleGetters = drivers.map((driver) => () =>
-    managementClient.getUserRoles({
+  for (let driver of drivers) {
+    const driverRoles = await managementClient.getUserRoles({
       id: driver.user_id,
-    })
-  );
-
-  const driversAndRoles: [User<AppMetadata, UserMetadata>, Role[]][] = [];
-  for (let i = 0; i < drivers.length; i++) {
-    const driverRoles = await driverRoleGetters[i]();
-
-    driversAndRoles.push([drivers[i], driverRoles]);
-  }
-
-  for (let [driver, roles] of driversAndRoles) {
-    const roleLookup = _.keyBy(roles, (role) => role.name);
+    });
+    const roleLookup = _.keyBy(driverRoles, (role) => role.name);
 
     /** Does the driver's car match the suv preference */
     const suvOk =
-      ride.carType === null ||
+      ride.carType === 'All' ||
       (ride.carType === 'noSUV' && !roleLookup['suv']) ||
       (ride.carType === 'suv' && roleLookup['suv']);
 
@@ -48,22 +36,29 @@ export default async function notifyNewRides(ride: Ride) {
         to: driver.email,
         subject: `New Hills Carpal ride for ${ride.client.name}`,
         html: `
-        <p>Hi ${driver.name},</p>
+          <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 
-        <p>A new ride has been created for ${ride.client.name} in Hills Carpal.</p>
+          <p>A new ride has been created for ${
+            ride.client.name
+          } in Hills Carpal.</p>
 
-        <h3>Details</h3>
-        <strong>From:</strong> ${ride.locationFrom.placeName} 
-        <strong>To:</strong> ${ride.locationTo.placeName} 
-        <strong>Time:</strong> ${ride.pickupTimeAndDate}
-
-        <p>To view and accept this ride, <a href="${process.env.EXTERNAL_URL}/driver/rides/${ride.id}">click here</a>.</p>
-
-        <p>
-          Thanks,<br>
-          Hills Carpal
-        </p>
-      `,
+          <h3>Details</h3>
+          <p>
+            <strong>From:</strong> ${ride.locationFrom.placeName} <br>
+            <strong>To:</strong> ${ride.locationTo.placeName} <br>
+            <strong>Time:</strong> ${ride.pickupTimeAndDate} <br>
+            <strong>Description:</strong> ${ride.description} <br>
+          </p>
+  
+          <p>To view and accept this ride, <a href="${
+            process.env.EXTERNAL_URL
+          }/driver/rides/${ride.id}/details">click here</a>.</p>
+ 
+          <p>
+            Thanks,<br>
+            Hills Carpal
+          </p>
+       `,
       });
     } else {
       console.log(`Skipping sending new ride notification to ${driver.email}`);

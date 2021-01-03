@@ -5,14 +5,17 @@ import router from 'next/router';
 import Link from 'next/link';
 
 import LocationInput from '../driver/location-input';
-import auth, {
-  AuthContext,
-  hasFacilitatorPrivilege,
-} from '../../../client/auth';
+import { AuthContext } from '../../../client/auth';
 
 import './Ride.css';
-import { Location, RideDriver, Ride as ModelRide } from '../../model';
-import Client from '../../../../pages/facilitator/clients';
+import {
+  Location,
+  RideDriver,
+  Ride as ModelRide,
+  Gender,
+  CarType,
+  Client,
+} from '../../model';
 import isAuthedWithRole from '../../redirect-if-no-role';
 
 interface Props {
@@ -20,12 +23,12 @@ interface Props {
 }
 
 interface State {
-  clientId: null | string;
+  clientId: null | number;
   pickupTimeAndDate: Date;
-  driverGender: string;
+  driverGender: Gender;
   locationTo: Location;
   locationFrom: Location;
-  carType: string;
+  carType: CarType;
   description: string;
   status: string | null;
   driver: RideDriver | null;
@@ -42,13 +45,13 @@ class Ride extends Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
-  state = {
+  state: State = {
     clientId: null,
     pickupTimeAndDate: moment().tz('Australia/Sydney').toDate(),
-    driverGender: '',
+    driverGender: 'any',
     locationTo: undefined,
     locationFrom: undefined,
-    carType: '',
+    carType: 'All',
     description: '',
     status: 'OPEN',
     driver: null,
@@ -87,7 +90,9 @@ class Ride extends Component<Props, State> {
         }
 
         const data = await res.json();
-        const client = this.state.clients.find((c) => c.name === data.client);
+        const client = this.state.clients.find(
+          (c: Client) => c.name === data.client
+        );
         let clientId = -1;
         if (client) {
           clientId = client.id;
@@ -258,11 +263,11 @@ class Ride extends Component<Props, State> {
     const client = clients.find((c) => c.id === clientId);
     this.setState((state: State) => ({
       selectedClientId: clientId,
-      locationFrom: state.locationFrom || client.locationHome,
-      locationTo: state.locationTo || client.locationHome,
-      carType: client.carType,
+      locationFrom: state.locationFrom || client.homeLocation,
+      locationTo: state.locationTo || client.homeLocation,
+      carType: client.preferredCarType,
       clientId: client.id,
-      driverGender: client.driverGender,
+      driverGender: client.preferredDriverGender,
       hasMps: client.hasMps,
     }));
   };
@@ -358,7 +363,9 @@ class Ride extends Component<Props, State> {
             <select
               required
               onChange={(e) => {
-                this.setState({ driverGender: e.currentTarget.value });
+                this.setState({
+                  driverGender: e.currentTarget.value as Gender,
+                });
               }}
               value={this.state.driverGender}
               className="custom-select"
@@ -375,14 +382,14 @@ class Ride extends Component<Props, State> {
             <select
               required
               onChange={(e) => {
-                this.setState({ carType: e.currentTarget.value });
+                this.setState({ carType: e.currentTarget.value as CarType });
               }}
               value={this.state.carType}
               className="custom-select"
             >
               <option disabled={true}>Select from following</option>
-              <option value="noSUV">No SUV</option>
               <option value="All">All</option>
+              <option value="noSUV">No SUV</option>
             </select>
           </div>
           <div className="form-check">
