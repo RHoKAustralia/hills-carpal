@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:4",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:6",
       "essential": true,
       "portMappings": [
         {
@@ -44,6 +44,18 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
         {
           "name": "MYSQL_USER",
           "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret-prod.arn}:MYSQL_USER::"
+        },
+        {
+          "name": "AUTH0_CLIENT_SECRET",
+          "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret-prod.arn}:AUTH0_CLIENT_SECRET::"
+        },
+        {
+          "name": "SMTP_USERNAME",
+          "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret-prod.arn}:SMTP_USERNAME::"
+        },
+        {
+          "name": "SMTP_PASSWORD",
+          "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret-prod.arn}:SMTP_PASSWORD::"
         }
       ],
       "environment": [

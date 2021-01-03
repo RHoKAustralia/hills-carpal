@@ -5,11 +5,12 @@ import router from 'next/router';
 import Link from 'next/link';
 
 import DriverMap from '../../../../src/common/components/driver/driver-map';
-import auth, { AuthContext } from '../../../../src/client/auth';
+import { AuthContext } from '../../../../src/client/auth';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
 import '../../../../src/common/components/driver/ride-detail.css';
 import { Ride, Image } from '../../../../src/common/model';
+import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 
 interface Props {
   rideId: string;
@@ -42,9 +43,8 @@ export default class RideDetail extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    if (!auth) {
-      router.replace('/');
-      return false;
+    if (!isAuthedWithRole(this.context, 'driver')) {
+      return;
     }
 
     if (this.props.rideId) {

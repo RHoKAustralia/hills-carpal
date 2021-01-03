@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import './poll.css';
+import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 
 interface Props {
   rideId: string;
@@ -21,6 +22,12 @@ export default class Poll extends React.Component<Props, State> {
     return {
       rideId: query.rideId && Number.parseInt(query.rideId),
     };
+  }
+
+  componentDidMount() {
+    if (!isAuthedWithRole(this.context, 'driver')) {
+      return;
+    }
   }
 
   completeRide = () => {
