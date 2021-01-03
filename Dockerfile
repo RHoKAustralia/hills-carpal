@@ -2,9 +2,7 @@ FROM node:12-alpine
 
 COPY . .
 
-RUN npm install
-RUN npm run build:prod
-RUN npm prune --production
+RUN npm install && npm run build:prod && npm prune --production
 
 EXPOSE 3000
 
