@@ -22,6 +22,6 @@ export default async function sendEmail(email: Email) {
     to: email.to,
     subject: email.subject,
     html: email.html,
-    from: 'no-reply@ride.carpal.org.au',
+    from: 'Hills Carpal <no-reply@ride.carpal.org.au>',
   });
 }
