@@ -2,15 +2,13 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Link from 'next/link';
 
-import LocationInput from '../../../src/components/driver/location-input';
-import ClientImages from '../../../src/components/facilitator/client-images';
-import auth, {
-  AuthContext,
-  hasFacilitatorPrivilege,
-} from '../../../src/auth/auth';
+import LocationInput from '../../../src/common/components/driver/location-input';
+import ClientImages from '../../../src/common/components/facilitator/client-images';
+import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 
 import './clients.css';
-import { Client, OptionalClient, Gender } from '../../../src/model';
+import { Client, OptionalClient, Gender } from '../../../src/common/model';
+import redirectIfNoRole from '../../../src/common/redirect-if-no-role';
 
 const defaultClient: OptionalClient = {
   name: '',
@@ -67,11 +65,7 @@ class Clients extends Component<Props, State> {
   }
 
   componentDidMount() {
-    const { authState } = this.context;
-    if (!authState || !hasFacilitatorPrivilege(authState)) {
-      Router.replace('/');
-      return false;
-    }
+    redirectIfNoRole(this.context, 'facilitator');
 
     this.fetchClients();
   }

@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import ImageRepository from '../../../src/api/clients/image-repository';
-import DatabaseManager from '../../../src/api/database/database-manager';
+import ImageRepository from '../../../src/server/api/clients/image-repository';
+import DatabaseManager from '../../../src/server/api/database/database-manager';
 import {
   requireDriverPermissions,
   decodeJwt,
   requireFacilitatorPermissions,
-} from '../../../src/auth/jwt';
+} from '../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
 const imageRepository = new ImageRepository(databaseManager);

@@ -3,10 +3,14 @@ import React, { Component } from 'react';
 import history from 'next/router';
 import qs from 'qs';
 
-import auth, { AuthContext, hasDriverPrivilege } from '../../../src/auth/auth';
-import LocationSearch from '../../../src/components/driver/location-search';
-import DriverList from '../../../src/components/driver/driver-list';
-import DriverMap from '../../../src/components/driver/driver-map';
+import auth, {
+  AuthContext,
+  hasDriverPrivilege,
+} from '../../../src/client/auth';
+import LocationSearch from '../../../src/common/components/driver/location-search';
+import DriverList from '../../../src/common/components/driver/driver-list';
+import DriverMap from '../../../src/common/components/driver/driver-map';
+import redirectIfNoRole from '../../../src/common/redirect-if-no-role';
 
 interface State {
   loading: boolean;
@@ -30,11 +34,7 @@ class FindRides extends Component<{}, State> {
   };
 
   componentDidMount() {
-    const { authState } = this.context;
-    if (!authState || !hasDriverPrivilege(authState)) {
-      history.replace('/');
-      return false;
-    }
+    redirectIfNoRole(this.context, 'driver');
 
     this.searchAllRides();
   }

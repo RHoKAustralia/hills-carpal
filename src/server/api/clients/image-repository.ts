@@ -1,7 +1,7 @@
 import { Connection } from 'mysql';
 
 import DatabaseManager from '../database/database-manager';
-import { Image } from '../../model';
+import { Image } from '../../../common/model';
 
 class ImageRepository {
   private dbName: string;

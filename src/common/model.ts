@@ -1,5 +1,5 @@
 export type Gender = 'male' | 'female' | 'any';
-export type CarType = 'suv' | 'noSUV' | 'All';
+export type CarType = 'suv' | 'noSUV';
 export type RideStatus = 'OPEN' | 'CONFIRMED' | 'ENDED' | 'CANCELLED';
 
 export interface Location {
@@ -25,7 +25,7 @@ interface RideCommon {
   locationTo: Location;
   driver: RideDriver;
   driverGender: Gender;
-  carType: CarType;
+  carType: CarType | null;
   hasMps: boolean;
   description: string;
   facilitatorEmail: string;

@@ -3,8 +3,8 @@ import _ from 'lodash';
 
 import RideRepository from './ride-repository';
 import DatabaseManager from '../database/database-manager';
-import { requireDriverPermissions, decodeJwt } from '../../auth/jwt';
-import { RideStatus } from '../../model';
+import { requireDriverPermissions, decodeJwt } from '../jwt';
+import { RideStatus } from '../../../common/model';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);

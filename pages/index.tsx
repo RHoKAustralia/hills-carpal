@@ -7,7 +7,7 @@ import auth, {
   hasDriverPrivilege,
   hasFacilitatorPrivilege,
   login,
-} from '../src/auth/auth';
+} from '../src/client/auth';
 
 import './login.css';
 

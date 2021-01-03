@@ -10,7 +10,7 @@ import {
   Ride,
   RideInput,
   RideDriver,
-} from '../../model';
+} from '../../../common/model';
 import LocationRepository from '../location-repository';
 
 interface ListQuery {
@@ -97,16 +97,21 @@ export default class RideRepository {
 
       await this.databaseManager.query(query, connection);
 
-      connection.commit();
-
-      return (
+      const id = (
         await this.databaseManager.query(
           'SELECT LAST_INSERT_ID() AS lastInsertId',
           connection
         )
       )[0]['lastInsertId'];
+
+      connection.commit();
+
+      console.log(id);
+
+      return id;
     } catch (e) {
       connection.rollback();
+      throw e;
     }
   }
 

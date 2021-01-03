@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:2",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:4",
       "essential": true,
       "portMappings": [
         {
@@ -231,7 +231,7 @@ resource "aws_db_instance" "hills-carpal-db-prod" {
   instance_class          = "db.t2.micro"
   name                    = "carpal"
   username                = "foo"
-  password                = "foobarbaz"
+  password                = "foobarbaz" # Note that this is just the password when it's created, we change it right away :)
   parameter_group_name    = "default.mysql5.7"
   backup_retention_period = 3
   deletion_protection     = true

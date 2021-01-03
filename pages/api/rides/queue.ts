@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import RideRepository from '../../../src/api/rides/ride-repository';
-import DatabaseManager from '../../../src/api/database/database-manager';
+import RideRepository from '../../../src/server/api/rides/ride-repository';
+import DatabaseManager from '../../../src/server/api/database/database-manager';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);

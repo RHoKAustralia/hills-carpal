@@ -1,5 +1,5 @@
 import DatabaseManager from './database/database-manager';
-import { Location } from './../model';
+import { Location } from '../../common/model';
 import { Connection } from 'mysql';
 
 export default class LocationRepository {

@@ -4,12 +4,12 @@ import ImageGallery from 'react-image-gallery';
 import router from 'next/router';
 import Link from 'next/link';
 
-import DriverMap from '../../../../src/components/driver/driver-map';
-import auth, { AuthContext } from '../../../../src/auth/auth';
+import DriverMap from '../../../../src/common/components/driver/driver-map';
+import auth, { AuthContext } from '../../../../src/client/auth';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
-import '../../../../src/components/driver/ride-detail.css';
-import { Ride, Image } from '../../../../src/model';
+import '../../../../src/common/components/driver/ride-detail.css';
+import { Ride, Image } from '../../../../src/common/model';
 
 interface Props {
   rideId: string;
