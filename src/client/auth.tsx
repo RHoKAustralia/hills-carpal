@@ -19,10 +19,12 @@ const metadataKeyUserRole =
   process.env.REACT_APP_AUTH_METADATA_ROLE;
 
 async function handleAuthentication() {
-  return new Promise((resolve, reject) => {
+  return new Promise<auth0.Auth0DecodedHash>((resolve, reject) => {
     webAuth.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
-        setSession(authResult).then(resolve).catch(reject);
+        setSession(authResult)
+          .then(() => resolve(authResult))
+          .catch(reject);
       } else if (err) {
         console.error(err);
         reject(err);
@@ -76,20 +78,15 @@ function setProfile(profile) {
   }
 
   localStorage.setItem(KEY_USER_ROLE, userRoles || ['']);
-
-  const firstUserRole = userRoles[0];
-  if (firstUserRole === 'facilitator') {
-    Router.replace('/facilitator');
-  } else if (firstUserRole === 'driver') {
-    Router.replace('/driver');
-  } else {
-    Router.replace('/');
-  }
 }
 
 export function login() {
   try {
-    webAuth.authorize();
+    webAuth.authorize({
+      appState: {
+        redirectTo: window.location.href,
+      },
+    });
   } catch (error) {
     throw new Error(`Apologies, system is unable to process users log in.`);
   }
@@ -159,8 +156,10 @@ const AuthProvider: FunctionComponent<{}> = ({ children }) => {
     },
     handleAuthentication: async () => {
       try {
-        await handleAuthentication();
+        const authResult = await handleAuthentication();
         setAuthState(getFromStorage());
+
+        window.location.href = authResult.appState.redirectTo;
       } catch (e) {
         console.error(e);
         alert('Failed to log in: ' + e.message);

@@ -8,7 +8,7 @@ import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 
 import './clients.css';
 import { Client, OptionalClient, Gender } from '../../../src/common/model';
-import redirectIfNoRole from '../../../src/common/redirect-if-no-role';
+import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
 
 const defaultClient: OptionalClient = {
   name: '',
@@ -65,7 +65,9 @@ class Clients extends Component<Props, State> {
   }
 
   componentDidMount() {
-    redirectIfNoRole(this.context, 'facilitator');
+    if (!isAuthedWithRole(this.context, 'facilitator')) {
+      return;
+    }
 
     this.fetchClients();
   }

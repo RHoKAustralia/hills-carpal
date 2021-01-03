@@ -10,7 +10,7 @@ import auth, {
 import LocationSearch from '../../../src/common/components/driver/location-search';
 import DriverList from '../../../src/common/components/driver/driver-list';
 import DriverMap from '../../../src/common/components/driver/driver-map';
-import redirectIfNoRole from '../../../src/common/redirect-if-no-role';
+import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
 
 interface State {
   loading: boolean;
@@ -34,7 +34,9 @@ class FindRides extends Component<{}, State> {
   };
 
   componentDidMount() {
-    redirectIfNoRole(this.context, 'driver');
+    if (!isAuthedWithRole(this.context, 'driver')) {
+      return;
+    }
 
     this.searchAllRides();
   }

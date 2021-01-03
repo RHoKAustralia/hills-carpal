@@ -13,7 +13,7 @@ import auth, {
 import './Ride.css';
 import { Location, RideDriver, Ride as ModelRide } from '../../model';
 import Client from '../../../../pages/facilitator/clients';
-import redirectIfNoRole from '../../redirect-if-no-role';
+import isAuthedWithRole from '../../redirect-if-no-role';
 
 interface Props {
   id?: number;
@@ -68,7 +68,9 @@ class Ride extends Component<Props, State> {
   }
 
   async componentDidMount() {
-    redirectIfNoRole(this.context, 'facilitator');
+    if (!isAuthedWithRole(this.context, 'facilitator')) {
+      return;
+    }
 
     this.setState({ loading: true, loadingError: null });
 
