@@ -18,16 +18,16 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:6",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:10",
       "essential": true,
+      "memory": 256,
+      "cpu": 10,
       "portMappings": [
         {
           "containerPort": 3000,
           "hostPort": 3000
         }
       ],
-      "memory": 512,
-      "cpu": 256,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -65,21 +65,15 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
     }
   ]
   DEFINITION
-  requires_compatibilities = ["FARGATE"] # Stating that we are using ECS Fargate
-  network_mode             = "awsvpc"    # Using awsvpc as our network mode as this is required for Fargate
-  memory                   = 512         # Specifying the memory our container requires
-  cpu                      = 256         # Specifying the CPU our container requires
+  # requires_compatibilities = ["FARGATE"] # Stating that we are using ECS Fargate
+  network_mode             = "host" 
+  # memory                   = 512         # Specifying the memory our container requires
+  # cpu                      = 256         # Specifying the CPU our container requires
   execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
 }
 
 resource "aws_cloudwatch_log_group" "awslogs-hills-carpal-prod" {
   name = "awslogs-hills-carpal-prod"
-}
-
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name               = "ecsTaskExecutionRole"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -91,6 +85,11 @@ data "aws_iam_policy_document" "assume_role_policy" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
+}
+
+resource "aws_iam_role" "ecsTaskExecutionRole" {
+  name               = "ecsTaskExecutionRole"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
 resource "aws_secretsmanager_secret" "hills-carpal-secret-prod" {
@@ -131,20 +130,21 @@ resource "aws_ecs_service" "hills-carpal-service-prod" {
   name            = "hills-carpal-service-prod"                        # Naming our first service
   cluster         = aws_ecs_cluster.hills-carpal-cluster-prod.id       # Referencing our created Cluster
   task_definition = aws_ecs_task_definition.hills-carpal-task-prod.arn # Referencing the task our service will spin up
-  launch_type     = "FARGATE"
+  launch_type     = "EC2"
   desired_count   = 1
+  deployment_minimum_healthy_percent = 0
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.target_group.arn # Referencing our target group
-    container_name   = aws_ecs_task_definition.hills-carpal-task-prod.family
-    container_port   = 3000 # Specifying the container port
-  }
+  # load_balancer {
+  #   target_group_arn = aws_lb_target_group.target_group.arn # Referencing our target group
+  #   container_name   = aws_ecs_task_definition.hills-carpal-task-prod.family
+  #   container_port   = 3000 # Specifying the container port
+  # }
 
-  network_configuration {
-    subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}", "${aws_default_subnet.default_subnet_c.id}"]
-    assign_public_ip = true                                                # Providing our containers with public IPs
-    security_groups  = ["${aws_security_group.service_security_group.id}"] # Setting the security group
-  }
+  # network_configuration {
+  #   subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}", "${aws_default_subnet.default_subnet_c.id}"]
+  #   # assign_public_ip = true                                                # Providing our containers with public IPs
+  #   security_groups  = ["${aws_security_group.service_security_group.id}"] # Setting the security group
+  # }
 }
 
 resource "aws_security_group" "service_security_group" {
@@ -153,7 +153,7 @@ resource "aws_security_group" "service_security_group" {
     to_port   = 0
     protocol  = "-1"
     # Only allowing traffic in from the load balancer security group
-    security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+    # security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
   }
 
   egress {
@@ -181,61 +181,61 @@ resource "aws_default_subnet" "default_subnet_c" {
   availability_zone = "ap-southeast-2c"
 }
 
-resource "aws_alb" "application_load_balancer" {
-  name               = "hills-carpal-prod-lb-tf" # Naming our load balancer
-  load_balancer_type = "application"
-  subnets = [ # Referencing the default subnets
-    "${aws_default_subnet.default_subnet_a.id}",
-    "${aws_default_subnet.default_subnet_b.id}",
-    "${aws_default_subnet.default_subnet_c.id}"
-  ]
-  # Referencing the security group
-  security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
-}
+# resource "aws_alb" "application_load_balancer" {
+#   name               = "hills-carpal-prod-lb-tf" # Naming our load balancer
+#   load_balancer_type = "application"
+#   subnets = [ # Referencing the default subnets
+#     "${aws_default_subnet.default_subnet_a.id}",
+#     "${aws_default_subnet.default_subnet_b.id}",
+#     "${aws_default_subnet.default_subnet_c.id}"
+#   ]
+#   # Referencing the security group
+#   security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+# }
 
 # Creating a security group for the load balancer:
-resource "aws_security_group" "load_balancer_security_group" {
-  ingress {
-    from_port   = 80 # Allowing traffic in from port 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allowing traffic in from all sources
-  }
+# resource "aws_security_group" "load_balancer_security_group" {
+#   ingress {
+#     from_port   = 80 # Allowing traffic in from port 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic in from all sources
+#   }
 
-  egress {
-    from_port   = 0             # Allowing any incoming port
-    to_port     = 0             # Allowing any outgoing port
-    protocol    = "-1"          # Allowing any outgoing protocol 
-    cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
-  }
-}
-resource "aws_lb_target_group" "target_group" {
-  name        = "target-group"
-  port        = 80
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = aws_default_vpc.default_vpc.id # Referencing the default VPC
+#   egress {
+#     from_port   = 0             # Allowing any incoming port
+#     to_port     = 0             # Allowing any outgoing port
+#     protocol    = "-1"          # Allowing any outgoing protocol 
+#     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
+#   }
+# }
+# resource "aws_lb_target_group" "target_group" {
+#   name        = "target-group"
+#   port        = 80
+#   protocol    = "HTTP"
+#   target_type = "ip"
+#   vpc_id      = aws_default_vpc.default_vpc.id # Referencing the default VPC
 
-  health_check {
-    healthy_threshold   = "2"
-    unhealthy_threshold = "6"
-    interval            = "30"
-    matcher             = "200,301,302"
-    path                = "/"
-    protocol            = "HTTP"
-    timeout             = "5"
-  }
-}
+#   health_check {
+#     healthy_threshold   = "2"
+#     unhealthy_threshold = "6"
+#     interval            = "30"
+#     matcher             = "200,301,302"
+#     path                = "/"
+#     protocol            = "HTTP"
+#     timeout             = "5"
+#   }
+# }
 
-resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_alb.application_load_balancer.arn # Referencing our load balancer
-  port              = "80"
-  protocol          = "HTTP"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group.arn # Referencing our tagrte group
-  }
-}
+# resource "aws_lb_listener" "listener" {
+#   load_balancer_arn = aws_alb.application_load_balancer.arn # Referencing our load balancer
+#   port              = "80"
+#   protocol          = "HTTP"
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.target_group.arn # Referencing our tagrte group
+#   }
+# }
 resource "aws_db_instance" "hills-carpal-db-prod" {
   allocated_storage       = 20
   engine                  = "mysql"
@@ -247,4 +247,64 @@ resource "aws_db_instance" "hills-carpal-db-prod" {
   parameter_group_name    = "default.mysql5.7"
   backup_retention_period = 3
   deletion_protection     = true
+}
+
+data "aws_ami" "amazon_linux_ecs" {
+  most_recent = true
+
+  owners = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn-ami-*-amazon-ecs-optimized"]
+  }
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+}
+
+data "aws_iam_policy_document" "assume_role_policy_ec2" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ecsInstanceRole" {
+  name               = "ecsInstanceRole"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
+}
+
+resource "aws_iam_role_policy_attachment" "attach-ec2-container-service" {
+  role       = aws_iam_role.ecsInstanceRole.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+resource "aws_iam_instance_profile" "ecsInstanceProfile" {
+  name = "ecsInstanceProfile"
+  role = aws_iam_role.ecsInstanceRole.name
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux_ecs.id
+  instance_type = "t2.micro"
+  iam_instance_profile = aws_iam_instance_profile.ecsInstanceProfile.name
+  user_data = <<EOF
+#!/bin/bash
+echo ECS_CLUSTER=hills-carpal-cluster-prod >> /etc/ecs/ecs.config
+EOF
+  tags = {
+    Name = "HillsCarpalProd"
+  }
+}
+
+resource "aws_eip" "ip" {
+  instance = aws_instance.web.id
+  vpc      = true
 }

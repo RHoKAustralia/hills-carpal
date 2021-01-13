@@ -47,7 +47,7 @@ class Ride extends Component<Props, State> {
 
   state: State = {
     clientId: null,
-    pickupTimeAndDate: moment().tz('Australia/Sydney').toDate(),
+    pickupTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
     driverGender: 'any',
     locationTo: undefined,
     locationFrom: undefined,
@@ -102,7 +102,7 @@ class Ride extends Component<Props, State> {
           ...data,
           pickupTimeAndDate: moment.tz(
             data.pickupTimeAndDate,
-            'Australia/Sydney'
+            process.env.TIMEZONE
           ),
         });
 
@@ -318,13 +318,13 @@ class Ride extends Component<Props, State> {
               value={moment
                 .tz(
                   this.state.pickupTimeAndDate || Date.now(),
-                  'Australia/Sydney'
+                  process.env.TIMEZONE
                 )
                 .format('LLL')}
               selected={moment
                 .tz(
                   this.state.pickupTimeAndDate || Date.now(),
-                  'Australia/Sydney'
+                  process.env.TIMEZONE
                 )
                 .toDate()}
               onChange={(date) =>

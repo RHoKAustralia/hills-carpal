@@ -1,7 +1,8 @@
 import nodemailer from 'nodemailer';
+import emailValidator from 'email-validator';
 
 const transporter = nodemailer.createTransport({
-  host: 'email-smtp.ap-southeast-2.amazonaws.com',
+  host: process.env.SMTP_SERVER || 'email-smtp.us-west-2.amazonaws.com',
   port: 465,
   secure: true,
   auth: {
@@ -17,7 +18,11 @@ type Email = {
 };
 
 export default async function sendEmail(email: Email) {
-  // console.log(email);
+  if (!email.to || !emailValidator.validate(email.to)) {
+    console.error('Could not send email to invalid email address' + email.to);
+    return;
+  }
+
   await transporter.sendMail({
     to: email.to,
     subject: email.subject,

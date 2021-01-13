@@ -105,7 +105,7 @@ class DriverMap extends Component<Props> {
             <p>
               At:{' '}
               {moment
-                .tz(date, 'Australia/Sydney')
+                .tz(date, process.env.TIMEZONE)
                 .format('dddd hh:mma DD/MM/YYYY ')}
             </p>
           </div>
