@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { managementClient } from '../auth/node-auth0';
 import { Ride } from '../../common/model';
 import sendEmail from './send-email';
+import moment from 'moment-timezone';
 
 export default async function notifyCancelled(ride: Ride) {
   const driver = await managementClient.getUser({
@@ -21,7 +22,9 @@ export default async function notifyCancelled(ride: Ride) {
           <p>
             The ride you accepted for ${ride.client.name} from
             ${ride.locationFrom.placeName} to ${ride.locationTo.placeName} at 
-            ${ride.pickupTimeAndDate} is no longer needed. Thanks for 
+            ${moment
+              .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
+              .format(process.env.DATE_FORMAT)} is no longer needed. Thanks for 
             accepting it!
           </p>
   

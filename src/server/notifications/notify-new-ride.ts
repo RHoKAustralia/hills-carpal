@@ -3,6 +3,7 @@ import { managementClient } from '../auth/node-auth0';
 import roleIdsPromise from '../auth/role-ids';
 import { Ride } from '../../common/model';
 import sendEmail from './send-email';
+import moment from 'moment-timezone';
 
 export default async function notifyNewRides(ride: Ride) {
   const roleIdLookup = await roleIdsPromise;
@@ -46,7 +47,9 @@ export default async function notifyNewRides(ride: Ride) {
           <p>
             <strong>From:</strong> ${ride.locationFrom.placeName} <br>
             <strong>To:</strong> ${ride.locationTo.placeName} <br>
-            <strong>Time:</strong> ${ride.pickupTimeAndDate} <br>
+            <strong>Time:</strong> ${moment
+              .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
+              .format(process.env.DATE_FORMAT)} <br>
             <strong>Description:</strong> ${ride.description} <br>
           </p>
   
@@ -61,7 +64,9 @@ export default async function notifyNewRides(ride: Ride) {
        `,
       });
     } else {
-      console.log(`Skipping sending new ride notification to ${driver.email}`);
+      console.log(
+        `Skipping sending new ride notification to ${driver.email}: suvOk: ${suvOk}, genderOk ${genderOk}`
+      );
     }
   }
 }
