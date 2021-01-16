@@ -274,6 +274,7 @@ export default class RideRepository {
       rideId,
       driverRestrictions: { carType, gender } = {},
       status,
+      driverId,
     }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
@@ -309,6 +310,10 @@ export default class RideRepository {
 
     if (status) {
       where.push(`( rides.status = '${escape(status)}' )`);
+    }
+
+    if (driverId) {
+      where.push(`( dr.driver_id = '${driverId}' )`);
     }
 
     const query = `

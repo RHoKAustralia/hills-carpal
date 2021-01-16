@@ -5,14 +5,17 @@ import RideRepository, {
   validSortLookup,
 } from '../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
-import { decodeJwt, requireDriverPermissions } from '../../../src/server/api/jwt';
+import {
+  decodeJwt,
+  requireDriverPermissions,
+} from '../../../src/server/api/jwt';
 import { CarType, Gender } from '../../../src/common/model';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { query, method } = req;
+  const { method } = req;
   const connection = databaseManager.createConnection();
 
   try {
