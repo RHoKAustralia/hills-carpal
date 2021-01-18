@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'GET':
-        const claims = decodeJwt(req);
+        const claims = await decodeJwt(req);
         if (requireDriverPermissions(claims, req, res)) {
           const image = await imageRepository.get(
             connection,
@@ -33,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         break;
       case 'PUT':
-        if (requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res)) {
           await imageRepository.update(
             req.query.imageId as string,
             req.body,
@@ -45,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         break;
       case 'DELETE':
-        if (requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res)) {
           await imageRepository.delete(req.query.imageId as string, connection);
 
           res.status(200).send({

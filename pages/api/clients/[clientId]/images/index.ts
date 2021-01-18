@@ -2,19 +2,24 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import ImageRepository from '../../../../../src/server/api/clients/image-repository';
 import DatabaseManager from '../../../../../src/server/api/database/database-manager';
-import { requireFacilitatorPermissions } from '../../../../../src/server/api/jwt';
+import {
+  decodeJwt,
+  requireDriverPermissions,
+  requireFacilitatorPermissions,
+} from '../../../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
 const imageRepository = new ImageRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, body } = req;
+  const { method } = req;
 
   const connection = databaseManager.createConnection();
   try {
     switch (method) {
       case 'GET':
-        if (requireFacilitatorPermissions(req, res)) {
+        const claims = await decodeJwt(req);
+        if (requireDriverPermissions(claims, req, res)) {
           const images = await imageRepository.list(
             connection,
             req.query.clientId as string

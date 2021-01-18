@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { Client } from '../../../src/common/model';
 
 import ClientRepository from '../../../src/server/api/clients/client-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
@@ -12,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const connection = databaseManager.createConnection();
   try {
-    if (requireFacilitatorPermissions(req, res)) {
+    if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'GET':
           const clients = await clientRepository.list(connection);
@@ -20,7 +21,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           break;
         case 'POST':
-          const result = await clientRepository.create(body, connection);
+          const client: Client = {
+            ...body,
+            preferredDriverGender: body.preferredDriverGender || 'any',
+            preferredCarType: body.preferredCarType || 'All',
+          };
+
+          const result = await clientRepository.create(client, connection);
 
           res.status(200).json({
             ...body,

@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const connection = databaseManager.createConnection();
 
   try {
-    if (requireFacilitatorPermissions(req, res)) {
+    if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'GET':
           // page=${state.page}&pageSize=${state.pageSize}&${state.sorted}&${state.filtered}

@@ -1,7 +1,6 @@
 import React from 'react';
 import moment from 'moment-timezone';
 import ImageGallery from 'react-image-gallery';
-import router from 'next/router';
 import Link from 'next/link';
 
 import DriverMap from '../../../../src/common/components/driver/driver-map';

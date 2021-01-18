@@ -3,7 +3,11 @@ import _ from 'lodash';
 
 import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
-import { requireFacilitatorPermissions } from '../../../../src/server/api/jwt';
+import {
+  decodeJwt,
+  requireDriverPermissions,
+  requireFacilitatorPermissions,
+} from '../../../../src/server/api/jwt';
 import notifyCancelled from '../../../../src/server/notifications/notify-cancelled';
 
 const databaseManager = new DatabaseManager();
@@ -14,9 +18,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const connection = databaseManager.createConnection();
 
   try {
-    if (requireFacilitatorPermissions(req, res)) {
-      switch (method) {
-        case 'PUT':
+    switch (method) {
+      case 'PUT':
+        if (await requireFacilitatorPermissions(req, res)) {
           const existingRide = await rideRepository.get(
             Number.parseInt(req.query.id as string),
             connection
@@ -38,18 +42,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           }
 
           res.status(200).json(updatedRide);
-          break;
-        case 'GET':
+        }
+        break;
+      case 'GET':
+        const claims = await decodeJwt(req);
+        if (requireDriverPermissions(claims, req, res)) {
           const ride = await rideRepository.get(
             Number.parseInt(req.query.id as string),
             connection
           );
           res.status(200).json(ride);
-          break;
-        default:
-          res.setHeader('Allow', ['PUT', 'GET']);
-          res.status(405).end(`Method ${method} Not Allowed`);
-      }
+        }
+        break;
+      default:
+        res.setHeader('Allow', ['PUT', 'GET']);
+        res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (e) {
     console.error(e);
