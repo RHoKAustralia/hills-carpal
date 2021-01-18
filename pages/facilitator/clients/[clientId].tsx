@@ -6,7 +6,12 @@ import ClientImages from '../../../src/common/components/facilitator/client-imag
 import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 
 import './clients.css';
-import { Client, OptionalClient, Gender } from '../../../src/common/model';
+import {
+  Client,
+  OptionalClient,
+  Gender,
+  CarType,
+} from '../../../src/common/model';
 import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
 
 const defaultClient: OptionalClient = {
@@ -394,12 +399,11 @@ class Clients extends Component<Props, State> {
                   <select
                     required
                     onChange={(e) => {
-                      let curr = { ...this.state.currentClient };
-                      curr.preferredDriverGender =
-                        e.currentTarget.value === 'any'
-                          ? undefined
-                          : (e.currentTarget.value as Gender);
-                      this.setState({ currentClient: curr });
+                      let currentClient = {
+                        ...this.state.currentClient,
+                        preferredDriverGender: e.currentTarget.value as Gender,
+                      };
+                      this.setState({ currentClient });
                     }}
                     value={this.state.currentClient.preferredDriverGender}
                     className="custom-select"
@@ -414,15 +418,12 @@ class Clients extends Component<Props, State> {
                   <select
                     required
                     onChange={(e) => {
-                      let curr = { ...this.state.currentClient };
+                      const currentClient: OptionalClient = {
+                        ...this.state.currentClient,
+                        preferredCarType: e.currentTarget.value as CarType,
+                      };
 
-                      if (e.currentTarget.value === 'All') {
-                        curr.preferredCarType = undefined;
-                      } else if (curr.preferredCarType === 'noSUV') {
-                        curr.preferredCarType = 'noSUV';
-                      }
-
-                      this.setState({ currentClient: curr });
+                      this.setState({ currentClient });
                     }}
                     value={this.state.currentClient.preferredCarType}
                     className="custom-select"

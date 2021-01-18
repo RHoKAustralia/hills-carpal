@@ -18,7 +18,7 @@ export default (rideStatus: RideStatus) => async (
   const connection = databaseManager.createConnection();
 
   try {
-    const jwt = decodeJwt(req);
+    const jwt = await decodeJwt(req);
 
     if (requireDriverPermissions(jwt, req, res)) {
       switch (method) {

@@ -24,7 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'POST':
-        if (requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res)) {
           const busboyResult = await busboyParse(req);
           const content = busboyResult.chunk.toString('base64');
 

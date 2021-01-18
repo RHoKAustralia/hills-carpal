@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import './poll.css';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
+import { AuthContext } from '../../../../src/client/auth';
 
 interface Props {
   rideId: string;
@@ -13,6 +14,9 @@ interface State {
 }
 
 export default class Poll extends React.Component<Props, State> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state: State = {
     submitState: 'form', // "form" | "saving" | "done" | "error"
     loadCount: 0,

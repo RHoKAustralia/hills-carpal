@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const connection = databaseManager.createConnection();
 
       try {
-        const jwt = decodeJwt(req);
+        const jwt = await decodeJwt(req);
 
         if (requireDriverPermissions(jwt, req, res)) {
           const rides = await rideRepository.listForDriver(

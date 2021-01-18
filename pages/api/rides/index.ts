@@ -17,16 +17,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
   const connection = databaseManager.createConnection();
 
-  const claims = decodeJwt(req);
+  const claims = await decodeJwt(req);
 
   try {
-    if (requireFacilitatorPermissions(req, res, claims)) {
+    if (await requireFacilitatorPermissions(req, res, claims)) {
       switch (method) {
         case 'POST':
           const rideInput: RideInput = {
             ...req.body,
             facilitatorEmail: claims.email,
             status: 'OPEN',
+            driverGender: req.body.driverGender || 'any',
+            carType: req.body.carType || 'All',
           };
 
           const rideId = await rideRepository.create(rideInput, connection);

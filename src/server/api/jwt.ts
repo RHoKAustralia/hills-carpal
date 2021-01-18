@@ -1,8 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
+import jwksClient from 'jwks-rsa';
 import { Gender, CarType } from '../../common/model';
 
 type Role = 'admin' | 'driver' | 'facilitator';
+
+const client = jwksClient({
+  jwksUri: 'https://hills-carpal.au.auth0.com/.well-known/jwks.json',
+});
 
 interface Claims {
   userId: string;
@@ -34,11 +39,15 @@ export function requireDriverPermissions(
   return true;
 }
 
-export function requireFacilitatorPermissions(
+export async function requireFacilitatorPermissions(
   req: NextApiRequest,
   res: NextApiResponse,
-  claims: Claims = decodeJwt(req)
+  claims?: Claims
 ) {
+  if (!claims) {
+    claims = await decodeJwt(req);
+  }
+
   const isAdmin = hasRole(claims, 'admin');
   const isFacilitator = hasRole(claims, 'facilitator');
   if (!isAdmin && !isFacilitator) {
@@ -59,7 +68,7 @@ export function hasRole(claims: Claims, role: Role) {
   return claims.roles.indexOf(role) >= 0;
 }
 
-export function decodeJwt(req: NextApiRequest): Claims {
+export async function decodeJwt(req: NextApiRequest): Promise<Claims> {
   try {
     const authHeader =
       req.headers.Authorization ||
@@ -73,9 +82,32 @@ export function decodeJwt(req: NextApiRequest): Claims {
     const domain = process.env.DOMAIN || 'carpal.org.au';
     const authHeaderParts = (authHeader as string).split(' ');
     const tokenValue = authHeaderParts[1] || authHeaderParts[0];
+
     // FIXME: This needs to be verify
-    let decodedToken = jsonwebtoken.decode(tokenValue);
-    
+    let decodedToken: any = await new Promise((resolve, reject) =>
+      jsonwebtoken.verify(
+        tokenValue,
+        (header: any, callback: (error?: Error, value?: string) => {}) => {
+          client.getSigningKey(header.kid, (err: Error, key: any) => {
+            if (err) {
+              callback(err);
+            } else {
+              const signingKey = key.publicKey || key.rsaPublicKey;
+              callback(null, signingKey);
+            }
+          });
+        },
+        {},
+        (err: Error, decoded: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(decoded);
+          }
+        }
+      )
+    );
+
     if (process.env.UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,

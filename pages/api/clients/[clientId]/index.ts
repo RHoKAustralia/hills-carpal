@@ -13,12 +13,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const connection = databaseManager.createConnection();
   try {
-    if (requireFacilitatorPermissions(req, res)) {
+    if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'PUT':
+          const client: Client = {
+            ...body,
+            preferredDriverGender: body.preferredDriverGender || 'any',
+            preferredCarType: body.preferredCarType || 'All',
+          };
+
           await clientRepository.update(
             parseInt(req.query.clientId as string),
-            body as Client,
+            client,
             connection
           );
           res.status(200).json(body);
