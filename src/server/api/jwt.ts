@@ -23,9 +23,11 @@ export function requireDriverPermissions(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const driver = hasRole(claims, 'driver');
+  const isDriver = hasRole(claims, 'driver');
+  const isAdmin = hasRole(claims, 'admin');
+  const isFacilitator = hasRole(claims, 'facilitator');
 
-  if (!driver) {
+  if (!isDriver && !isAdmin && !isFacilitator) {
     console.log(
       'WARNING: unauthorised attempt to access driver-only api: ' +
         req.method +
