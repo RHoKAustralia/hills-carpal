@@ -16,7 +16,7 @@ import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
 
 const defaultClient: OptionalClient = {
   name: '',
-  description: '',
+  clientDescription: '',
   phoneNumber: '',
   preferredDriverGender: undefined,
   preferredCarType: undefined,
@@ -220,7 +220,7 @@ class Clients extends Component<Props, State> {
     let clients = this.state.clients;
     let client = this.findClient(clients, this.state.currentClient.id);
     client.name = this.state.currentClient.name;
-    client.description = this.state.currentClient.description;
+    client.description = this.state.currentClient.clientDescription;
     client.phoneNumber = this.state.currentClient.phoneNumber;
     client.driverGender = this.state.currentClient.preferredDriverGender;
     client.carType = this.state.currentClient.preferredCarType;
@@ -456,11 +456,11 @@ class Clients extends Component<Props, State> {
                     maxLength={1024}
                     onChange={(e) => {
                       let curr = { ...this.state.currentClient };
-                      curr.description = e.currentTarget.value;
+                      curr.clientDescription = e.currentTarget.value;
                       this.setState({ currentClient: curr });
                     }}
                     className="form-control"
-                    value={this.state.currentClient.description}
+                    value={this.state.currentClient.clientDescription}
                   />
                 </div>
 
