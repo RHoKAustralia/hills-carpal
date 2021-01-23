@@ -39,7 +39,7 @@ export interface Ride extends RideCommon {
 export interface OptionalClient {
   id?: number;
   name?: string;
-  description?: string;
+  clientDescription?: string;
   phoneNumber?: string;
   preferredDriverGender?: Gender;
   preferredCarType?: CarType;

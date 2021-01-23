@@ -260,7 +260,7 @@ export default class RideDetail extends React.Component<Props, State> {
               <dt>Drop Address</dt>
               <dd>{this.state.ride.locationTo.placeName}</dd>
               <dt>Client Description</dt>
-              <dd>{this.state.ride.client.description}</dd>
+              <dd>{this.state.ride.client.clientDescription}</dd>
               <dt>Ride Description</dt>
               <dd>{this.state.ride.description}</dd>
             </dl>
