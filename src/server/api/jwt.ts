@@ -23,9 +23,9 @@ export function requireDriverPermissions(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const isDriver = hasRole(claims, 'driver');
-  const isAdmin = hasRole(claims, 'admin');
-  const isFacilitator = hasRole(claims, 'facilitator');
+  const isDriver = hasRole('driver', claims);
+  const isAdmin = hasRole('admin', claims);
+  const isFacilitator = hasRole('facilitator', claims);
 
   if (!isDriver && !isAdmin && !isFacilitator) {
     console.log(
@@ -50,8 +50,8 @@ export async function requireFacilitatorPermissions(
     claims = await decodeJwt(req);
   }
 
-  const isAdmin = hasRole(claims, 'admin');
-  const isFacilitator = hasRole(claims, 'facilitator');
+  const isAdmin = hasRole('admin', claims);
+  const isFacilitator = hasRole('facilitator', claims);
   if (!isAdmin && !isFacilitator) {
     console.log(
       'WARNING: unauthorised attempt to access facilitator-only api: ' +
@@ -66,11 +66,17 @@ export async function requireFacilitatorPermissions(
   return true;
 }
 
-export function hasRole(claims: Claims, role: Role) {
+export function hasRole(role: Role, claims?: Claims) {
+  if (!claims?.roles) {
+    return false;
+  }
+
   return claims.roles.indexOf(role) >= 0;
 }
 
-export async function decodeJwt(req: NextApiRequest): Promise<Claims> {
+export async function decodeJwt(
+  req: NextApiRequest
+): Promise<Claims | undefined> {
   try {
     const authHeader =
       req.headers.Authorization ||

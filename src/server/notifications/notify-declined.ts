@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { managementClient } from '../auth/node-auth0';
+import { managementClient } from '../auth/api-auth0';
 import { Ride } from '../../common/model';
 import sendEmail from './send-email';
 
