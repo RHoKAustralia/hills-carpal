@@ -5,31 +5,33 @@ import moment from 'moment-timezone';
 
 import getDrivers from './get-drivers';
 
-export default async function notifyNewRides(ride: Ride) {
+export default async function notifyUnclaimedRide(ride: Ride) {
   const drivers = await getDrivers(ride);
 
   for (let driver of drivers) {
     console.log(
-      `Sending new ride notification for ride ${ride.id} to ${driver.email} `
+      `Sending unclaimed ride notification for ride ${ride.id} to ${driver.email} `
     );
+
+    const formattedRideDate = moment
+      .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
+      .format(process.env.DATE_FORMAT);
 
     await sendEmail({
       to: driver.email,
-      subject: `New Hills Carpal ride for ${ride.client.name}`,
+      subject: `Hills Carpal ride for ${ride.client.name} still doesn't have a driver!`,
       html: `
           <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 
-          <p>A new ride has been created for ${
+          <p>A ride for ${
             ride.client.name
-          } in Hills Carpal.</p>
+          } at ${formattedRideDate} in Hills Carpal still hasn't been claimed by any driver. Please consider claiming it if you're available!</p>
 
           <h3>Details</h3>
           <p>
             <strong>From:</strong> ${ride.locationFrom.placeName} <br>
             <strong>To:</strong> ${ride.locationTo.placeName} <br>
-            <strong>Time:</strong> ${moment
-              .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-              .format(process.env.DATE_FORMAT)} <br>
+            <strong>Time:</strong> ${formattedRideDate} <br>
             <strong>Description:</strong> ${ride.description} <br>
           </p>
   

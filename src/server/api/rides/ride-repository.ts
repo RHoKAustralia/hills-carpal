@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import _ from 'lodash';
 import { Connection } from 'mysql';
 
@@ -26,6 +26,10 @@ interface ListQuery {
   size?: number;
   page?: number;
   rideId?: number;
+  date?: {
+    from: Moment;
+    to: Moment;
+  };
 }
 
 const validSorts = [
@@ -36,6 +40,8 @@ const validSorts = [
   'status',
   'driverName',
 ];
+
+const MYSQL_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 export const validSortLookup = _(validSorts)
   .keyBy()
@@ -105,8 +111,6 @@ export default class RideRepository {
       )[0]['lastInsertId'];
 
       connection.commit();
-
-      console.log(id);
 
       return id;
     } catch (e) {
@@ -275,6 +279,7 @@ export default class RideRepository {
       driverRestrictions: { carType, gender } = {},
       status,
       driverId,
+      date,
     }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
@@ -314,6 +319,22 @@ export default class RideRepository {
 
     if (driverId) {
       where.push(`( dr.driver_id = '${driverId}' )`);
+    }
+
+    if (date?.from) {
+      where.push(
+        `( rides.pickupTimeAndDateInUTC >= '${date?.from
+          .utc()
+          .format(MYSQL_DATE_FORMAT)}' )`
+      );
+    }
+
+    if (date?.to) {
+      where.push(
+        `( rides.pickupTimeAndDateInUTC <= '${date?.to
+          .utc()
+          .format(MYSQL_DATE_FORMAT)}' )`
+      );
     }
 
     const query = `
