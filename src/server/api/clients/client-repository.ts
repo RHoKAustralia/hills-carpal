@@ -35,7 +35,7 @@ export default class ClientRepository {
         ) VALUES (
         ${[
           escape(client.name),
-          escape(client.description),
+          escape(client.clientDescription),
           escape(client.phoneNumber),
           escape(client.preferredDriverGender),
           escape(client.preferredCarType),
@@ -76,7 +76,7 @@ export default class ClientRepository {
         ON clients.homeLocation = locations.id
       SET
         clients.name = ${escape(client.name)},
-        clients.description = ${escape(client.description)},
+        clients.description = ${escape(client.clientDescription)},
         clients.phoneNumber = ${escape(client.phoneNumber)},
         clients.driverGender = ${escape(client.preferredDriverGender)},
         clients.carType = ${escape(client.preferredCarType)},
@@ -126,7 +126,7 @@ export default class ClientRepository {
           id: result.id,
           name: result.name,
           phoneNumber: result.phoneNumber,
-          description: result.description,
+          clientDescription: result.description,
           preferredDriverGender: result.driverGender,
           preferredCarType: result.carType,
           hasMps: result.hasMps,

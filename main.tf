@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:14",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:16",
       "essential": true,
       "memory": 256,
       "cpu": 10,
@@ -293,7 +293,7 @@ resource "aws_iam_instance_profile" "ecsInstanceProfile" {
 
 resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon_linux_ecs.id
-  instance_type = "t2.micro"
+  instance_type = "t2.nano"
   iam_instance_profile = aws_iam_instance_profile.ecsInstanceProfile.name
   user_data = <<EOF
 #!/bin/bash
@@ -307,4 +307,47 @@ EOF
 resource "aws_eip" "ip" {
   instance = aws_instance.web.id
   vpc      = true
+}
+
+resource "aws_cloudwatch_event_rule" "daily_cron" {
+  name        = "daily_cron"
+  description = "Daily cron - happens every morning Sydney time"
+
+  schedule_expression = "cron(0 22 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "sns" {
+  rule      = aws_cloudwatch_event_rule.daily_cron.name
+  target_id = "SendToSNS"
+  arn       = aws_sns_topic.daily_cron.arn
+}
+
+resource "aws_sns_topic" "daily_cron" {
+  name = "daily_cron"
+}
+
+resource "aws_sns_topic_policy" "default" {
+  arn    = aws_sns_topic.daily_cron.arn
+  policy = data.aws_iam_policy_document.sns_topic_policy.json
+}
+
+data "aws_iam_policy_document" "sns_topic_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    resources = [aws_sns_topic.daily_cron.arn]
+  }
+}
+
+resource "aws_sns_topic_subscription" "app_sns_target" {
+  topic_arn = aws_sns_topic.daily_cron.arn
+  protocol  = "https"
+  endpoint  = "https://ride.carpal.org.au/api/send-reminders"
+  endpoint_auto_confirms = true
 }
