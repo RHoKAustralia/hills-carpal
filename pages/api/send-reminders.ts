@@ -79,6 +79,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             connection
           );
 
+          console.log(
+            'Received reminder notification, sending reminders for ' +
+              rides.length +
+              ' rides'
+          );
+
           // SNS will only wait 15 seconds before retrying and this might take
           // way longer, so return a 200 before actually sending emails
           res.status(200).send('');
