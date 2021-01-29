@@ -13,12 +13,12 @@ resource "aws_ecs_cluster" "hills-carpal-cluster-prod" {
 }
 
 resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
-  family                   = "hills-carpal-task-prod" # Naming our first task
-  container_definitions    = <<DEFINITION
+  family                = "hills-carpal-task-prod" # Naming our first task
+  container_definitions = <<DEFINITION
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:16",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:17",
       "essential": true,
       "memory": 256,
       "cpu": 10,
@@ -66,10 +66,10 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   ]
   DEFINITION
   # requires_compatibilities = ["FARGATE"] # Stating that we are using ECS Fargate
-  network_mode             = "host" 
+  network_mode = "host"
   # memory                   = 512         # Specifying the memory our container requires
   # cpu                      = 256         # Specifying the CPU our container requires
-  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
+  execution_role_arn = aws_iam_role.ecsTaskExecutionRole.arn
 }
 
 resource "aws_cloudwatch_log_group" "awslogs-hills-carpal-prod" {
@@ -127,11 +127,11 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
 }
 
 resource "aws_ecs_service" "hills-carpal-service-prod" {
-  name            = "hills-carpal-service-prod"                        # Naming our first service
-  cluster         = aws_ecs_cluster.hills-carpal-cluster-prod.id       # Referencing our created Cluster
-  task_definition = aws_ecs_task_definition.hills-carpal-task-prod.arn # Referencing the task our service will spin up
-  launch_type     = "EC2"
-  desired_count   = 1
+  name                               = "hills-carpal-service-prod"                        # Naming our first service
+  cluster                            = aws_ecs_cluster.hills-carpal-cluster-prod.id       # Referencing our created Cluster
+  task_definition                    = aws_ecs_task_definition.hills-carpal-task-prod.arn # Referencing the task our service will spin up
+  launch_type                        = "EC2"
+  desired_count                      = 1
   deployment_minimum_healthy_percent = 0
 
   # load_balancer {
@@ -247,6 +247,8 @@ resource "aws_db_instance" "hills-carpal-db-prod" {
   parameter_group_name    = "default.mysql5.7"
   backup_retention_period = 3
   deletion_protection     = true
+  publicly_accessible     = true
+  apply_immediately       = true
 }
 
 data "aws_ami" "amazon_linux_ecs" {
@@ -292,10 +294,10 @@ resource "aws_iam_instance_profile" "ecsInstanceProfile" {
 }
 
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.amazon_linux_ecs.id
-  instance_type = "t2.nano"
+  ami                  = data.aws_ami.amazon_linux_ecs.id
+  instance_type        = "t2.nano"
   iam_instance_profile = aws_iam_instance_profile.ecsInstanceProfile.name
-  user_data = <<EOF
+  user_data            = <<EOF
 #!/bin/bash
 echo ECS_CLUSTER=hills-carpal-cluster-prod >> /etc/ecs/ecs.config
 EOF
@@ -346,8 +348,8 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 }
 
 resource "aws_sns_topic_subscription" "app_sns_target" {
-  topic_arn = aws_sns_topic.daily_cron.arn
-  protocol  = "https"
-  endpoint  = "https://ride.carpal.org.au/api/send-reminders"
+  topic_arn              = aws_sns_topic.daily_cron.arn
+  protocol               = "https"
+  endpoint               = "https://ride.carpal.org.au/api/send-reminders"
   endpoint_auto_confirms = true
 }
