@@ -34,6 +34,10 @@ type SnsMessage = {
   SubscribeURL: string;
 };
 
+const reminderDifferenceDays = Number.parseInt(
+  process.env.REMINDER_DIFFERENCE_DAYS
+);
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
   const connection = databaseManager.createConnection();
@@ -71,8 +75,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // find all rides that are unclaimed and due in a week
           const startOfToday = moment.tz(process.env.TIMEZONE).startOf('day');
-          const fromDate = startOfToday.clone().subtract(7, 'days');
-          const toDate = startOfToday.clone().subtract(6, 'days');
+          const fromDate = startOfToday
+            .clone()
+            .add(reminderDifferenceDays - 1, 'days');
+          const toDate = startOfToday
+            .clone()
+            .add(reminderDifferenceDays, 'days');
 
           const rides = await rideRepository.list(
             { status: 'OPEN', date: { from: fromDate, to: toDate } },

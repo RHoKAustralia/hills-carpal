@@ -19,7 +19,8 @@ module.exports = withPlugins([
           process.env.REACT_APP_UNSAFE_GOD_MODE || false,
         EXTERNAL_URL: process.env.EXTERNAL_URL || 'https://ride.carpal.org.au',
         DATE_FORMAT: process.env.DATE_FORMAT || 'YYYY-MM-DD hh:mma',
-        TIMEZONE: process.env.TIMEZONE || 'Australia/Sydney'
+        TIMEZONE: process.env.TIMEZONE || 'Australia/Sydney',
+        REMINDER_DIFFERENCE_DAYS: process.env.REMINDER_DIFFERENCE_DAYS || '5',
       },
     },
   ],
