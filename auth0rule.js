@@ -27,6 +27,8 @@ function (user, context, callback) {
     
     if (roleLookup.suv) {
       setClaim("car", "suv");
+    } else {
+      setClaim("car", "noSUV");
     }
   
     context.idToken = idTokenClaims;
