@@ -35,7 +35,7 @@ class LocationInput extends Component<Props> {
             value: x,
           };
         });
-        
+
         return options;
       })
       .catch((e) => {
@@ -57,6 +57,7 @@ class LocationInput extends Component<Props> {
       });
       return valueObj ? valueObj.text : null;
     };
+    
     this.props.onChange({
       placeName: value.place_name,
       longitude: value.center[0],

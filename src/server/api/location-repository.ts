@@ -12,8 +12,8 @@ export default class LocationRepository {
   async create(location: Location, connection: Connection): Promise<number> {
     const escape = (data) => connection.escape(data);
 
-    const point = `POINT(${escape(location.latitude)}, ${escape(
-      location.longitude
+    const point = `POINT(${escape(location.longitude)}, ${escape(
+      location.latitude
     )})`;
 
     await this.databaseManager.query(
