@@ -22,9 +22,7 @@ class Home extends Component {
   }
 
   facilitatorLink() {
-    const isAuthorised =
-      hasFacilitatorPrivilege(this.context.authState) ||
-      hasAdminPrivilege(this.context.authState);
+    const isAuthorised = hasFacilitatorPrivilege(this.context.authState);
 
     if (isAuthorised) {
       return (
@@ -38,9 +36,7 @@ class Home extends Component {
   }
 
   driverLink() {
-    const isAuthorised =
-      hasDriverPrivilege(this.context.authState) ||
-      hasAdminPrivilege(this.context.authState);
+    const isAuthorised = hasDriverPrivilege(this.context.authState);
 
     if (isAuthorised) {
       return (

@@ -74,7 +74,7 @@ function getFromStorage(): AuthState | undefined {
 function setProfile(profile) {
   let userRoles = profile[metadataKeyUserRole];
   if (process.env.REACT_APP_UNSAFE_GOD_MODE) {
-    userRoles = ['driver', 'facilitator', 'admin'];
+    userRoles = ['driver', 'admin', 'facilitator'];
   }
 
   localStorage.setItem(KEY_USER_ROLE, userRoles || ['']);
@@ -113,11 +113,11 @@ function isAuthenticated(authState: AuthState) {
 }
 
 export function hasFacilitatorPrivilege(auth: AuthState | undefined) {
-  return auth?.roles.indexOf('facilitator') > -1 || hasAdminPrivilege(auth);
+  return auth?.roles.indexOf('facilitator') > -1;
 }
 
 export function hasDriverPrivilege(auth: AuthState | undefined) {
-  return auth?.roles.indexOf('driver') > -1 || hasAdminPrivilege(auth);
+  return auth?.roles.indexOf('driver') > -1;
 }
 
 export function hasAdminPrivilege(auth: AuthState | undefined) {
