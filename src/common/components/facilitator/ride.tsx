@@ -129,6 +129,10 @@ class Ride extends Component<Props, State> {
 
       this.setState({ clients: data });
 
+      if (data.length) {
+        this.setNewClient(data[0].id, data);
+      }
+
       return data;
     })();
 
@@ -263,8 +267,8 @@ class Ride extends Component<Props, State> {
     const client = clients.find((c) => c.id === clientId);
     this.setState((state: State) => ({
       selectedClientId: clientId,
-      locationFrom: state.locationFrom || client.homeLocation,
-      locationTo: state.locationTo || client.homeLocation,
+      locationFrom: client.homeLocation,
+      locationTo: client.homeLocation,
       carType: client.preferredCarType,
       clientId: client.id,
       driverGender: client.preferredDriverGender,
