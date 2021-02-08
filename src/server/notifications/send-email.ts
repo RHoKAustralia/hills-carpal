@@ -23,10 +23,16 @@ export default async function sendEmail(email: Email) {
     return;
   }
 
-  await transporter.sendMail({
+  const emailDetails = {
     to: email.to,
     subject: email.subject,
     html: email.html,
     from: 'Hills Carpal <no-reply@ride.carpal.org.au>',
-  });
+  };
+  if (process.env.NODE_ENV === 'production') {
+    await transporter.sendMail(emailDetails);
+  } else {
+    console.log("Not sending email because we're not in production");
+    console.log(emailDetails);
+  }
 }
