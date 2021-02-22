@@ -14,15 +14,15 @@ export default async function getDrivers(ride: Ride) {
 
     /** Does the driver's car match the suv preference */
     const suvOk =
-      ride.carType === 'All' ||
-      (ride.carType === 'noSUV' && !roleLookup['suv']) ||
-      (ride.carType === 'suv' && roleLookup['suv']);
+      ride.client.preferredCarType === 'All' ||
+      (ride.client.preferredCarType === 'noSUV' && !roleLookup['suv']) ||
+      (ride.client.preferredCarType === 'suv' && roleLookup['suv']);
 
     /** Does the driver's gender match the gender preference */
     const genderOk =
-      ride.driverGender === 'any' ||
-      (ride.driverGender === 'female' && roleLookup['female']) ||
-      (ride.driverGender === 'male' && roleLookup['male']);
+      ride.client.preferredDriverGender === 'any' ||
+      (ride.client.preferredDriverGender === 'female' && roleLookup['female']) ||
+      (ride.client.preferredDriverGender === 'male' && roleLookup['male']);
 
     if (suvOk && genderOk) {
       filteredDrivers.push(driver);

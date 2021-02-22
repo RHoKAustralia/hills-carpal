@@ -24,9 +24,6 @@ interface RideCommon {
   locationFrom: Location;
   locationTo: Location;
   driver: RideDriver;
-  driverGender: Gender;
-  carType: CarType;
-  hasMps: boolean;
   description: string;
   facilitatorEmail: string;
   pickupTimeAndDate: string;

@@ -67,8 +67,8 @@ export default class ClientRepository {
     const escape = (data) => connection.escape(data);
 
     const homeLocationPoint = `POINT(${escape(
-      client.homeLocation.latitude
-    )}, ${escape(client.homeLocation.longitude)})`;
+      client.homeLocation.longitude
+    )}, ${escape(client.homeLocation.latitude)})`;
 
     let query = `
       UPDATE ${this.dbName}.clients AS clients

@@ -25,14 +25,11 @@ interface Props {
 interface State {
   clientId: null | number;
   pickupTimeAndDate: Date;
-  driverGender: Gender;
   locationTo: Location;
   locationFrom: Location;
-  carType: CarType;
   description: string;
   status: string | null;
   driver: RideDriver | null;
-  hasMps: boolean;
   clients: Client[];
   selectedClientId: number;
   loading: boolean;
@@ -48,14 +45,11 @@ class Ride extends Component<Props, State> {
   state: State = {
     clientId: null,
     pickupTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
-    driverGender: 'any',
     locationTo: undefined,
     locationFrom: undefined,
-    carType: 'All',
     description: '',
     status: 'OPEN',
     driver: null,
-    hasMps: false,
     clients: [],
     selectedClientId: -1,
     loading: false,
@@ -149,10 +143,7 @@ class Ride extends Component<Props, State> {
           selectedClientId: clientId,
           locationFrom: state.locationFrom || client.locationHome,
           locationTo: state.locationTo || client.locationHome,
-          carType: state.carType || client.carType,
           clientId: clientId,
-          driverGender: state.driverGender || client.driverGender,
-          hasMps: state.hasMps || client.hasMps,
         }));
       })
       .catch((e) => {
@@ -264,16 +255,22 @@ class Ride extends Component<Props, State> {
   }
 
   setNewClient = (clientId, clients = this.state.clients) => {
-    const client = clients.find((c) => c.id === clientId);
-    this.setState((state: State) => ({
-      selectedClientId: clientId,
-      locationFrom: client.homeLocation,
-      locationTo: client.homeLocation,
-      carType: client.preferredCarType,
-      clientId: client.id,
-      driverGender: client.preferredDriverGender,
-      hasMps: client.hasMps,
-    }));
+    const newClient = clients.find((c) => c.id === clientId);
+    this.setState((oldState: State) => {
+      const oldClient = clients.find((c) => c.id === oldState.selectedClientId);
+      return {
+        selectedClientId: clientId,
+        locationFrom:
+          oldState.locationFrom?.id === oldClient?.homeLocation?.id
+            ? newClient.homeLocation
+            : oldState.locationFrom,
+        locationTo:
+          oldState.locationTo?.id === oldClient?.homeLocation?.id
+            ? newClient.homeLocation
+            : oldState.locationTo,
+        clientId: newClient.id,
+      };
+    });
   };
 
   render() {
@@ -361,54 +358,6 @@ class Ride extends Component<Props, State> {
                 this.setState({ locationTo: value });
               }}
             />
-          </div>
-          <div className="form-group">
-            <label>Driver Gender</label>
-            <select
-              required
-              onChange={(e) => {
-                this.setState({
-                  driverGender: e.currentTarget.value as Gender,
-                });
-              }}
-              value={this.state.driverGender}
-              className="custom-select"
-            >
-              <option disabled={true}>Select from following</option>
-              <option value="any">Any</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Car type</label>
-
-            <select
-              required
-              onChange={(e) => {
-                this.setState({ carType: e.currentTarget.value as CarType });
-              }}
-              value={this.state.carType}
-              className="custom-select"
-            >
-              <option disabled={true}>Select from following</option>
-              <option value="All">All</option>
-              <option value="noSUV">No SUV</option>
-            </select>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="mps"
-              checked={this.state.hasMps}
-              onChange={(e) => {
-                this.setState({ hasMps: e.currentTarget.checked });
-              }}
-            />
-            <label className="form-check-label" htmlFor="mps">
-              Has Mobility Parking Sticker
-            </label>
           </div>
           <div className="form-group">
             <label>Description</label>
