@@ -21,7 +21,8 @@ export default async function getDrivers(ride: Ride) {
     /** Does the driver's gender match the gender preference */
     const genderOk =
       ride.client.preferredDriverGender === 'any' ||
-      (ride.client.preferredDriverGender === 'female' && roleLookup['female']) ||
+      (ride.client.preferredDriverGender === 'female' &&
+        roleLookup['female']) ||
       (ride.client.preferredDriverGender === 'male' && roleLookup['male']);
 
     if (suvOk && genderOk) {

@@ -83,7 +83,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             .add(reminderDifferenceDays, 'days');
 
           const rides = await rideRepository.list(
-            { status: 'OPEN', date: { from: fromDate, to: toDate } },
+            {
+              filters: { status: 'OPEN', date: { from: fromDate, to: toDate } },
+              size: Number.MIN_SAFE_INTEGER,
+            },
             connection
           );
 

@@ -18,12 +18,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'GET':
-          // page=${state.page}&pageSize=${state.pageSize}&${state.sorted}&${state.filtered}
           const {
             page,
             pageSize,
             sort = 'pickupTimeAndDate',
-            // filtered,
+            facilitatorEmail,
             sortDirection = 'desc',
           } = req.query;
 
@@ -49,10 +48,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             connection,
             sortArray,
             sortDirection && sortDirection === 'asc' ? 'asc' : 'desc',
+            facilitatorEmail as string,
             parsedPageSize,
             page && !_.isArray(page) && Number.parseInt(page)
           );
-          const countPromise = rideRepository.countForFacilitator(connection);
+          const countPromise = rideRepository.countForFacilitator(
+            connection,
+            facilitatorEmail as string
+          );
           const [rides, count] = await Promise.all([
             ridesPromise,
             countPromise,

@@ -14,22 +14,23 @@ import {
 import LocationRepository from '../location-repository';
 
 interface ListQuery {
-  fromNow?: boolean;
-  driverId?: string;
-  driverRestrictions?: {
+  filters?: {
+    fromNow?: boolean;
+    driverId?: string;
     gender?: Gender[];
     carType?: CarType[];
+    status?: RideStatus;
+    date?: {
+      from: Moment;
+      to: Moment;
+    };
+    facilitatorEmail?: string;
   };
-  status?: RideStatus;
   sort?: string[];
   sortDirection?: 'asc' | 'desc';
   size?: number;
   page?: number;
   rideId?: number;
-  date?: {
-    from: Moment;
-    to: Moment;
-  };
 }
 
 const validSorts = [
@@ -233,24 +234,37 @@ export default class RideRepository {
     status: RideStatus,
     connection: Connection
   ): Promise<Ride[]> {
-    return this.list({ driverId, status }, connection);
+    return this.list({ filters: { driverId, status } }, connection);
   }
 
   listForFacilitator(
     connection: Connection,
     sort?: string[],
     sortDirection?: 'asc' | 'desc',
+    facilitatorEmail?: string,
     size?: number,
     page?: number
   ): Promise<Ride[]> {
     return this.list(
-      { fromNow: false, sort, sortDirection, size, page },
+      {
+        filters: { fromNow: false, facilitatorEmail },
+        sort,
+        sortDirection,
+        size,
+        page,
+      },
       connection
     );
   }
 
-  countForFacilitator(connection: Connection): Promise<number> {
-    return this.count({ fromNow: false }, connection);
+  countForFacilitator(
+    connection: Connection,
+    facilitatorEmail: string
+  ): Promise<number> {
+    return this.count(
+      { filters: { fromNow: false, facilitatorEmail } },
+      connection
+    );
   }
 
   async get(rideId: number, connection: Connection): Promise<Ride | undefined> {
@@ -261,16 +275,22 @@ export default class RideRepository {
 
   async list(
     {
-      fromNow = false,
       sort,
       sortDirection = 'asc',
       size = 10,
       page = 0,
       rideId,
-      driverRestrictions: { carType, gender } = {},
-      status,
-      driverId,
-      date,
+      filters: {
+        fromNow = false,
+        carType,
+        gender,
+        status,
+        driverId,
+        date,
+        facilitatorEmail,
+      } = {
+        fromNow: false,
+      },
     }: ListQuery,
     connection: Connection
   ): Promise<Ride[]> {
@@ -298,7 +318,9 @@ export default class RideRepository {
       where.push(
         '(' +
           gender
-            .map((thisGender) => `clients.driverGender = '${escape(thisGender)}'`)
+            .map(
+              (thisGender) => `clients.driverGender = '${escape(thisGender)}'`
+            )
             .join(' OR ') +
           ')'
       );
@@ -326,6 +348,10 @@ export default class RideRepository {
           .utc()
           .format(MYSQL_DATE_FORMAT)}' )`
       );
+    }
+
+    if (facilitatorEmail) {
+      where.push(`( rides.facilitatorEmail = '${escape(facilitatorEmail)}' )`);
     }
 
     const query = `
@@ -374,7 +400,7 @@ export default class RideRepository {
             clientDescription: sqlRide.clientDescription,
             preferredDriverGender: sqlRide.clientDriverGender,
             preferredCarType: sqlRide.clientCarType,
-            hasMps: sqlRide.clientHasMps
+            hasMps: sqlRide.clientHasMps,
           },
           driver: {
             id: sqlRide.driverId,
@@ -407,13 +433,17 @@ export default class RideRepository {
   }
 
   async count(
-    { fromNow = false }: ListQuery,
+    { filters: { fromNow = false, facilitatorEmail } }: ListQuery,
     connection: Connection
   ): Promise<number> {
     let where = [];
 
     if (fromNow) {
-      where.push('rides.pickupTimeAndDateInUTC >= NOW()');
+      where.push('( rides.pickupTimeAndDateInUTC >= NOW() )');
+    }
+
+    if (facilitatorEmail) {
+      where.push(`( rides.facilitatorEmail = '${escape(facilitatorEmail)}' )`);
     }
 
     const query = `
