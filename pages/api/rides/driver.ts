@@ -26,9 +26,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         case 'GET':
           const rides = await rideRepository.list(
             {
-              fromNow: true,
-              status: 'OPEN',
-              driverRestrictions: {
+              filters: {
+                fromNow: true,
+                status: 'OPEN',
                 carType: ['All' as CarType].concat(
                   jwt.carType ? [jwt.carType as CarType] : []
                 ),

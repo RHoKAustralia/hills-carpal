@@ -16,6 +16,7 @@ const getColumns = (table) => {
     {
       Header: 'Pickup Time',
       id: 'pickupTimeAndDate',
+      filterable: false,
       accessor: (cell: Ride) =>
         moment
           .tz(cell.pickupTimeAndDate, process.env.TIMEZONE)
@@ -24,21 +25,25 @@ const getColumns = (table) => {
     {
       Header: 'Location from',
       id: 'locationFrom',
+      filterable: false,
       accessor: (cell) => cell.locationFrom.placeName,
     },
     {
       id: 'locationTo',
       Header: 'Location to',
+      filterable: false,
       accessor: (cell) => cell.locationTo.placeName,
     },
     {
       id: 'driverName',
       accessor: 'driver.name',
+      filterable: false,
       Header: 'Driver',
     },
     {
       id: 'status',
       accessor: 'status',
+      filterable: false,
       Header: 'Status',
       Cell: ({ row }) => {
         return (
@@ -153,7 +158,7 @@ class Facilitator extends React.Component<Props, State> {
               })}
               pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
               loading={this.state.loading}
-              filterable={false}
+              filterable={true}
               data={this.state.rides}
               manual
               columns={getColumns(this)}
@@ -172,7 +177,9 @@ class Facilitator extends React.Component<Props, State> {
                     .join('');
 
                   const res = await fetch(
-                    `/api/rides/facilitator?page=${state.page}&pageSize=${state.pageSize}${sorted}&filtered=${state.filtered}`,
+                    `/api/rides/facilitator?page=${state.page}&pageSize=${
+                      state.pageSize
+                    }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
                     {
                       headers: {
                         Authorization: `Bearer ${localStorage.getItem(
@@ -200,21 +207,6 @@ class Facilitator extends React.Component<Props, State> {
                     error: e,
                   });
                 }
-
-                // fetch your data
-                // Axios.post('mysite.com/data', {
-                //   page: state.page,
-                //   pageSize: state.pageSize,
-                //   sorted: state.sorted,
-                //   filtered: state.filtered,
-                // }).then((res) => {
-                //   // Update react-table
-                //   this.setState({
-                //     data: res.data.rows,
-                //     pages: res.data.pages,
-                //     loading: false,
-                //   });
-                // });
               }}
             />
           </div>
