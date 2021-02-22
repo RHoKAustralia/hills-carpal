@@ -77,10 +77,7 @@ export default class RideRepository {
                                   pickupTimeAndDateInUTC,
                                   locationFrom,
                                   locationTo,
-                                  driverGender,
-                                  carType,
                                   status,
-                                  hasMps,
                                   description) 
                          VALUES 
                                   (${[
@@ -93,10 +90,7 @@ export default class RideRepository {
                                     ),
                                     locationFromId,
                                     locationToId,
-                                    escape(ride.driverGender),
-                                    escape(ride.carType),
                                     escape(ride.status),
-                                    escape(ride.hasMps),
                                     escape(ride.description),
                                   ].join(',')})`;
       // console.log(query);
@@ -196,10 +190,7 @@ export default class RideRepository {
           pickupTimeAndDateInUTC = ${escape(
             moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
           )},
-          driverGender = ${escape(ride.driverGender)},
-          carType = ${escape(ride.carType)},
           status = ${escape(ride.status)},
-          hasMps = ${escape(ride.hasMps)},
           description = ${escape(ride.description)} 
         WHERE
           id = ${id}`;
@@ -297,7 +288,7 @@ export default class RideRepository {
       where.push(
         '(' +
           carType
-            .map((thisCarType) => `rides.carType = '${escape(thisCarType)}'`)
+            .map((thisCarType) => `clients.carType = '${escape(thisCarType)}'`)
             .join(' OR ') +
           ')'
       );
@@ -307,7 +298,7 @@ export default class RideRepository {
       where.push(
         '(' +
           gender
-            .map((thisGender) => `rides.driverGender = '${escape(thisGender)}'`)
+            .map((thisGender) => `clients.driverGender = '${escape(thisGender)}'`)
             .join(' OR ') +
           ')'
       );
@@ -339,8 +330,8 @@ export default class RideRepository {
 
     const query = `
       SELECT 
-        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC AS pickupTimeAndDate, rides.description, rides.hasMps,
-        rides.driverGender, rides.carType, rides.status,
+        rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC AS pickupTimeAndDate, rides.description, clients.hasMps AS clientHasMps,
+        clients.driverGender AS clientDriverGender, clients.carType AS clientCarType, rides.status,
         dr.driver_id AS driverId, dr.confirmed AS driverConfirmed, dr.updated_at AS updatedAt, dr.driver_name AS driverName,
         rides.clientId, clients.name AS clientName, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
         locationFrom.id AS locationIdFrom, locationFrom.name AS placeNameFrom, locationFrom.postCode AS postCodeFrom, locationFrom.point AS locationFrom, locationFrom.suburb AS suburbFrom,
@@ -381,6 +372,9 @@ export default class RideRepository {
             name: sqlRide.clientName,
             phoneNumber: sqlRide.clientPhoneNumber,
             clientDescription: sqlRide.clientDescription,
+            preferredDriverGender: sqlRide.clientDriverGender,
+            preferredCarType: sqlRide.clientCarType,
+            hasMps: sqlRide.clientHasMps
           },
           driver: {
             id: sqlRide.driverId,
@@ -406,10 +400,7 @@ export default class RideRepository {
             postCode: sqlRide.postCodeTo,
             placeName: sqlRide.placeNameTo,
           },
-          driverGender: sqlRide.driverGender,
-          carType: sqlRide.carType,
           status: sqlRide.status,
-          hasMps: sqlRide.hasMps,
           description: sqlRide.description,
         } as Ride)
     );

@@ -116,7 +116,7 @@ export async function decodeJwt(
       )
     );
 
-    if (process.env.UNSAFE_GOD_MODE === 'true') {
+    if (process.env.REACT_APP_UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,
         [`https://${domain}/gender`]: 'male',

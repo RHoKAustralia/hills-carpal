@@ -20,10 +20,8 @@ export const getBoundsFromLngLatArray = (latlng: number[][]) => {
 };
 
 const rideToDirectionUrl = (ride) => {
-  // const from = `${ride.locationFrom.longitude},${ride.locationFrom.latitude}`;
-  // const to = `${ride.locationTo.longitude},${ride.locationTo.latitude}`;
-  const from = `${ride.locationFrom.latitude},${ride.locationFrom.longitude}`;
-  const to = `${ride.locationTo.latitude},${ride.locationTo.longitude}`;
+  const from = `${ride.locationFrom.longitude},${ride.locationFrom.latitude}`;
+  const to = `${ride.locationTo.longitude},${ride.locationTo.latitude}`;
   return `https://api.mapbox.com/directions/v5/mapbox/driving/${from};${to}.json?access_token=${token}&geometries=geojson`;
 };
 
@@ -121,8 +119,8 @@ class DriverMap extends Component<Props> {
             iconAnchor: [9, 23.5],
           })}
           position={this.L.latLng(
-            ride.locationFrom.longitude,
-            ride.locationFrom.latitude
+            ride.locationFrom.latitude,
+            ride.locationFrom.longitude
           )}
         >
           {popup}
@@ -134,7 +132,10 @@ class DriverMap extends Component<Props> {
             iconSize: [18, 23.5], // size of the icon
             iconAnchor: [9, 23.5],
           })}
-          position={[ride.locationTo.longitude, ride.locationTo.latitude]}
+          position={this.L.latLng(
+            ride.locationTo.latitude,
+            ride.locationTo.longitude
+          )}
         >
           {popup}
         </this.ReactLeaflet.Marker>,
@@ -178,8 +179,8 @@ class DriverMap extends Component<Props> {
     const lnglats: number[][] = allRides
       .map((ride) => {
         return [
-          [ride.locationFrom.latitude, ride.locationFrom.longitude],
-          [ride.locationTo.latitude, ride.locationTo.longitude],
+          [ride.locationFrom.longitude, ride.locationFrom.latitude],
+          [ride.locationTo.longitude, ride.locationTo.latitude],
         ];
       })
       .reduce((acc, val) => acc.concat(val), [] as [number, number][]);
