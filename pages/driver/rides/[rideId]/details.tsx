@@ -10,6 +10,7 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 import '../../../../src/common/components/driver/ride-detail.css';
 import { Ride, Image } from '../../../../src/common/model';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
+import isRideInPast from '../../../../src/common/util';
 
 interface Props {
   rideId: string;
@@ -167,28 +168,36 @@ export default class RideDetail extends React.Component<Props, State> {
     }
   }
 
-  OfferRideButton() {
+  offerRideButton() {
     return (
       <div className="btn-group" role="group">
-        <button
-          onClick={this.acceptRide.bind(this)}
-          className="btn btn-outline btn-primary"
-        >
-          Offer a ride
-        </button>
+        {isRideInPast(this.state.ride) ? (
+          <div>
+            A ride can't be offered because this ride's date was in the past.
+          </div>
+        ) : (
+          <button
+            onClick={this.acceptRide.bind(this)}
+            className="btn btn-outline btn-primary"
+          >
+            Offer a ride
+          </button>
+        )}
       </div>
     );
   }
 
-  RideOfferedButtons() {
+  rideOfferedButtons() {
     return this.state.ride.driver.id === this.context.authState.userId ? (
       <div className="btn-group" role="group">
-        <button
-          onClick={this.declineRide.bind(this)}
-          className="card-link btn btn-outline btn-danger"
-        >
-          Decline
-        </button>
+        {!isRideInPast(this.state.ride) && (
+          <button
+            onClick={this.declineRide.bind(this)}
+            className="card-link btn btn-outline btn-danger"
+          >
+            Decline
+          </button>
+        )}
         <Link href={`/driver/rides/${this.props.rideId}/poll`}>
           <a className="card-link btn btn-outline btn-success">
             Complete the ride
@@ -285,13 +294,15 @@ export default class RideDetail extends React.Component<Props, State> {
             {(() => {
               const buttons = () =>
                 this.state.ride.driver && this.state.ride.driver.confirmed
-                  ? this.RideOfferedButtons()
-                  : this.OfferRideButton();
+                  ? this.rideOfferedButtons()
+                  : this.offerRideButton();
 
               if (this.state.updating) {
                 return (
                   <img alt="loader" className="loader" src="/loader.svg" />
                 );
+              } else if (this.state.ride.status === 'ENDED') {
+                return <div>This ride has already been marked as complete</div>;
               } else if (this.state.updateError) {
                 return (
                   <React.Fragment>
