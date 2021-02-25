@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:19",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:20",
       "essential": true,
       "memory": 256,
       "cpu": 10,
