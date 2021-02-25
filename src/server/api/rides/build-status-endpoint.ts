@@ -6,6 +6,7 @@ import DatabaseManager from '../database/database-manager';
 import { requireDriverPermissions, decodeJwt } from '../jwt';
 import { RideStatus } from '../../../common/model';
 import notifyDeclined from '../../notifications/notify-declined';
+import isRideInPast from '../../../common/util';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -26,6 +27,10 @@ export default (rideStatus: RideStatus) => async (
           const id = Number.parseInt(req.query.id as string);
 
           const oldRide = await rideRepository.get(id, connection);
+
+          if (rideStatus !== 'ENDED' && isRideInPast(oldRide)) {
+            res.status(400).end('Cannot change status of ride in past');
+          }
 
           await rideRepository.setStatus(
             id,
