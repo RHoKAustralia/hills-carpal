@@ -109,7 +109,6 @@ class Facilitator extends React.Component<Props, State> {
               })}
               pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
               loading={this.state.loading}
-              filterable={true}
               data={this.state.rides}
               manual
               columns={getColumns(this)}

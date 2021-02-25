@@ -241,7 +241,7 @@ export default class RideDetail extends React.Component<Props, State> {
               <dd>
                 {moment
                   .tz(this.state.ride.pickupTimeAndDate, process.env.TIMEZONE)
-                  .format(process.env.FORMAT)}
+                  .format(process.env.DATE_FORMAT)}
               </dd>
               <dt>Client Name</dt>
               <dd>{this.state.ride.client.name}</dd>
