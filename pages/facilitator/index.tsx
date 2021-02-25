@@ -4,7 +4,7 @@ import Link from 'next/link';
 import router from 'next/router';
 
 import Table from '../../src/common/components/table';
-import { AuthContext, hasFacilitatorPrivilege } from '../../src/client/auth';
+import { AuthContext } from '../../src/client/auth';
 
 import './index.css';
 import { Ride } from '../../src/common/model';
@@ -45,26 +45,6 @@ const getColumns = (table) => {
       accessor: 'status',
       filterable: false,
       Header: 'Status',
-      Cell: ({ row }) => {
-        return (
-          <div onClick={(e) => e.stopPropagation()} className="form-group">
-            <select
-              onChange={(e) => table.handleStatusChange(e, row)}
-              value={row['status']}
-              className="custom-select"
-            >
-              <option value="OPEN">Open</option>
-              <option value="CONFIRMED" disabled={!row._original.driver}>
-                Confirmed
-              </option>
-              <option value="ENDED" disabled={!row._original.driver}>
-                Ended
-              </option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
-          </div>
-        );
-      },
     },
   ];
 };
@@ -83,35 +63,6 @@ class Facilitator extends React.Component<Props, State> {
   context!: React.ContextType<typeof AuthContext>;
 
   state: State = { rides: [], loading: false, pages: -1 };
-
-  async handleStatusChange(e, row) {
-    // This is a work around for a backend incinsistency.  It still gives us back pickupTime instead of pickupTimeAndDateInUTC
-    const newStatus = e.currentTarget.value;
-    const pickupTimeAndDate =
-      row._original.pickupTimeAndDate || row._original.pickupTime;
-    const res = await fetch('/facilitator/rides/' + row._original.id, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-      },
-      body: JSON.stringify({
-        ...row._original,
-        pickupTimeAndDate,
-        status: newStatus,
-        driver: newStatus !== 'OPEN' ? row._original.driver : null,
-      }),
-    });
-
-    if (res.status === 200) {
-      row.status = newStatus;
-      let newState = this.state;
-      newState.rides[row._index].status = newStatus;
-      newState.rides[row._index].driver = null;
-      this.setState(newState);
-    } else {
-      throw new Error('Could not change status');
-    }
-  }
 
   async componentDidMount() {
     isAuthedWithRole(this.context, 'facilitator');
