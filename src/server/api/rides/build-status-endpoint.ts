@@ -30,6 +30,7 @@ export default (rideStatus: RideStatus) => async (
 
           if (rideStatus !== 'ENDED' && isRideInPast(oldRide)) {
             res.status(400).end('Cannot change status of ride in past');
+            return;
           }
 
           await rideRepository.setStatus(
