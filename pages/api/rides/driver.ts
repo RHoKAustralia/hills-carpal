@@ -36,6 +36,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                   jwt.driverGender ? [jwt.driverGender as Gender] : []
                 ),
               },
+              sort: ['pickupTimeAndDateInUTC'],
+              sortDirection: 'asc',
             },
             connection
           );
