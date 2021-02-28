@@ -29,8 +29,9 @@ export default async function notifyDeclined(ride: Ride) {
           <p>
             The ride for ${ride.client.name} from
             ${ride.locationFrom.placeName} to ${ride.locationTo.placeName} at 
-            ${ride.pickupTimeAndDate} has been withdrawn from. This means
-            that it's available for other drivers to pick up.
+            ${ride.pickupTimeAndDate} by facilitator ${ride.facilitatorEmail} 
+            has been withdrawn from. This means that it's available for other
+            drivers to pick up.
           </p>
   
           <p>To view the ride, <a href="${

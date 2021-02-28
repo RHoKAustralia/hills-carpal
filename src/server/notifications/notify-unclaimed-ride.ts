@@ -32,6 +32,7 @@ export default async function notifyUnclaimedRide(ride: Ride) {
             <strong>From:</strong> ${ride.locationFrom.placeName} <br>
             <strong>To:</strong> ${ride.locationTo.placeName} <br>
             <strong>Time:</strong> ${formattedRideDate} <br>
+            <strong>Facilitator:</strong> ${ride.facilitatorEmail} <br>
             <strong>Description:</strong> ${ride.description} <br>
           </p>
   
