@@ -284,8 +284,8 @@ export default class RideRepository {
     {
       sort,
       sortDirection = 'asc',
-      size = 10,
-      page = 0,
+      size,
+      page,
       rideId,
       filters: {
         fromNow = false,
@@ -386,8 +386,8 @@ export default class RideRepository {
               .join(', ')} ${sortDirection.toUpperCase()}`
           : ''
       }
-      LIMIT ${size}
-      OFFSET ${page * size}
+      ${size ? `LIMIT ${size}` : ''}
+      ${page ? `OFFSET ${page * size}` : ''}
     `;
 
     // console.log(query);
