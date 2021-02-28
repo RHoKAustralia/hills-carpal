@@ -8,7 +8,7 @@ import {
   decodeJwt,
 } from '../../../src/server/api/jwt';
 import { RideInput } from '../../../src/common/model';
-import notifyNewRides from '../../../src/server/notifications/notify-new-ride';
+import notifyAvailableRide from '../../../src/server/notifications/notify-available-ride';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -34,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const rideId = await rideRepository.create(rideInput, connection);
           const newRide = await rideRepository.get(rideId, connection);
 
-          notifyNewRides(newRide);
+          notifyAvailableRide(newRide, 'new');
 
           res.status(200).json(newRide);
           break;

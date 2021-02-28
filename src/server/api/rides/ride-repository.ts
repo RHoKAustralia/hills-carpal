@@ -234,7 +234,14 @@ export default class RideRepository {
     status: RideStatus,
     connection: Connection
   ): Promise<Ride[]> {
-    return this.list({ filters: { driverId, status } }, connection);
+    return this.list(
+      {
+        filters: { driverId, status },
+        sortDirection: 'asc',
+        sort: ['pickupTimeAndDateInUTC'],
+      },
+      connection
+    );
   }
 
   listForFacilitator(

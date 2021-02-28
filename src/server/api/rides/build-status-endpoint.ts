@@ -7,6 +7,7 @@ import { requireDriverPermissions, decodeJwt } from '../jwt';
 import { RideStatus } from '../../../common/model';
 import notifyDeclined from '../../notifications/notify-declined';
 import isRideInPast from '../../../common/util';
+import notifyAvailableRide from '../../notifications/notify-available-ride';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -43,6 +44,7 @@ export default (rideStatus: RideStatus) => async (
 
           if (rideStatus === 'OPEN') {
             notifyDeclined(oldRide);
+            notifyAvailableRide(oldRide, 'declined');
           }
 
           const newRide = await rideRepository.get(id, connection);
