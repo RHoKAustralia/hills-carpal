@@ -24,7 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const rides = await rideRepository.listForDriver(
             jwt.userId,
             'CONFIRMED',
-            connection
+            connection,
           );
           res.status(200).json(rides);
         }
