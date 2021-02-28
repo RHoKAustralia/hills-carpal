@@ -24,7 +24,8 @@ export default async function notifyCancelled(ride: Ride) {
             ${ride.locationFrom.placeName} to ${ride.locationTo.placeName} at 
             ${moment
               .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-              .format(process.env.DATE_FORMAT)} is no longer needed. Thanks for 
+              .format(process.env.DATE_FORMAT)} by facilitator
+            ${ride.facilitatorEmail} is no longer needed. Thanks for 
             accepting it!
           </p>
   
