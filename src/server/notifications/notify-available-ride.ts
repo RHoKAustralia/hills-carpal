@@ -5,7 +5,10 @@ import moment from 'moment-timezone';
 
 import getDrivers from './get-drivers';
 
-export default async function notifyNewRides(ride: Ride) {
+export default async function notifyAvailableRide(
+  ride: Ride,
+  type: 'new' | 'declined'
+) {
   const drivers = await getDrivers(ride);
 
   for (let driver of drivers) {
@@ -15,13 +18,15 @@ export default async function notifyNewRides(ride: Ride) {
 
     await sendEmail({
       to: driver.email,
-      subject: `New Hills Carpal ride for ${ride.client.name}`,
+      subject: `Hills Carpal: Driver needed for ${ride.client.name}`,
       html: `
           <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 
-          <p>A new ride has been created for ${
-            ride.client.name
-          } in Hills Carpal.</p>
+          <p>${
+            type === 'new'
+              ? 'A new ride has been created'
+              : 'The previous driver has had to cancel their offer of a ride for'
+          } for ${ride.client.name} in Hills Carpal, and it needs a driver.</p>
 
           <h3>Details</h3>
           <p>

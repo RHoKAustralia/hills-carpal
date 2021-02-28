@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import _ from 'lodash';
 
-import RideRepository, {
-  validSortLookup,
-} from '../../../src/server/api/rides/ride-repository';
+import RideRepository from '../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
 import {
   decodeJwt,
