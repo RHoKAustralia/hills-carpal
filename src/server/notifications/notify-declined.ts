@@ -1,12 +1,10 @@
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import { managementClient } from '../auth/api-auth0';
 import { Ride } from '../../common/model';
 import sendEmail from './send-email';
 
 export default async function notifyDeclined(ride: Ride) {
-  const driver = await managementClient.getUser({
-    id: ride.driver.id,
-  });
   const facilitators = await managementClient.getUsersByEmail(
     ride.facilitatorEmail
   );
@@ -15,6 +13,10 @@ export default async function notifyDeclined(ride: Ride) {
   console.log(
     `Sending declined notification to ${ride.facilitatorEmail} for ride ${ride.id}`
   );
+
+  const formattedRideDate = moment
+    .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
+    .format(process.env.DATE_FORMAT);
 
   await sendEmail({
     to: ride.facilitatorEmail,
@@ -29,7 +31,7 @@ export default async function notifyDeclined(ride: Ride) {
           <p>
             The ride for ${ride.client.name} from
             ${ride.locationFrom.placeName} to ${ride.locationTo.placeName} at 
-            ${ride.pickupTimeAndDate} by facilitator ${ride.facilitatorEmail} 
+            ${formattedRideDate} by facilitator ${ride.facilitatorEmail} 
             has been withdrawn from. This means that it's available for other
             drivers to pick up.
           </p>
