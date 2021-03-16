@@ -15,6 +15,7 @@ import {
   Gender,
   CarType,
   Client,
+  RideStatus,
 } from '../../model';
 import isAuthedWithRole from '../../redirect-if-no-role';
 
@@ -28,7 +29,7 @@ interface State {
   locationTo: Location;
   locationFrom: Location;
   description: string;
-  status: string | null;
+  status: RideStatus | null;
   driver: RideDriver | null;
   clients: Client[];
   selectedClientId: number;
@@ -36,6 +37,7 @@ interface State {
   loadingError: Error | null;
   updating: boolean;
   updatingError: Error | null;
+  originalRideState?: ModelRide;
 }
 
 class Ride extends Component<Props, State> {
@@ -56,6 +58,7 @@ class Ride extends Component<Props, State> {
     loadingError: null,
     updating: false,
     updatingError: null,
+    originalRideState: undefined,
   };
 
   static getInitialProps({ query }) {
@@ -98,6 +101,7 @@ class Ride extends Component<Props, State> {
             data.pickupTimeAndDate,
             process.env.TIMEZONE
           ),
+          originalRideState: data,
         });
 
         return data;
@@ -287,6 +291,12 @@ class Ride extends Component<Props, State> {
       );
     }
 
+    const dateInFuture = moment(this.state.pickupTimeAndDate).isAfter(
+      moment.now()
+    );
+    const cannotReopen =
+      !dateInFuture && this.state.originalRideState?.status === 'CANCELLED';
+
     return (
       <React.Fragment>
         {this.getHeadline()}
@@ -328,8 +338,17 @@ class Ride extends Component<Props, State> {
                   process.env.TIMEZONE
                 )
                 .toDate()}
-              onChange={(date) =>
-                this.setState({ pickupTimeAndDate: date as Date })
+              onChange={(date: Date) =>
+                this.setState((state) => {
+                  const wasCancelled =
+                    state.originalRideState?.status === 'CANCELLED';
+                  const isInPast = date.valueOf() <= new Date().valueOf();
+                  return {
+                    status:
+                      isInPast && wasCancelled ? 'CANCELLED' : state.status,
+                    pickupTimeAndDate: date,
+                  };
+                })
               }
               showTimeSelect
               timeFormat="HH:mm"
@@ -378,16 +397,26 @@ class Ride extends Component<Props, State> {
                 <label>Status</label>
                 <select
                   onChange={(e) => {
-                    this.setState({ status: e.currentTarget.value });
+                    this.setState({
+                      status: e.currentTarget.value as RideStatus,
+                    });
                   }}
                   value={this.state.status}
                   className="custom-select"
                 >
-                  <option value="OPEN">Open</option>
-                  <option value="CONFIRMED" disabled={!this.state.driver}>
+                  <option value="OPEN" disabled={cannotReopen}>
+                    Open
+                  </option>
+                  <option
+                    value="CONFIRMED"
+                    disabled={!this.state.driver || cannotReopen}
+                  >
                     Confirmed
                   </option>
-                  <option value="ENDED" disabled={!this.state.driver}>
+                  <option
+                    value="ENDED"
+                    disabled={!this.state.driver || cannotReopen}
+                  >
                     Ended
                   </option>
                   <option value="CANCELLED">Cancelled</option>

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import _ from 'lodash';
+import moment from 'moment';
 
 import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
@@ -9,6 +10,7 @@ import {
   requireFacilitatorPermissions,
 } from '../../../../src/server/api/jwt';
 import notifyCancelled from '../../../../src/server/notifications/notify-cancelled';
+import { RideInput } from '../../../../src/common/model';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -25,6 +27,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             Number.parseInt(req.query.id as string),
             connection
           );
+
+          const input = req.body as RideInput;
+
+          // If the ride is being reopened, it needs to be in the future
+          if (
+            existingRide.status === 'CANCELLED' &&
+            (input.status === 'OPEN' || input.status === 'CONFIRMED') &&
+            moment(input.pickupTimeAndDate).isBefore(moment.now())
+          ) {
+            res.status(409).json({
+              status: 'Error',
+              message: 'Cannot open a cancelled ride after the ride date',
+            });
+            return;
+          }
 
           const updatedRide = await rideRepository.update(
             Number.parseInt(req.query.id as string),
