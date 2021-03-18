@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task-prod" {
   [
     {
       "name": "hills-carpal-task-prod",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:21",
+      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:22",
       "essential": true,
       "memory": 256,
       "cpu": 10,
@@ -294,7 +294,7 @@ resource "aws_iam_instance_profile" "ecsInstanceProfile" {
 }
 
 resource "aws_instance" "web" {
-  ami                  = data.aws_ami.amazon_linux_ecs.id
+  ami                  = "ami-020e17478ee31e7a8" #data.aws_ami.amazon_linux_ecs.id
   instance_type        = "t2.nano"
   iam_instance_profile = aws_iam_instance_profile.ecsInstanceProfile.name
   user_data            = <<EOF
