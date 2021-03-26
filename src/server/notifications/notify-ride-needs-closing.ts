@@ -34,6 +34,8 @@ export default async function notifyRideNeedsClosing(ride: Ride) {
     }/poll">click here</a>.
       </p>
 
+      <p>Facilitator for the ride : ${ride.facilitatorEmail}</p>
+      
       <p>
         Thanks,<br>
         Hills Carpal
