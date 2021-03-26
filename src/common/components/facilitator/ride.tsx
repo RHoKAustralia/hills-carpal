@@ -38,6 +38,7 @@ interface State {
   updating: boolean;
   updatingError: Error | null;
   originalRideState?: ModelRide;
+  rideCreatedTimeAndDate: Date;
 }
 
 class Ride extends Component<Props, State> {
@@ -59,6 +60,7 @@ class Ride extends Component<Props, State> {
     updating: false,
     updatingError: null,
     originalRideState: undefined,
+    rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
   };
 
   static getInitialProps({ query }) {
@@ -174,6 +176,7 @@ class Ride extends Component<Props, State> {
 
     let promise;
     if (this.props.id) {
+      delete rideFromState.rideCreatedTimeAndDate;
       promise = fetch('/api/rides/' + this.props.id, {
         method: 'put',
         headers: {

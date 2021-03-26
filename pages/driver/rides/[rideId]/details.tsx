@@ -272,6 +272,8 @@ export default class RideDetail extends React.Component<Props, State> {
               <dd>{this.state.ride.locationFrom.placeName}</dd>
               <dt>Drop Address</dt>
               <dd>{this.state.ride.locationTo.placeName}</dd>
+              <dt>Facilitator Email</dt>
+              <dd>{this.state.ride.facilitatorEmail}</dd>
               <dt>Client Description</dt>
               <dd>{this.state.ride.client.clientDescription}</dd>
               <dt>Ride Description</dt>

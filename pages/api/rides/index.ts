@@ -25,6 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         case 'POST':
           const rideInput: RideInput = {
             ...req.body,
+
             facilitatorEmail: claims.email,
             status: 'OPEN',
             driverGender: req.body.driverGender || 'any',
@@ -38,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           res.status(200).json(newRide);
           break;
-        default:
+          default:
           res.setHeader('Allow', ['POST']);
           res.status(405).end(`Method ${method} Not Allowed`);
       }

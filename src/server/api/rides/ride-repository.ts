@@ -79,7 +79,8 @@ export default class RideRepository {
                                   locationFrom,
                                   locationTo,
                                   status,
-                                  description) 
+                                  description,
+                                  rideCreatedTimeAndDateInUTC) 
                          VALUES 
                                   (${[
                                     escape(ride.clientId),
@@ -93,6 +94,11 @@ export default class RideRepository {
                                     locationToId,
                                     escape(ride.status),
                                     escape(ride.description),
+                                    escape(
+                                      moment(ride.rideCreatedTimeAndDate)
+                                        .utc()
+                                        .format('YYYY-MM-DD HH:mm:ss')
+                                    ),
                                   ].join(',')})`;
       // console.log(query);
 
