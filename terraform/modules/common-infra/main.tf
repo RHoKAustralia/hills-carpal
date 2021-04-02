@@ -1,5 +1,34 @@
+data "aws_iam_policy_document" "get_access_to_secrets" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    resources = [
+      "${aws_secretsmanager_secret.hills-carpal-secret.arn}"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "get_access_to_secrets" {
+  name = "get-access-to-secrets-${var.environment_id}"
+
+  policy = data.aws_iam_policy_document.get_access_to_secrets.json
+}
+
+resource "aws_iam_role_policy_attachment" "test-attach" {
+  role       = var.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.get_access_to_secrets.arn
+}
+
 resource "aws_ecs_cluster" "hills-carpal-cluster" {
   name = "hills-carpal-cluster-${var.environment_id}" # Naming the cluster
+}
+
+resource "aws_secretsmanager_secret" "hills-carpal-secret" {
+  name = "hills-carpal-secret-${var.environment_id}"
 }
 
 resource "aws_ecs_task_definition" "hills-carpal-task" {
@@ -8,7 +37,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
   [
     {
       "name": "hills-carpal-task-${var.environment_id}",
-      "image": "${aws_ecr_repository.hills-carpal-repo.repository_url}:${var.docker_image_tag}",
+      "image": "${var.hills_carpal_repo.repository_url}:${var.docker_image_tag}",
       "essential": true,
       "memory": 256,
       "cpu": 10,
@@ -59,69 +88,15 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
   network_mode = "host"
   # memory                   = 512         # Specifying the memory our container requires
   # cpu                      = 256         # Specifying the CPU our container requires
-  execution_role_arn = aws_iam_role.ecsTaskExecutionRole.arn
+  execution_role_arn = var.ecs_task_execution_role.arn
 }
 
 resource "aws_cloudwatch_log_group" "awslogs-hills-carpal" {
   name = "awslogs-hills-carpal-${var.environment_id}"
 }
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_ecr_repository" "hills-carpal-repo" {
-  name = "hills-carpal-repo"
-}
-
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name               = "ecsTaskExecutionRole"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-}
-
-resource "aws_secretsmanager_secret" "hills-carpal-secret" {
-  name = "hills-carpal-secret-${var.environment_id}"
-}
-
-data "aws_iam_policy_document" "get_access_to_secrets" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue"
-    ]
-
-    resources = [
-      "${aws_secretsmanager_secret.hills-carpal-secret.arn}"
-    ]
-  }
-}
-
-resource "aws_iam_policy" "get_access_to_secrets" {
-  name = "get-access-to-secrets"
-
-  policy = data.aws_iam_policy_document.get_access_to_secrets.json
-}
-
-resource "aws_iam_role_policy_attachment" "test-attach" {
-  role       = aws_iam_role.ecsTaskExecutionRole.name
-  policy_arn = aws_iam_policy.get_access_to_secrets.arn
-}
-
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = aws_iam_role.ecsTaskExecutionRole.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
 resource "aws_ecs_service" "hills-carpal-service" {
-  name                               = "hills-carpal-service-${var.environment_id}"                        # Naming our first service
+  name                               = "hills-carpal-service-${var.environment_id}"  # Naming our first service
   cluster                            = aws_ecs_cluster.hills-carpal-cluster.id       # Referencing our created Cluster
   task_definition                    = aws_ecs_task_definition.hills-carpal-task.arn # Referencing the task our service will spin up
   launch_type                        = "EC2"
@@ -273,7 +248,7 @@ data "aws_iam_policy_document" "assume_role_policy_ec2" {
 }
 
 resource "aws_iam_role" "ecsInstanceRole" {
-  name               = "ecsInstanceRole"
+  name               = "ecsInstanceRole-${var.environment_id}"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
 }
 
@@ -283,7 +258,7 @@ resource "aws_iam_role_policy_attachment" "attach-ec2-container-service" {
 }
 
 resource "aws_iam_instance_profile" "ecsInstanceProfile" {
-  name = "ecsInstanceProfile"
+  name = "ecs-instance-profile-${var.environment_id}"
   role = aws_iam_role.ecsInstanceRole.name
 }
 
@@ -306,7 +281,7 @@ resource "aws_eip" "ip" {
 }
 
 resource "aws_cloudwatch_event_rule" "daily_cron" {
-  name        = "daily_cron"
+  name        = "daily_cron-${var.environment_id}"
   description = "Daily cron - happens every morning Sydney time"
 
   schedule_expression = "cron(0 22 * * ? *)"
@@ -319,7 +294,7 @@ resource "aws_cloudwatch_event_target" "sns" {
 }
 
 resource "aws_sns_topic" "daily_cron" {
-  name = "daily_cron"
+  name = "daily-cron-${var.environment_id}"
 }
 
 resource "aws_sns_topic_policy" "default" {
