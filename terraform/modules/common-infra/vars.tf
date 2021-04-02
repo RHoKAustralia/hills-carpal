@@ -13,3 +13,11 @@ variable "ami_id" {
   type        = string
   default     = null
 }
+
+variable "ecs_task_execution_role" {
+  description = "An aws_iam_role to run the ecs tasks in"
+}
+
+variable "hills_carpal_repo" {
+  description = "An aws_ecr_repository in which to find the docker image"
+}
