@@ -9,6 +9,8 @@ import { AuthContext } from '../../src/client/auth';
 import './index.css';
 import { Ride } from '../../src/common/model';
 import isAuthedWithRole from '../../src/common/redirect-if-no-role';
+import getUserEmail from '../../src/common/components/facilitator/getUserEmail';
+import { filter } from 'lodash';
 
 const getColumns = (table) => {
   return [
@@ -41,6 +43,11 @@ const getColumns = (table) => {
       Header: 'Driver',
     },
     {
+      id: 'facilitatorEmail',
+      accessor: 'facilitatorEmail',
+      Header: 'Facilitator Email'
+    },
+    {
       id: 'status',
       accessor: 'status',
       filterable: false,
@@ -62,7 +69,7 @@ class Facilitator extends React.Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
-  state: State = { rides: [], loading: false, pages: -1 };
+  state: State = { rides: [], loading: false, pages: -1};
 
   async componentDidMount() {
     isAuthedWithRole(this.context, 'facilitator');
@@ -141,10 +148,9 @@ class Facilitator extends React.Component<Props, State> {
 
                   if (res.status === 200) {
                     const data = await res.json();
-
                     this.setState({
                       loading: false,
-                      rides: data.rides,
+                      rides : data.rides,
                       pages: data.pages,
                     });
                   } else {

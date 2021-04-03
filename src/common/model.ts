@@ -27,6 +27,7 @@ interface RideCommon {
   description: string;
   facilitatorEmail: string;
   pickupTimeAndDate: string;
+  rideCreatedTimeAndDate: Date;
 }
 
 export interface Ride extends RideCommon {
