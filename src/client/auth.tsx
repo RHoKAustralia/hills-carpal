@@ -31,6 +31,9 @@ async function handleAuthentication() {
         console.error(err);
         reject(err);
       }
+      webAuth.client.userInfo(authResult.accessToken, function(err, user) {
+        localStorage.setItem('user_email', user.email);
+      });  
     });
   });
 }

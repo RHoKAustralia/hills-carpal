@@ -34,6 +34,10 @@ export default function DriverList({ rides }) {
                         <span className="ride-list__place-prefix">To:</span>{' '}
                         {ride.locationTo.placeName}
                       </div>
+                      <div className="ride_list_facilitator">
+                        <span className="ride_list_facilitator_prefix">Facilitator:</span>{' '}
+                        {ride.facilitatorEmail}
+                      </div>
                     </div>
                     <div className="ride-list__chevron">
                       <span className="chevron right"></span>
