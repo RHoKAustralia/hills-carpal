@@ -79,7 +79,8 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
       ],
       "environment": [
           {"name": "MYSQL_HOST", "value": "${aws_db_instance.hills-carpal-db.address}"},
-          {"name": "MYSQL_PORT", "value": "${aws_db_instance.hills-carpal-db.port}"}
+          {"name": "MYSQL_PORT", "value": "${aws_db_instance.hills-carpal-db.port}"},
+          {"name": "EXTERNAL_URL", "value": "${var.external_url}"}
       ]
     }
   ]
@@ -278,6 +279,9 @@ EOF
 resource "aws_eip" "ip" {
   instance = aws_instance.web.id
   vpc      = true
+  tags     = {
+    environment: var.environment_id
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "daily_cron" {
@@ -319,6 +323,6 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 resource "aws_sns_topic_subscription" "app_sns_target" {
   topic_arn              = aws_sns_topic.daily_cron.arn
   protocol               = "https"
-  endpoint               = "https://ride.carpal.org.au/api/send-reminders"
+  endpoint               = "${var.external_url}/api/send-reminders"
   endpoint_auto_confirms = true
 }

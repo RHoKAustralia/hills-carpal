@@ -21,3 +21,7 @@ variable "ecs_task_execution_role" {
 variable "hills_carpal_repo" {
   description = "An aws_ecr_repository in which to find the docker image"
 }
+
+variable "external_url" {
+  description = "the external https url"
+}
