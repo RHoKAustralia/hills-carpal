@@ -10,9 +10,6 @@ module.exports = withPlugins([
       env: {
         REACT_APP_AUTH0_DOMAIN: 'hills-carpal.au.auth0.com',
         REACT_APP_AUTH0_CLIENT_ID: 's6DigGwiugQ2lNOnGbpNJPY5RlxO65KB',
-        REACT_APP_AUTH0_CALLBACK_URL:
-          process.env.REACT_APP_AUTH0_CALLBACK_URL ||
-          'https://ride.carpal.org.au/',
         REACT_APP_AUTH_METADATA_NAMESPACE: 'https://carpal.org.au/',
         REACT_APP_AUTH_METADATA_ROLE: 'roles',
         REACT_APP_UNSAFE_GOD_MODE:

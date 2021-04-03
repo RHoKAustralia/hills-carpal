@@ -1,6 +1,5 @@
 import auth0 from 'auth0-js';
-import Router from 'next/router';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useState } from 'react';
 
 export const KEY_USER_ROLE = 'user_role';
@@ -8,7 +7,10 @@ export const KEY_USER_ROLE = 'user_role';
 const webAuth = new auth0.WebAuth({
   domain: process.env.REACT_APP_AUTH0_DOMAIN,
   clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
-  redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
+  redirectUri:
+    typeof window !== 'undefined'
+      ? `${window.location.protocol}//${window.location.hostname}/`
+      : undefined,
   audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo`,
   responseType: 'token id_token',
   scope: 'openid profile email',
