@@ -1,6 +1,7 @@
 import auth0 from 'auth0-js';
 import React, { FunctionComponent } from 'react';
 import { useState } from 'react';
+import getConfig from 'next/config';
 
 export const KEY_USER_ROLE = 'user_role';
 
@@ -9,7 +10,7 @@ const webAuth = new auth0.WebAuth({
   clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
   redirectUri:
     typeof window !== 'undefined'
-      ? `${window.location.protocol}//${window.location.hostname}/`
+      ? `${window.location.protocol}//${window.location.host}/`
       : undefined,
   audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/userinfo`,
   responseType: 'token id_token',
@@ -20,25 +21,37 @@ const metadataKeyUserRole =
   process.env.REACT_APP_AUTH_METADATA_NAMESPACE +
   process.env.REACT_APP_AUTH_METADATA_ROLE;
 
-async function handleAuthentication() {
+async function handleAuthentication(requireUserRole?: string) {
   return new Promise<auth0.Auth0DecodedHash>((resolve, reject) => {
     webAuth.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult)
-          .then(() => resolve(authResult))
+          .then((profile) => {
+            const roles: string[] | undefined = profile[metadataKeyUserRole];
+            if (
+              requireUserRole &&
+              (roles || []).indexOf(requireUserRole) === -1
+            ) {
+              reject(
+                new Error('User does not have the ' + requireUserRole + ' role')
+              );
+            }
+
+            resolve(authResult);
+          })
           .catch(reject);
       } else if (err) {
         console.error(err);
         reject(err);
       }
-      webAuth.client.userInfo(authResult.accessToken, function(err, user) {
+      webAuth.client.userInfo(authResult.accessToken, function (err, user) {
         localStorage.setItem('user_email', user.email);
-      });  
+      });
     });
   });
 }
 
-async function setSession(authResult) {
+function setSession(authResult) {
   // Set the time that the Access Token will expire at
   const expiresAt = JSON.stringify(
     authResult.expiresIn * 1000 + new Date().getTime()
@@ -49,17 +62,17 @@ async function setSession(authResult) {
   localStorage.setItem('expires_at', expiresAt);
   localStorage.setItem('user_id', authResult.idTokenPayload.sub);
 
-  await getProfile(authResult.accessToken);
+  return getProfile(authResult.accessToken);
 }
 
-function getProfile(accessToken: string) {
-  return new Promise<void>((resolve, reject) => {
+function getProfile(accessToken: string): Promise<auth0.Auth0UserProfile> {
+  return new Promise<auth0.Auth0UserProfile>((resolve, reject) => {
     webAuth.client.userInfo(accessToken, (err, profile) => {
       if (err) {
         reject(err);
       } else {
         setProfile(profile);
-        resolve();
+        resolve(profile);
       }
     });
   });
@@ -141,7 +154,7 @@ export type AuthState = {
 export type Auth = {
   authState: AuthState;
   logout: () => void;
-  handleAuthentication: () => Promise<void>;
+  handleAuthentication: (requireUserRole?: string) => Promise<void>;
 };
 
 export type WrappedComponentProps = {
@@ -159,9 +172,9 @@ const AuthProvider: FunctionComponent<{}> = ({ children }) => {
       setAuthState(undefined);
       logout();
     },
-    handleAuthentication: async () => {
+    handleAuthentication: async (requireUserRole?: string) => {
       try {
-        const authResult = await handleAuthentication();
+        const authResult = await handleAuthentication(requireUserRole);
         setAuthState(getFromStorage());
 
         window.location.href = authResult.appState.redirectTo;

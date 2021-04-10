@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import getConfig from 'next/config';
 
-import auth, {
+import {
   AuthContext,
-  hasAdminPrivilege,
   hasDriverPrivilege,
   hasFacilitatorPrivilege,
   login,
 } from '../src/client/auth';
+const { publicRuntimeConfig } = getConfig();
 
 import './login.css';
 
@@ -17,7 +18,9 @@ class Home extends Component {
 
   async componentDidMount() {
     if (/access_token|id_token|error/.test(window.location.hash)) {
-      await this.context.handleAuthentication();
+      await this.context.handleAuthentication(
+        publicRuntimeConfig.requireUserRole
+      );
     }
   }
 

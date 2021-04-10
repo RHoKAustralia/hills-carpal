@@ -25,3 +25,9 @@ variable "hills_carpal_repo" {
 variable "external_url" {
   description = "the external https url"
 }
+
+variable "require_user_role" {
+  type = "string"
+  default = ""
+  description = "A user role that must be set on any user accessing this deployment"
+}

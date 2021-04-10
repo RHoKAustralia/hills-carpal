@@ -19,6 +19,10 @@ module.exports = withPlugins([
         TIMEZONE: process.env.TIMEZONE || 'Australia/Sydney',
         REMINDER_DIFFERENCE_DAYS: process.env.REMINDER_DIFFERENCE_DAYS || '5',
       },
+      publicRuntimeConfig: {
+        // For putting a role (e.g. "training") that users must have
+        requireUserRole: process.env.REQUIRE_USER_ROLE,
+      },
     },
   ],
 ]);
