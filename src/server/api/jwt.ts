@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { Gender, CarType } from '../../common/model';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 type Role = 'admin' | 'driver' | 'facilitator';
 
@@ -27,7 +30,7 @@ export function requireDriverPermissions(
   const isAdmin = hasRole('admin', claims);
   const isFacilitator = hasRole('facilitator', claims);
 
-  if (!isDriver && !isAdmin && !isFacilitator) {
+  if (!hasRequiredRole(claims) || (!isDriver && !isAdmin && !isFacilitator)) {
     console.log(
       'WARNING: unauthorised attempt to access driver-only api: ' +
         req.method +
@@ -52,7 +55,7 @@ export async function requireFacilitatorPermissions(
 
   const isAdmin = hasRole('admin', claims);
   const isFacilitator = hasRole('facilitator', claims);
-  if (!isAdmin && !isFacilitator) {
+  if (!hasRequiredRole(claims) || (!isAdmin && !isFacilitator)) {
     console.log(
       'WARNING: unauthorised attempt to access facilitator-only api: ' +
         req.method +
@@ -64,6 +67,13 @@ export async function requireFacilitatorPermissions(
   }
 
   return true;
+}
+
+function hasRequiredRole(claims?: Claims) {
+  return (
+    !publicRuntimeConfig.requireUserRole ||
+    hasRole(publicRuntimeConfig.requireUserRole, claims)
+  );
 }
 
 export function hasRole(role: Role, claims?: Claims) {
@@ -91,7 +101,6 @@ export async function decodeJwt(
     const authHeaderParts = (authHeader as string).split(' ');
     const tokenValue = authHeaderParts[1] || authHeaderParts[0];
 
-    // FIXME: This needs to be verify
     let decodedToken: any = await new Promise((resolve, reject) =>
       jsonwebtoken.verify(
         tokenValue,

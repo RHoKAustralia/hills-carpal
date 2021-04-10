@@ -32,16 +32,17 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 
 module "prod" {
   source                  = "./terraform/modules/common-infra"
-  docker_image_tag        = "24"
+  docker_image_tag        = "25"
   environment_id          = "prod"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
   hills_carpal_repo       = aws_ecr_repository.hills-carpal-repo
   external_url            = "https://ride.carpal.org.au"
+  require_user_role       = "prod"
 }
 
 module "training" {
   source                  = "./terraform/modules/common-infra"
-  docker_image_tag        = "24"
+  docker_image_tag        = "25"
   environment_id          = "training"
   ami_id                  = "ami-020e17478ee31e7a8"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
