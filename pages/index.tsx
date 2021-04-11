@@ -16,6 +16,11 @@ class Home extends Component {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
+  // We need this to allow use of publicRuntimeConfig
+  static getInitialProps() {
+    return {};
+  }
+
   async componentDidMount() {
     if (/access_token|id_token|error/.test(window.location.hash)) {
       await this.context.handleAuthentication(
