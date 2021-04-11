@@ -1,7 +1,6 @@
 import auth0 from 'auth0-js';
 import React, { FunctionComponent } from 'react';
 import { useState } from 'react';
-import getConfig from 'next/config';
 
 export const KEY_USER_ROLE = 'user_role';
 
