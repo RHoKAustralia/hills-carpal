@@ -40,6 +40,7 @@ const validSorts = [
   'locationTo',
   'status',
   'driverName',
+  'facilitatorEmail',
 ];
 
 const MYSQL_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
