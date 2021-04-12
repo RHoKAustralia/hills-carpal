@@ -45,6 +45,7 @@ const getColumns = (table) => {
     {
       id: 'facilitatorEmail',
       accessor: 'facilitatorEmail',
+      filterable: false,
       Header: 'Facilitator Email'
     },
     {
