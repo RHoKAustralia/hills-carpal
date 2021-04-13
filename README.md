@@ -38,10 +38,11 @@ It'll be available at http://localhost:3000.
 
 ## Deploying
 
-1. Go to https://ap-southeast-2.console.aws.amazon.com/ecr/repositories/private/201335468138/hills-carpal-repo?region=ap-southeast-2 and use the "View push commands" button to build as a docker image. At the tag step, select a new tag
+```bash
+docker build -t hills-carpal-repo .
+docker tag hills-carpal-repo:latest 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com/hills-carpal-repo:<version-number>
+aws ecr get-login-password --region ap-southeast-2 --profile hills-carpal | docker login --username AWS --password-stdin 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com #docker login
+docker push 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com/hills-carpal-repo:<version-number>
+```
 
-NOTE: If you use multiple AWS profiles you'll need to specify `--profile` in the `aws ecr get-login-password` step.
-
-2. Change the tag in the `aws_ecs_task_definition` part of `main.tf` to point to the new docker image tag.
-
-3. `terraform apply` to apply the changes
+Then go to main.tf and change the desired environment to `<version-number>`
