@@ -22,6 +22,7 @@ module.exports = withPlugins([
       publicRuntimeConfig: {
         // For putting a role (e.g. "training") that users must have
         requireUserRole: process.env.REQUIRE_USER_ROLE,
+        environmentName: process.env.ENVIRONMENT_NAME || 'Local',
       },
     },
   ],
