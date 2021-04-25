@@ -20,6 +20,10 @@
   font-size: large;
 }
 
+.App-environment-name {
+  text-transform: capitalize;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -56,5 +60,5 @@
 }
 
 .hcp-navbar {
-	margin-bottom: 1em;
+  margin-bottom: 1em;
 }

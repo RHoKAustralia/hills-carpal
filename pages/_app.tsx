@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
 import { AppProps } from 'next/app';
+import getConfig from 'next/config';
 
 import AuthProvider, {
   AuthContext,
@@ -12,6 +13,8 @@ import './app.css';
 import './document.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-datepicker/dist/react-datepicker.css';
+
+const { publicRuntimeConfig } = getConfig();
 
 interface LinkData {
   type: string;
@@ -146,6 +149,9 @@ const Nav = () => {
           id="icon"
         />
       </a>
+      <div className="App-environment-name">
+        {publicRuntimeConfig.environmentName} Environment
+      </div>
       {typeof window !== 'undefined' ? (
         <>
           {!authState && <Links links={loggedOutLinks} />}

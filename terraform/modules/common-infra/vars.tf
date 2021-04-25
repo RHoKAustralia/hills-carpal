@@ -27,7 +27,12 @@ variable "external_url" {
 }
 
 variable "require_user_role" {
-  type = "string"
-  default = ""
+  type        = string
+  default     = ""
   description = "A user role that must be set on any user accessing this deployment"
+}
+
+variable "environment_name" {
+  type        = string
+  description = "The name of this environment"
 }
