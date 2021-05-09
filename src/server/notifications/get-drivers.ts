@@ -5,10 +5,19 @@ import { Ride } from '../../common/model';
 import { getUserRoles, getUsersInRole } from '../auth/api-auth0';
 
 export default async function getDrivers(ride: Ride) {
-  const drivers = await getUsersInRole('driver');
+  const allDrivers = await getUsersInRole('driver');
+  const requiredRole = process.env.REQUIRE_USER_ROLE;
+
+  const validDrivers = requiredRole
+    ? _.intersectionBy(
+        allDrivers,
+        await getUsersInRole(requiredRole),
+        (driver1) => driver1.user_id
+      )
+    : allDrivers;
 
   let filteredDrivers: User<AppMetadata, UserMetadata>[] = [];
-  for (let driver of drivers) {
+  for (let driver of validDrivers) {
     const driverRoles = await getUserRoles(driver.user_id);
     const roleLookup = _.keyBy(driverRoles, (role) => role.name);
 
