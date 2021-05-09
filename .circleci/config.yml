@@ -1,0 +1,17 @@
+orbs:
+  node: circleci/node@4.2.1
+
+version: 2.1
+
+jobs:
+  build:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run: npm run build
+
+workflows:
+  build:
+    jobs:
+      - build
