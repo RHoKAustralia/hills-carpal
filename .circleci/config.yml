@@ -15,10 +15,6 @@ orbs:
 #       - run: npm run build
 
 workflows:
-  build:
-    jobs:
-      - build
-
   build-and-deploy:
     jobs:
       - aws-ecr/build-and-push-image:
