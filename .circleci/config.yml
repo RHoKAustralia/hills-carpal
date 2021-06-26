@@ -20,6 +20,8 @@ workflows:
       - aws-ecr/build-and-push-image:
           repo: "201335468138.dkr.ecr.ap-southeast-2.amazonaws.com/hills-carpal-repo"
           tag: "${CIRCLE_SHA1}"
+          account-url: 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com
+          region: ap-southeast-2
 
       # - aws-ecs/deploy-service-update:
       #     filters:
