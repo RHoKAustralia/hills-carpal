@@ -44,8 +44,8 @@ export default class LocationRepository {
   ): Promise<void> {
     const escape = (data) => connection.escape(data);
 
-    const point = `POINT(${escape(location.latitude)}, ${escape(
-      location.longitude
+    const point = `POINT(${escape(location.longitude)}, ${escape(
+      location.latitude
     )})`;
 
     const sql = `

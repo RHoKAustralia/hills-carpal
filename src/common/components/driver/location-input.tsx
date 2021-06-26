@@ -60,8 +60,8 @@ class LocationInput extends Component<Props> {
 
     this.props.onChange({
       placeName: value.place_name,
-      longitude: value.center[1],
-      latitude: value.center[0],
+      longitude: value.center[0],
+      latitude: value.center[1],
       postCode: getValueFromContext('postcode'),
       suburb: getValueFromContext('suburb'),
     });
