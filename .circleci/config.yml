@@ -37,8 +37,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - master
+              ignore: /.*/
           requires:
             - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
           family: "hills-carpal-task-production"
