@@ -31,6 +31,7 @@ workflows:
           family: "hills-carpal-task-training"
           cluster-name: "hills-carpal-cluster-training"
           container-image-name-updates: "container=hills-carpal-task-training,tag=${CIRCLE_SHA1}"
+          service-name: "hills-carpal-service-training"
 
       - aws-ecs/deploy-service-update:
           filters:
@@ -43,6 +44,7 @@ workflows:
           family: "hills-carpal-task-production"
           cluster-name: "hills-carpal-cluster-production"
           container-image-name-updates: "container=hills-carpal-task-production,tag=${CIRCLE_SHA1}"
+          service-name: "hills-carpal-service-production"
 
 
 
