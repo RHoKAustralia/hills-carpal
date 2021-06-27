@@ -21,29 +21,29 @@ workflows:
           repo: "hills-carpal-repo"
           tag: "${CIRCLE_SHA1}"
 
-      # - aws-ecs/deploy-service-update:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
-      #     requires:
-      #       - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
-      #     family: "hills-carpal-service-training"
-      #     cluster-name: "hills-carpal-cluster-training"
-      #     container-image-name-updates: "container=hills-carpal-service-training,tag=${CIRCLE_SHA1}"
+      - aws-ecs/deploy-service-update:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
+          family: "hills-carpal-service-training"
+          cluster-name: "hills-carpal-cluster-training"
+          container-image-name-updates: "container=hills-carpal-service-training,tag=${CIRCLE_SHA1}"
 
-      # - aws-ecs/deploy-service-update:
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
-      #       branches:
-      #         only:
-      #           - master
-      #     requires:
-      #       - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
-      #     family: "hills-carpal-service-production"
-      #     cluster-name: "hills-carpal-cluster-production"
-      #     container-image-name-updates: "container=hills-carpal-service-production,tag=${CIRCLE_SHA1}"
+      - aws-ecs/deploy-service-update:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - master
+          requires:
+            - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
+          family: "hills-carpal-service-production"
+          cluster-name: "hills-carpal-cluster-production"
+          container-image-name-updates: "container=hills-carpal-service-production,tag=${CIRCLE_SHA1}"
 
 
 
