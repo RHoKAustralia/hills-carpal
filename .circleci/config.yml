@@ -18,7 +18,7 @@ workflows:
   build-and-deploy:
     jobs:
       - aws-ecr/build-and-push-image:
-          repo: "201335468138.dkr.ecr.ap-southeast-2.amazonaws.com/hills-carpal-repo"
+          repo: "hills-carpal-repo"
           tag: "${CIRCLE_SHA1}"
 
       # - aws-ecs/deploy-service-update:
