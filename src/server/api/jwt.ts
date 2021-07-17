@@ -55,7 +55,7 @@ export async function requireFacilitatorPermissions(
 
   const isAdmin = hasRole('admin', claims);
   const isFacilitator = hasRole('facilitator', claims);
-  console.log(claims)
+  
   if (!hasRequiredRole(claims) || (!isAdmin && !isFacilitator)) {
     console.log(
       'WARNING: unauthorised attempt to access facilitator-only api: ' +
