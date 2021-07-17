@@ -20,6 +20,7 @@
     "auth0-js": "^9.16.2",
     "bootstrap": "^4.6.0",
     "busboy": "^0.3.1",
+    "debounce-promise": "^3.1.2",
     "email-validator": "^2.0.4",
     "formidable": "^1.2.2",
     "jwks-rsa": "^1.12.3",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@types/auth0": "^2.33.3",
     "@types/busboy": "^0.2.3",
+    "@types/debounce-promise": "^3.1.4",
     "@types/email-validator": "^1.0.6",
     "@types/formidable": "^1.2.2",
     "@types/lodash": "^4.14.170",
