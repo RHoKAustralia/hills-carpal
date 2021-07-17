@@ -127,8 +127,12 @@ export default class RideDetail extends React.Component<Props, State> {
       });
 
       if (!res.ok) {
+        const { message } = await res.json();
+
         throw new Error(
-          `PUT /api/rides/${this.props.rideId}/accept got status ${res.status}`
+          `PUT /api/rides/${this.props.rideId}/accept got status ${
+            res.status
+          }. ${message ?? ''}`
         );
       }
 
@@ -308,9 +312,7 @@ export default class RideDetail extends React.Component<Props, State> {
               } else if (this.state.updateError) {
                 return (
                   <React.Fragment>
-                    <div>
-                      Error: {this.state.updateError.message}. Please try again!
-                    </div>
+                    <div>Error: {this.state.updateError.message}.</div>
                     {buttons()}
                   </React.Fragment>
                 );
