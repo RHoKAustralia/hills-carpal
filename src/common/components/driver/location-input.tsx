@@ -33,7 +33,7 @@ class LocationInput extends Component<Props> {
         .then((data) => {
           const options = data.features.map((x) => {
             return {
-              label: x.place_name,
+              label: LocationInput.getPlaceName(x),
               value: x,
             };
           });
@@ -55,24 +55,36 @@ class LocationInput extends Component<Props> {
     return options;
   }
 
+  /**
+   * Mapbox api gives back a context array.
+   * This is a bit weird format so we use this helper function to grab the value we want.
+   */
+  static getValueFromContext = (key: string, value: any) => {
+    const valueObj = value.context.find((x) => {
+      return x.id.includes(key);
+    });
+    return valueObj ? valueObj.text : null;
+  };
+
+  static getPlaceName = (value: any) => {
+    return value.place_type.length > 0 && value.place_type[0] === 'poi'
+      ? value.place_name.replace(
+          LocationInput.getValueFromContext('place', value),
+          LocationInput.getValueFromContext('locality', value)
+        )
+      : value.place_name;
+  };
+
   handleChange = (option) => {
     if (!option) return;
     const value = option.value;
-    // Mapbox api gives back a context array.
-    // This is a bit weird format so we use this helper function to grab the value we want.
-    const getValueFromContext = (key) => {
-      const valueObj = value.context.find((x) => {
-        return x.id.includes(key);
-      });
-      return valueObj ? valueObj.text : null;
-    };
 
     this.props.onChange({
-      placeName: value.place_name,
+      placeName: LocationInput.getPlaceName(value),
       longitude: value.center[0],
       latitude: value.center[1],
-      postCode: getValueFromContext('postcode'),
-      suburb: getValueFromContext('suburb'),
+      postCode: LocationInput.getValueFromContext('postcode', value),
+      suburb: LocationInput.getValueFromContext('suburb', value),
     });
   };
 
