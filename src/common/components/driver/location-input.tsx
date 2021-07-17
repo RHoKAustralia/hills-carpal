@@ -1,3 +1,4 @@
+import debounce from 'debounce-promise';
 import React, { Component } from 'react';
 import Async from 'react-select/async';
 import { Location } from '../../model';
@@ -21,31 +22,39 @@ interface Props {
 }
 
 class LocationInput extends Component<Props> {
-  getOptions(text) {
-    if (!text || text.length < 2) {
-      return Promise.resolve([]);
-    }
-    const url = getUrl(text);
-    return fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        const options = data.features.map((x) => {
-          return {
-            label: x.place_name,
-            value: x,
-          };
-        });
+  getOptions = debounce(
+    (text) => {
+      if (!text || text.length < 2) {
+        return Promise.resolve([]);
+      }
+      const url = getUrl(text);
+      return fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+          const options = data.features.map((x) => {
+            return {
+              label: x.place_name,
+              value: x,
+            };
+          });
 
-        return options;
-      })
-      .catch((e) => {
-        console.error(e);
-        throw e;
-      });
-  }
+          return options;
+        })
+        .catch((e) => {
+          console.error(e);
+          throw e;
+        });
+    },
+    200,
+    {
+      leading: true,
+    }
+  );
+
   filterOptions(options) {
     return options;
   }
+
   handleChange = (option) => {
     if (!option) return;
     const value = option.value;
@@ -66,6 +75,7 @@ class LocationInput extends Component<Props> {
       suburb: getValueFromContext('suburb'),
     });
   };
+
   getValue() {
     const { value } = this.props;
     if (!value) return '';
