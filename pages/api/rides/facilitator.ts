@@ -35,7 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             );
 
             if (!validSort) {
-              res.status(400).send({
+              res.status(400).json({
                 message: 'Invalid sort',
               });
               return;

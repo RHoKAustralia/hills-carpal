@@ -281,8 +281,12 @@ export default class RideRepository {
     );
   }
 
-  async get(rideId: number, connection: Connection): Promise<Ride | undefined> {
-    const rides = await this.list({ rideId }, connection);
+  async get(
+    rideId: number,
+    connection: Connection,
+    forUpdate: boolean = false
+  ): Promise<Ride | undefined> {
+    const rides = await this.list({ rideId }, connection, forUpdate);
 
     return rides.length > 0 ? rides[0] : undefined;
   }
@@ -306,7 +310,8 @@ export default class RideRepository {
         fromNow: false,
       },
     }: ListQuery,
-    connection: Connection
+    connection: Connection,
+    forUpdate: boolean = false
   ): Promise<Ride[]> {
     let where = [];
 
@@ -395,6 +400,7 @@ export default class RideRepository {
       }
       ${size ? `LIMIT ${size}` : ''}
       ${page ? `OFFSET ${page * size}` : ''}
+      ${forUpdate ? 'FOR UPDATE' : ''}
     `;
 
     // console.log(query);
