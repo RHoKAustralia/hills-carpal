@@ -52,10 +52,10 @@ export async function requireFacilitatorPermissions(
   if (!claims) {
     claims = await decodeJwt(req);
   }
-
+  
   const isAdmin = hasRole('admin', claims);
   const isFacilitator = hasRole('facilitator', claims);
-  
+
   if (!hasRequiredRole(claims) || (!isAdmin && !isFacilitator)) {
     console.log(
       'WARNING: unauthorised attempt to access facilitator-only api: ' +
@@ -130,7 +130,14 @@ export async function decodeJwt(
       decodedToken = {
         ...decodedToken,
         [`https://${domain}/gender`]: 'male',
-        [`https://${domain}/roles`]: ['driver', 'admin', 'facilitator', 'test'],
+        [`https://${domain}/roles`]: [
+          'driver',
+          'admin',
+          'facilitator',
+          'test',
+          'prod',
+          'training',
+        ],
       };
     }
     const claims: Claims = {
