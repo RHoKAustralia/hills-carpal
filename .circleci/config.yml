@@ -25,7 +25,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - master
           requires:
             - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
           family: "hills-carpal-task-training"

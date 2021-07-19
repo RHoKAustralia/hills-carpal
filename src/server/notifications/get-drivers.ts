@@ -21,6 +21,10 @@ export default async function getDrivers(ride: Ride) {
     const driverRoles = await getUserRoles(driver.user_id);
     const roleLookup = _.keyBy(driverRoles, (role) => role.name);
 
+    const environmentRoleOk =
+      !process.env.REQUIRE_USER_ROLE ||
+      roleLookup[process.env.REQUIRE_USER_ROLE];
+
     /** Does the driver's car match the suv preference */
     const suvOk =
       ride.client.preferredCarType === 'All' ||
@@ -34,7 +38,7 @@ export default async function getDrivers(ride: Ride) {
         roleLookup['female']) ||
       (ride.client.preferredDriverGender === 'male' && roleLookup['male']);
 
-    if (suvOk && genderOk) {
+    if (suvOk && genderOk && environmentRoleOk) {
       filteredDrivers.push(driver);
     } else {
       console.log(
