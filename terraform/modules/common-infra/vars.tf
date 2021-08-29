@@ -22,6 +22,16 @@ variable "hills_carpal_repo" {
   description = "An aws_ecr_repository in which to find the docker image"
 }
 
+variable "vpc" {}
+variable "default_subnet_a" {} 
+variable "default_subnet_b" {}
+variable "default_subnet_c" {}
+variable "load_balancer_security_group" {}
+variable "load_balancer" {}
+variable "load_balancer_port" {
+  type = number
+}
+
 variable "external_url" {
   description = "the external https url"
 }
@@ -36,3 +46,5 @@ variable "environment_name" {
   type        = string
   description = "The name of this environment"
 }
+
+variable "db_instance" {}
