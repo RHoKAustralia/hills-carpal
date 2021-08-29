@@ -84,8 +84,24 @@ resource "aws_security_group" "load_balancer_security_group" {
   }
 }
 
+module "prod_db" {
+  source                  = "./terraform/modules/database"
+  vpc                     = aws_default_vpc.default_vpc
+  database_id             = "prod"
+}
+
+module "dev_db" {
+  source                  = "./terraform/modules/database"
+  vpc                     = aws_default_vpc.default_vpc
+  database_id             = "dev"
+}
+
+module "bastion" {
+  source                  = "./terraform/modules/bastion"
+}
+
 module "prod" {
-  source                  = "./terraform/modules/common-infra-2"
+  source                  = "./terraform/modules/common-infra"
   docker_image_tag        = "082e511489bd55ad85c165ae5ec3ce00d497d2f0"
   environment_id          = "prod"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
@@ -100,10 +116,11 @@ module "prod" {
   load_balancer_security_group = aws_security_group.load_balancer_security_group
   load_balancer           = aws_alb.application_load_balancer
   load_balancer_port      = 80
+  db_instance             = module.prod_db.db
 }
 
 module "training" {
-  source                  = "./terraform/modules/common-infra-2"
+  source                  = "./terraform/modules/common-infra"
   docker_image_tag        = "082e511489bd55ad85c165ae5ec3ce00d497d2f0"
   environment_id          = "training"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
@@ -118,4 +135,5 @@ module "training" {
   load_balancer_security_group = aws_security_group.load_balancer_security_group
   load_balancer           = aws_alb.application_load_balancer
   load_balancer_port      = 1024
+  db_instance             = module.dev_db.db
 }
