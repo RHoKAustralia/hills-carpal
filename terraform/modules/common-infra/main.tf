@@ -80,6 +80,7 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
       "environment": [
           {"name": "MYSQL_HOST", "value": "${var.db_instance.address}"},
           {"name": "MYSQL_PORT", "value": "${var.db_instance.port}"},
+          {"name": "MYSQL_USE_SSL", "value": "TRUE"},
           {"name": "EXTERNAL_URL", "value": "${var.external_url}"},
           {"name": "REQUIRE_USER_ROLE", "value": "${var.require_user_role}"},
           {"name": "ENVIRONMENT_NAME", "value": "${var.environment_name}"}

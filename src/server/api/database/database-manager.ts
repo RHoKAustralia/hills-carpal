@@ -1,4 +1,5 @@
 import mysql, { Connection } from 'mysql';
+import fs from 'fs';
 
 export default class DatabaseManager {
   databaseConfig: any;
@@ -13,6 +14,9 @@ export default class DatabaseManager {
       multipleStatements: true,
       connectTimeout: 60000, // Needs to be super high to wait for serverless aurora to wake up
       timezone: 'UTC',
+      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ?? {
+        ca: fs.readFileSync(__dirname + '/rds-ca-2019-root.pem'),
+      },
       // debug: true
     };
   }
