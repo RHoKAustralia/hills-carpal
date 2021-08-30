@@ -177,12 +177,6 @@ class FindRides extends Component<{}, State> {
           <div className="col-12 col-sm-6">
             <h4>Available Rides</h4>
           </div>
-          {/* <div className="col-12 col-sm-6 text-left text-sm-right">
-            <div className="btn-group">
-              {this.renderLocationSearchBtn()}
-              {this.renderMapBtn()}
-            </div>
-          </div> */}
         </div>
         {this.state.showLocationSearch && (
           <LocationSearch

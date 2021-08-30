@@ -194,7 +194,13 @@ export default class RideDetail extends React.Component<Props, State> {
   rideOfferedButtons() {
     return this.state.ride.driver.id === this.context.authState.userId ? (
       <div className="btn-group" role="group">
-        {!isRideInPast(this.state.ride) && (
+        {isRideInPast(this.state.ride) ? (
+          <Link href={`/driver/rides/${this.props.rideId}/poll`}>
+            <a className="card-link btn btn-outline btn-success">
+              Complete the ride
+            </a>
+          </Link>
+        ) : (
           <button
             onClick={this.declineRide.bind(this)}
             className="card-link btn btn-outline btn-danger"
@@ -202,11 +208,6 @@ export default class RideDetail extends React.Component<Props, State> {
             Decline
           </button>
         )}
-        <Link href={`/driver/rides/${this.props.rideId}/poll`}>
-          <a className="card-link btn btn-outline btn-success">
-            Complete the ride
-          </a>
-        </Link>
       </div>
     ) : (
       <div>
