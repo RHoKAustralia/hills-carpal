@@ -299,14 +299,22 @@ class Ride extends Component<Props, State> {
     );
     const cannotReopen =
       !dateInFuture && this.state.originalRideState?.status === 'CANCELLED';
+    const disabled = this.state.originalRideState?.status !== 'OPEN';
 
     return (
       <React.Fragment>
         {this.getHeadline()}
         <form onSubmit={this.handleSubmit}>
+          {disabled && (
+            <p className="alert alert-warning" role="alert">
+              This ride can't be edited because the status is{' '}
+              {this.state.originalRideState?.status}
+            </p>
+          )}
           <div className="form-group">
             <label>Client</label>
             <select
+              disabled={disabled}
               required
               onChange={(e) => {
                 const clientId = parseInt(e.currentTarget.value, 10);
@@ -329,6 +337,7 @@ class Ride extends Component<Props, State> {
             <label>Date (all dates and times are in the Sydney timezone)</label>
             <DatePicker
               required
+              disabled={disabled}
               value={moment
                 .tz(
                   this.state.pickupTimeAndDate || Date.now(),
@@ -364,6 +373,7 @@ class Ride extends Component<Props, State> {
           <div className="form-group">
             <label>Location from</label>
             <LocationInput
+              disabled={disabled}
               required={true}
               value={this.state.locationFrom}
               onChange={(value) => {
@@ -374,6 +384,7 @@ class Ride extends Component<Props, State> {
           <div className="form-group">
             <label>Location to</label>
             <LocationInput
+              disabled={disabled}
               required={true}
               value={this.state.locationTo}
               onChange={(value) => {
@@ -385,6 +396,7 @@ class Ride extends Component<Props, State> {
             <label>Description</label>
 
             <textarea
+              disabled={disabled}
               onChange={(e) => {
                 this.setState({ description: e.target.value });
               }}
