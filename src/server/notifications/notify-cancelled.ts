@@ -31,7 +31,7 @@ export default async function notifyCancelled(ride: Ride) {
   
           <p>If you'd like to pick up a new ride, <a href="${
             process.env.EXTERNAL_URL
-          }/driver/rides">click here</a>.</p>
+          }/driver/rides/find">click here</a>.</p>
  
           <p>
             Thanks,<br>
