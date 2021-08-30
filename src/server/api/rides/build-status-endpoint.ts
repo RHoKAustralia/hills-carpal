@@ -4,7 +4,7 @@ import _ from 'lodash';
 import RideRepository from './ride-repository';
 import DatabaseManager from '../database/database-manager';
 import { requireDriverPermissions, decodeJwt } from '../jwt';
-import { RideStatus } from '../../../common/model';
+import { Ride, RideStatus } from '../../../common/model';
 import notifyDeclined from '../../notifications/notify-declined';
 import isRideInPast from '../../../common/util';
 import notifyAvailableRide from '../../notifications/notify-available-ride';
@@ -32,19 +32,24 @@ export default (statusToChangeTo: RideStatus) =>
 
             const oldRide = await rideRepository.get(id, connection, true);
 
-            if (statusToChangeTo !== 'ENDED' && isRideInPast(oldRide)) {
+            if (acceptingOrDecliningRideInPast(statusToChangeTo, oldRide)) {
               res
                 .status(400)
                 .json({ message: 'Cannot change status of ride in past' });
               return;
             }
 
-            if (statusToChangeTo === 'CONFIRMED' && oldRide.status !== 'OPEN') {
-              res
-                .status(400)
-                .json({
-                  message: "Cannot confirm ride that isn't currently open",
-                });
+            if (confirmingClosedRide(statusToChangeTo, oldRide)) {
+              res.status(400).json({
+                message: "Cannot confirm ride that isn't currently open",
+              });
+              return;
+            }
+
+            if (endingRideInFuture(statusToChangeTo, oldRide)) {
+              res.status(400).json({
+                message: "Cannot close ride that's yet to happen",
+              });
               return;
             }
 
@@ -80,3 +85,23 @@ export default (statusToChangeTo: RideStatus) =>
       databaseManager.closeConnection(connection);
     }
   };
+
+function endingRideInFuture(statusToChangeTo: RideStatus, oldRide: Ride) {
+  return statusToChangeTo === 'ENDED' && !isRideInPast(oldRide);
+}
+
+function acceptingOrDecliningRideInPast(
+  statusToChangeTo: RideStatus,
+  oldRide: Ride
+) {
+  return (
+    (statusToChangeTo === 'CONFIRMED' ||
+      statusToChangeTo === 'CANCELLED' ||
+      statusToChangeTo === 'OPEN') &&
+    isRideInPast(oldRide)
+  );
+}
+
+function confirmingClosedRide(statusToChangeTo: RideStatus, oldRide: Ride) {
+  return statusToChangeTo === 'CONFIRMED' && oldRide.status !== 'OPEN';
+}
