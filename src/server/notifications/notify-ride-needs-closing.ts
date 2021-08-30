@@ -31,7 +31,7 @@ export default async function notifyRideNeedsClosing(ride: Ride) {
         ${formattedRideDate}. Please complete the feedback form and mark the ride as completed at
         <a href="${process.env.EXTERNAL_URL}/driver/rides/${
       ride.id
-    }/poll">click here</a>.
+    }/details">click here</a>.
       </p>
 
       <p>Facilitator for the ride : ${ride.facilitatorEmail}</p>
