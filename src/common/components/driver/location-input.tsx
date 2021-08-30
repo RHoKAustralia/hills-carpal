@@ -19,6 +19,7 @@ interface Props {
   value: Location;
   required?: boolean;
   clearable?: boolean;
+  disabled?: boolean;
 }
 
 class LocationInput extends Component<Props> {
@@ -103,6 +104,7 @@ class LocationInput extends Component<Props> {
         clearable={this.props.clearable}
         placeholder={'Type your address, suburb or postcode'}
         filterOptions={(x) => x} // The mapbox api does the filtering for us
+        isDisabled={this.props.disabled}
       />
     );
   }
