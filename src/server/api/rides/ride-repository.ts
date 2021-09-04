@@ -169,7 +169,7 @@ export default class RideRepository {
     }
   }
 
-  async update(id: number, ride: RideInput, connection: Connection) {
+  async update(id: number, ride: Partial<RideInput>, connection: Connection) {
     if (!id) {
       throw new Error('No id specified when updating ride.');
     }
@@ -194,7 +194,6 @@ export default class RideRepository {
       let query = `UPDATE ${this.dbName}.rides 
         SET 
           clientId = ${escape(ride.clientId)},
-          facilitatorEmail = ${escape(ride.facilitatorEmail)},
           pickupTimeAndDateInUTC = ${escape(
             moment(ride.pickupTimeAndDate).utc().format('YYYY-MM-DD HH:mm:ss')
           )},
@@ -429,7 +428,7 @@ export default class RideRepository {
             name: sqlRide.driverName,
           },
           facilitatorEmail: sqlRide.facilitatorEmail,
-          pickupTimeAndDate: sqlRide.pickupTimeAndDate,
+          pickupTimeAndDate: (sqlRide.pickupTimeAndDate as Date).toISOString(),
           locationFrom: {
             id: sqlRide.locationIdFrom,
             latitude: sqlRide.locationFrom.y,
