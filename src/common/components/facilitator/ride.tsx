@@ -16,6 +16,7 @@ import {
   CarType,
   Client,
   RideStatus,
+  RideInput,
 } from '../../model';
 import isAuthedWithRole from '../../redirect-if-no-role';
 
@@ -164,10 +165,15 @@ class Ride extends Component<Props, State> {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    //hack remove non-ride props
-    const rideFromState = { ...this.state };
-    delete rideFromState.clients;
-    delete rideFromState.selectedClientId;
+    const rideFromState: Partial<RideInput> = {
+      clientId: this.state.clientId,
+      status: this.state.status,
+      description: this.state.description,
+      driver: this.state.driver,
+      locationFrom: this.state.locationFrom,
+      locationTo: this.state.locationTo,
+      pickupTimeAndDate: this.state.pickupTimeAndDate.toISOString()
+    };
 
     this.setState({
       updating: true,

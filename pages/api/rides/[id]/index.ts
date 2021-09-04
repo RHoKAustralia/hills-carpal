@@ -10,7 +10,7 @@ import {
   requireFacilitatorPermissions,
 } from '../../../../src/server/api/jwt';
 import notifyCancelled from '../../../../src/server/notifications/notify-cancelled';
-import { RideInput } from '../../../../src/common/model';
+import { Ride, RideInput } from '../../../../src/common/model';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -28,7 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             connection
           );
 
-          const input = req.body as RideInput;
+          const input = req.body as Partial<RideInput>;
 
           // If the ride is being reopened, it needs to be in the future
           if (
@@ -43,9 +43,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
           }
 
+          // Can't make edits to a ride that's been accepted or completed
+          // (because a user is expecting to drive the ride, or because it's beyond changing)
+          if (
+            rideShouldBeImmutable(existingRide) &&
+            isRideChanged(input, existingRide)
+          ) {
+            res.status(401).json({
+              status: 'Error',
+              message: 'Cannot edit details of confirmed or ended ride',
+            });
+            return;
+          }
+
           const updatedRide = await rideRepository.update(
             Number.parseInt(req.query.id as string),
-            req.body,
+            input,
             connection
           );
 
@@ -82,3 +95,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     databaseManager.closeConnection(connection);
   }
 };
+function isRideChanged(input: Partial<RideInput>, existingRide: Ride) {
+  console.log(input.pickupTimeAndDate);
+  console.log(existingRide.pickupTimeAndDate);
+
+  return (
+    input.clientId !== existingRide.client.id ||
+    input.description !== existingRide.description ||
+    input.locationFrom.id !== existingRide.locationFrom.id ||
+    input.locationTo.id !== existingRide.locationTo.id ||
+    input.pickupTimeAndDate !== existingRide.pickupTimeAndDate
+  );
+}
+
+function rideShouldBeImmutable(existingRide: Ride) {
+  return existingRide.status === 'CONFIRMED' || existingRide.status === 'ENDED';
+}
