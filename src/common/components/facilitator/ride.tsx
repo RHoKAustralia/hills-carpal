@@ -172,7 +172,7 @@ class Ride extends Component<Props, State> {
       driver: this.state.driver,
       locationFrom: this.state.locationFrom,
       locationTo: this.state.locationTo,
-      pickupTimeAndDate: this.state.pickupTimeAndDate.toISOString()
+      pickupTimeAndDate: this.state.pickupTimeAndDate.toISOString(),
     };
 
     this.setState({
@@ -305,7 +305,9 @@ class Ride extends Component<Props, State> {
     );
     const cannotReopen =
       !dateInFuture && this.state.originalRideState?.status === 'CANCELLED';
-    const disabled = this.state.originalRideState?.status !== 'OPEN';
+    const disabled =
+      this.state.originalRideState &&
+      this.state.originalRideState.status !== 'OPEN';
 
     return (
       <React.Fragment>
