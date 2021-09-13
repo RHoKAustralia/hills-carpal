@@ -56,6 +56,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
           }
 
+          if (input.status === "OPEN") {
+            input.driver = undefined;
+          }
+
           const updatedRide = await rideRepository.update(
             Number.parseInt(req.query.id as string),
             input,
