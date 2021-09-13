@@ -421,12 +421,12 @@ export default class RideRepository {
             preferredCarType: sqlRide.clientCarType,
             hasMps: sqlRide.clientHasMps,
           },
-          driver: {
+          driver: sqlRide.driverId ? {
             id: sqlRide.driverId,
             confirmed: sqlRide.driverConfirmed,
             updatedAt: sqlRide.updatedAt,
             name: sqlRide.driverName,
-          },
+          } : undefined,
           facilitatorEmail: sqlRide.facilitatorEmail,
           pickupTimeAndDate: (sqlRide.pickupTimeAndDate as Date).toISOString(),
           locationFrom: {
