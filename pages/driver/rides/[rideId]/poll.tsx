@@ -4,22 +4,23 @@ import Link from 'next/link';
 import './poll.css';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 import { AuthContext } from '../../../../src/client/auth';
+import { CompletePayload } from '../../../../src/common/model';
 
 interface Props {
   rideId: string;
 }
-interface State {
-  submitState: 'form' | 'saving' | 'done' | 'error';
-  loadCount: number;
-}
+
+type SubmitState = 'form' | 'saving' | 'done' | 'error';
+type State = {
+  submitState: SubmitState;
+} & CompletePayload;
 
 export default class Poll extends React.Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
   state: State = {
-    submitState: 'form', // "form" | "saving" | "done" | "error"
-    loadCount: 0,
+    submitState: 'form',
   };
 
   static getInitialProps({ query }) {
@@ -41,7 +42,14 @@ export default class Poll extends React.Component<Props, State> {
 
     fetch(`/api/rides/${this.props.rideId}/complete`, {
       method: 'PUT',
-      body: JSON.stringify(this.state),
+      body: JSON.stringify({
+        lateness: this.state.lateness,
+        satisfaction: this.state.satisfaction,
+        communicationsIssues: this.state.communicationsIssues,
+        mobilityPermit: this.state.mobilityPermit,
+        reimbursmentAmount: this.state.reimbursementAmount,
+        anythingElse: this.state.anythingElse,
+      }),
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
       },
@@ -61,44 +69,171 @@ export default class Poll extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <div className="poll row justify-content-center">
         {(() => {
-          if (this.state.submitState === 'form') {
+          if (this.state.submitState !== 'done') {
             return (
-              <>
-                <div className="poll-explanation">
-                  Please complete the Google Form then{' '}
-                  <button
-                    className="btn btn-success"
-                    disabled={this.state.loadCount < 4}
-                    onClick={this.completeRide}
-                  >
-                    Click Here
-                  </button>{' '}
-                  when finished.
-                </div>
+              <div className="col-9">
+                <div className="card">
+                  <div className="card-header">
+                    <h1>Submit Feedback</h1>
+                  </div>
 
-                <iframe
-                  src="https://docs.google.com/forms/d/e/1FAIpQLScdGx7Pk80YATeIkfI0geXMxdK4HzFqQ4Domvie5cj7yCPJmQ/viewform?embedded=true"
-                  width="100%"
-                  height="600"
-                  onLoad={() => {
-                    this.setState((state) => ({
-                      loadCount: state.loadCount + 1,
-                    }));
-                  }}
-                  frameBorder={0}
-                  marginHeight={0}
-                  marginWidth={0}
-                >
-                  Loading…
-                </iframe>
-              </>
+                  <form className="card-body">
+                    <div className="form-group">
+                      <label>
+                        <div>Tell us about the pickup*</div>
+                        <select
+                          required
+                          onChange={(e) => {
+                            this.setState({
+                              lateness: e.currentTarget.value as PickupLateness,
+                            });
+                          }}
+                          value={this.state.satisfaction}
+                          className="custom-select"
+                        >
+                          <option></option>
+                          <option value="onTime">
+                            ON TIME (includes 10 minutes early to 5 minutes
+                            late)
+                          </option>
+                          <option value="fiveMinutesLater">
+                            More than 5 minutes LATE
+                          </option>
+                          <option value="didNotHappen">
+                            Did NOT happen at all
+                          </option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <div>
+                          Overall, how satisfied are you about the Ride? *
+                        </div>
+                        <select
+                          required
+                          onChange={(e) => {
+                            this.setState({
+                              satisfaction: e.currentTarget
+                                .value as SatisfactionLevel,
+                            });
+                          }}
+                          value={this.state.satisfaction}
+                          className="custom-select"
+                        >
+                          <option></option>
+                          <option value="good">It was GOOD in every way</option>
+                          <option value="ok">It was OK</option>
+                          <option value="couldBeBetter">
+                            It could have been better
+                          </option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <div>Communication issues, if any</div>
+                        <textarea
+                          onChange={(e) => {
+                            this.setState({
+                              satisfaction: e.currentTarget
+                                .value as SatisfactionLevel,
+                            });
+                          }}
+                          value={this.state.communicationsIssues}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <div>
+                          Was CarPal's Mobility Parking Scheme (MPS) Permit used
+                          on this Ride? *
+                        </div>
+                        <select
+                          required
+                          onChange={(e) => {
+                            this.setState({
+                              mobilityPermit: e.currentTarget.value === 'true',
+                            });
+                          }}
+                          value={this.state.mobilityPermit ? 'true' : 'false'}
+                          className="custom-select"
+                        >
+                          <option value="true">Yes</option>
+                          <option value="false">No</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <div>Reimbursement amount you are claiming *</div>
+                        <select
+                          required
+                          onChange={(e) => {
+                            this.setState({
+                              reimbursementAmount: Number.parseFloat(
+                                e.currentTarget.value
+                              ),
+                            });
+                          }}
+                          value={this.state.reimbursementAmount?.toString()}
+                          className="custom-select"
+                        >
+                          <option></option>
+                          <option value="2.75">$2.75</option>
+                          <option value="5.5">$5.50</option>
+                          <option value="0">
+                            No reimbursement needed just add points to my Ride
+                            Credit Account
+                          </option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <div>Anything else about the ride goes here</div>
+                        <textarea
+                          onChange={(e) => {
+                            this.setState({
+                              satisfaction: e.currentTarget
+                                .value as SatisfactionLevel,
+                            });
+                          }}
+                          value={this.state.communicationsIssues}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      {this.state.submitState === 'saving' && (
+                        <img
+                          alt="loader"
+                          className="loader"
+                          src="/loader.svg"
+                        />
+                      )}
+                      {this.state.submitState === 'error' && (
+                        <span>Error, please try again.</span>
+                      )}
+                      {(this.state.submitState === 'form' ||
+                        this.state.submitState === 'error') && (
+                        <button className="btn btn-success" type="submit">
+                          Submit
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </div>
             );
-          } else if (this.state.submitState === 'saving') {
-            return 'Saving...';
-          } else if (this.state.submitState === 'error') {
-            return 'Error';
           } else {
             return (
               <div>

@@ -2,3 +2,14 @@
     text-align: center;
     margin-bottom: 1em;
 }
+.poll label {
+    display: block;
+}
+
+.poll select {
+    width: 100%;
+}
+
+.poll textarea {
+    width: 100%;
+}

@@ -63,3 +63,18 @@ export interface Image {
 export interface RideInput extends RideCommon {
   clientId: number;
 }
+
+export type SatisfactionLevel = 'good' | 'ok' | 'couldBeBetter';
+export type PickupLateness = 'onTime' | 'fiveMinutesLate' | 'didNotHappen';
+
+/**
+ * Payload for the complete ride endpoint
+ */
+export interface CompletePayload {
+  lateness?: PickupLateness;
+  satisfaction?: SatisfactionLevel;
+  communicationsIssues?: string;
+  mobilityPermit?: boolean;
+  reimbursementAmount?: number;
+  anythingElse?: string;
+}
