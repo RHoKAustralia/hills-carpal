@@ -46,13 +46,6 @@ export default (statusToChangeTo: RideStatus) =>
               return;
             }
 
-            if (endingRideInFuture(statusToChangeTo, oldRide)) {
-              res.status(400).json({
-                message: "Cannot close ride that's yet to happen",
-              });
-              return;
-            }
-
             await rideRepository.setStatus(
               id,
               statusToChangeTo,
