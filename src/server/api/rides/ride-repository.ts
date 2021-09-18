@@ -10,6 +10,7 @@ import {
   Ride,
   RideInput,
   RideDriver,
+  CompletePayload,
 } from '../../../common/model';
 import LocationRepository from '../location-repository';
 
@@ -121,6 +122,32 @@ export default class RideRepository {
     }
   }
 
+  async setSurvey(id: number, result: CompletePayload, connection: Connection) {
+    const escape = (data) => connection.escape(data);
+    console.log(typeof result);
+    const query = `
+      INSERT INTO ${this.dbName}.ride_surveys(
+        ride_id,
+        lateness,
+        satisfaction,
+        communications_issues,
+        mobility_permit,
+        reimbursement_amount,
+        anything_else
+      ) VALUES (
+        ${escape(id)},
+        ${escape(result.lateness)},
+        ${escape(result.satisfaction)},
+        ${escape(result.communicationsIssues)},
+        ${escape(result.mobilityPermit)},
+        ${escape(result.reimbursementAmount)},
+        ${escape(result.anythingElse)}
+      )
+    `;
+
+    await this.databaseManager.query(query, connection);
+  }
+
   async setStatus(
     id: number,
     status: RideStatus,
@@ -145,7 +172,7 @@ export default class RideRepository {
 
       if (status === 'CONFIRMED') {
         extraQuery = `
-            insert into ${
+            INSERT INTO ${
               this.dbName
             }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
           escape(driverId),
@@ -154,7 +181,7 @@ export default class RideRepository {
           escape(1),
         ]}, NOW()) ON DUPLICATE KEY UPDATE confirmed=${escape(1)};`;
       } else if (status === 'OPEN') {
-        extraQuery = `delete from ${
+        extraQuery = `DELETE from ${
           this.dbName
         }.driver_ride WHERE ride_id = ${escape(id)};`;
       }
@@ -421,12 +448,14 @@ export default class RideRepository {
             preferredCarType: sqlRide.clientCarType,
             hasMps: sqlRide.clientHasMps,
           },
-          driver: sqlRide.driverId ? {
-            id: sqlRide.driverId,
-            confirmed: sqlRide.driverConfirmed,
-            updatedAt: sqlRide.updatedAt,
-            name: sqlRide.driverName,
-          } : undefined,
+          driver: sqlRide.driverId
+            ? {
+                id: sqlRide.driverId,
+                confirmed: sqlRide.driverConfirmed,
+                updatedAt: sqlRide.updatedAt,
+                name: sqlRide.driverName,
+              }
+            : undefined,
           facilitatorEmail: sqlRide.facilitatorEmail,
           pickupTimeAndDate: (sqlRide.pickupTimeAndDate as Date).toISOString(),
           locationFrom: {
