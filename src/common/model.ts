@@ -71,10 +71,10 @@ export type PickupLateness = 'onTime' | 'fiveMinutesLate' | 'didNotHappen';
  * Payload for the complete ride endpoint
  */
 export interface CompletePayload {
-  lateness?: PickupLateness;
-  satisfaction?: SatisfactionLevel;
+  lateness: PickupLateness;
+  satisfaction: SatisfactionLevel;
   communicationsIssues?: string;
-  mobilityPermit?: boolean;
-  reimbursementAmount?: number;
+  mobilityPermit: boolean;
+  reimbursementAmount: number;
   anythingElse?: string;
 }

@@ -31,7 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const id = Number.parseInt(req.query.id as string);
 
           const oldRide = await rideRepository.get(id, connection, true);
-          const body = req.body as CompletePayload
+          const body = req.body as CompletePayload;
 
           if (!isRideInPast(oldRide)) {
             res.status(400).json({
@@ -40,9 +40,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
           }
 
+          await rideRepository.setSurvey(id, body, connection);
           await rideRepository.setStatus(
             id,
-            "ENDED",
+            'ENDED',
             jwt.userId,
             jwt.name,
             connection

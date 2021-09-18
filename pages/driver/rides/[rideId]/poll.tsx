@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { FormEvent } from 'react';
 import Link from 'next/link';
 
 import './poll.css';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 import { AuthContext } from '../../../../src/client/auth';
-import { CompletePayload } from '../../../../src/common/model';
+import {
+  CompletePayload,
+  PickupLateness,
+  SatisfactionLevel,
+} from '../../../../src/common/model';
 
 interface Props {
   rideId: string;
@@ -13,7 +17,7 @@ interface Props {
 type SubmitState = 'form' | 'saving' | 'done' | 'error';
 type State = {
   submitState: SubmitState;
-} & CompletePayload;
+} & Partial<CompletePayload>;
 
 export default class Poll extends React.Component<Props, State> {
   static contextType = AuthContext;
@@ -35,7 +39,9 @@ export default class Poll extends React.Component<Props, State> {
     }
   }
 
-  completeRide = () => {
+  completeRide = (e: FormEvent) => {
+    e.preventDefault();
+
     this.setState({
       submitState: 'saving',
     });
@@ -46,18 +52,23 @@ export default class Poll extends React.Component<Props, State> {
         lateness: this.state.lateness,
         satisfaction: this.state.satisfaction,
         communicationsIssues: this.state.communicationsIssues,
-        mobilityPermit: this.state.mobilityPermit,
-        reimbursmentAmount: this.state.reimbursementAmount,
+        mobilityPermit: this.state.mobilityPermit === true,
+        reimbursementAmount: this.state.reimbursementAmount,
         anythingElse: this.state.anythingElse,
       }),
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        'Content-Type': 'application/json',
       },
     })
-      .then(() => {
-        this.setState({
-          submitState: 'done',
-        });
+      .then((res) => {
+        if (res.ok) {
+          this.setState({
+            submitState: 'done',
+          });
+        } else {
+          throw new Error('Request returned ' + res.status);
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -79,10 +90,10 @@ export default class Poll extends React.Component<Props, State> {
                     <h1>Submit Feedback</h1>
                   </div>
 
-                  <form className="card-body">
+                  <form onSubmit={this.completeRide} className="card-body">
                     <div className="form-group">
                       <label>
-                        <div>Tell us about the pickup*</div>
+                        <div>Tell us about the pickup *</div>
                         <select
                           required
                           onChange={(e) => {
@@ -90,7 +101,7 @@ export default class Poll extends React.Component<Props, State> {
                               lateness: e.currentTarget.value as PickupLateness,
                             });
                           }}
-                          value={this.state.satisfaction}
+                          value={this.state.lateness}
                           className="custom-select"
                         >
                           <option></option>
@@ -140,8 +151,7 @@ export default class Poll extends React.Component<Props, State> {
                         <textarea
                           onChange={(e) => {
                             this.setState({
-                              satisfaction: e.currentTarget
-                                .value as SatisfactionLevel,
+                              communicationsIssues: e.currentTarget.value,
                             });
                           }}
                           value={this.state.communicationsIssues}
@@ -203,11 +213,10 @@ export default class Poll extends React.Component<Props, State> {
                         <textarea
                           onChange={(e) => {
                             this.setState({
-                              satisfaction: e.currentTarget
-                                .value as SatisfactionLevel,
+                              anythingElse: e.currentTarget.value,
                             });
                           }}
-                          value={this.state.communicationsIssues}
+                          value={this.state.anythingElse}
                         />
                       </label>
                     </div>
