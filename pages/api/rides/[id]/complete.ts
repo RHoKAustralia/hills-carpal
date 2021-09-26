@@ -9,6 +9,7 @@ import {
 } from '../../../../src/server/api/jwt';
 import { CompletePayload } from '../../../../src/common/model';
 import isRideInPast from '../../../../src/common/util';
+import writeSurvey from '../../../../src/server/google/sheets';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -50,6 +51,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           );
 
           const newRide = await rideRepository.get(id, connection);
+
+          await writeSurvey({
+            ...body,
+            clientName: newRide.client.name,
+            driverName: newRide.driver.name,
+            rideDateTime: newRide.pickupTimeAndDate,
+          })
 
           await databaseManager.commit(connection);
           res.status(200).json(newRide);
