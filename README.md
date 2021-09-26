@@ -8,8 +8,8 @@ The app is a next.js monolith that uses mysql as a database. It also integrates 
 1. First get a local db running, which is easiest with docker
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d -v hillscarpaldb:/var/lib/mysql mysql:5.7
-yarn run create-db
-yarn run refresh-db
+npm run create-db
+npm run refresh-db
 ```
 
 By default it will try to connect to a local mysql database with username `root` and password `admin`. If you want to change those configurations you can set as environment variable, for instance:
