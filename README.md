@@ -4,8 +4,6 @@ Hill Carpal is an application to organise Hills Community Aids' programme to pro
 ## Architecture
 The app is a next.js monolith that uses mysql as a database. It also integrates with Auth0 for authentication.
 
-The current version hasn't been deployed yet, but eventually it'll sit on AWS.
-
 ## Running locally
 1. First get a local db running, which is easiest with docker
 ```
@@ -24,25 +22,19 @@ You might end up with an error "Client does not support authentication protocol"
 
 2. Install
 ```
-yarn install
+npm install
 ```
 
-3. Run for development
+3. Get the `.env.local` file that provides certain environment variables from @AlexGilleran. If you skip this step you'll get annoying error messages about a missing client secret.
+
+4. Run for development
 ```
-yarn run dev
+npm run dev
 ```
 
 It'll be available at http://localhost:3000.
 
-4. Huzzah!
+5. Huzzah!
 
 ## Deploying
-
-```bash
-docker build -t hills-carpal-repo .
-docker tag hills-carpal-repo:latest 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com/hills-carpal-repo:<version-number>
-aws ecr get-login-password --region ap-southeast-2 --profile hills-carpal | docker login --username AWS --password-stdin 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com #docker login
-docker push 201335468138.dkr.ecr.ap-southeast-2.amazonaws.com/hills-carpal-repo:<version-number>
-```
-
-Then go to main.tf and change the desired environment to `<version-number>`
+This is automatically deployed to AWS now. Anything that's pushed to master goes to the training environment, anything pushed with a tag goes to the prod environment. You should be able to see the results of the builds on github.
