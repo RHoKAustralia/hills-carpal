@@ -75,6 +75,14 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
         {
           "name": "SMTP_PASSWORD",
           "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret.arn}:SMTP_PASSWORD::"
+        },
+        {
+          "name": "GOOGLE_PRIVATE_KEY",
+          "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret.arn}:GOOGLE_PRIVATE_KEY::"
+        },
+        {
+          "name": "SURVEY_GOOGLE_SHEET_ID",
+          "valueFrom": "${aws_secretsmanager_secret.hills-carpal-secret.arn}:SURVEY_GOOGLE_SHEET_ID::"
         }
       ],
       "environment": [
@@ -83,7 +91,8 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
           {"name": "MYSQL_USE_SSL", "value": "TRUE"},
           {"name": "EXTERNAL_URL", "value": "${var.external_url}"},
           {"name": "REQUIRE_USER_ROLE", "value": "${var.require_user_role}"},
-          {"name": "ENVIRONMENT_NAME", "value": "${var.environment_name}"}
+          {"name": "ENVIRONMENT_NAME", "value": "${var.environment_name}"},
+          {"name": "GOOGLE_SERVICE_ACCOUNT_EMAIL", "value": "hillscarpalsheets@hills-carpal.iam.gserviceaccount.com"}
       ]
     }
   ]
