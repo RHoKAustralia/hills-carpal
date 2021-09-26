@@ -124,9 +124,9 @@ export default class RideRepository {
 
   async setSurvey(id: number, result: CompletePayload, connection: Connection) {
     const escape = (data) => connection.escape(data);
-    console.log(typeof result);
+    
     const query = `
-      INSERT INTO ${this.dbName}.ride_surveys(
+      REPLACE INTO ${this.dbName}.ride_surveys(
         ride_id,
         lateness,
         satisfaction,
@@ -142,7 +142,7 @@ export default class RideRepository {
         ${escape(result.mobilityPermit)},
         ${escape(result.reimbursementAmount)},
         ${escape(result.anythingElse)}
-      )
+      );
     `;
 
     await this.databaseManager.query(query, connection);
