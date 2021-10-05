@@ -9,7 +9,7 @@
     "build:training": "",
     "build:prod": "npm run build",
     "build": "next build",
-    "start": "next start"
+    "start": "db-migrate up && next start"
   },
   "dependencies": {
     "@turf/bbox": "^6.4.0",
