@@ -9,7 +9,7 @@ type SurveyDetails = CompletePayload & {
 
 const writeSurvey = async (survey: SurveyDetails) => {
   const doc = new GoogleSpreadsheet(process.env.SURVEY_GOOGLE_SHEET_ID);
-  const googlePrivateKey = process.env.GOOGLE_PRIVATE_KEY;
+  const googlePrivateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
