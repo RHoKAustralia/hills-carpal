@@ -23,7 +23,7 @@
   },
 
   "auto": {
-    "database": { "ENV": "MYSQL_DB" },
+    "database": "carpal",
     "driver": "mysql",
     "host": { "ENV": "MYSQL_HOST" },
     "port": { "ENV": "MYSQL_PORT" },
