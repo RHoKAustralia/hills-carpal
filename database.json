@@ -22,10 +22,10 @@
     "multipleStatements": true
   },
 
-  "prod": {
+  "auto": {
     "database": { "ENV": "MYSQL_DB" },
     "driver": "mysql",
-    "host": "terraform-20210331115119710700000002.cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com",
+    "host": { "ENV": "MYSQL_HOST" },
     "port": { "ENV": "MYSQL_PORT" },
     "user": { "ENV": "MYSQL_USER" },
     "password": { "ENV": "MYSQL_PW" },
@@ -33,13 +33,24 @@
     "multipleStatements": true
   },
 
+  "prod": {
+    "database": "carpal",
+    "driver": "mysql",
+    "host": "terraform-20210331115119710700000002.cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com",
+    "port": { "ENV": "MYSQL_PORT" },
+    "user": "foo",
+    "password": { "ENV": "SERVICE_MYSQL_PWD" },
+    "flags": { "ENV": "MYSQL_FLAGS" },
+    "multipleStatements": true
+  },
+
   "training": {
-    "database": { "ENV": "MYSQL_DB" },
+    "database": "carpal",
     "driver": "mysql",
     "host": "terraform-20201214143959354100000001.cbmtdkajuu0s.ap-southeast-2.rds.amazonaws.com",
     "port": { "ENV": "MYSQL_PORT" },
-    "user": { "ENV": "MYSQL_USER" },
-    "password": { "ENV": "MYSQL_PW" },
+    "user": "foo",
+    "password": { "ENV": "SERVICE_MYSQL_PWD" },
     "flags": { "ENV": "MYSQL_FLAGS" },
     "multipleStatements": true
   }
