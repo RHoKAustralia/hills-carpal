@@ -33,7 +33,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "mysql": "^2.18.1",
-    "next": "9.3.2",
+    "next": "11.1.1",
     "next-compose-plugins": "^2.2.1",
     "next-images": "^1.8.1",
     "node-cache": "^5.1.2",
