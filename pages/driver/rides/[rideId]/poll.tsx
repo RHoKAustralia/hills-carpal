@@ -6,6 +6,7 @@ import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 import { AuthContext } from '../../../../src/client/auth';
 import {
   CompletePayload,
+  MobilityPermit,
   PickupLateness,
   SatisfactionLevel,
 } from '../../../../src/common/model';
@@ -15,9 +16,12 @@ interface Props {
 }
 
 type SubmitState = 'form' | 'saving' | 'done' | 'error';
+type MobilityPermitTime = Exclude<MobilityPermit, 'neither'>;
 type State = {
   submitState: SubmitState;
-} & Partial<CompletePayload>;
+  mobilityPermitUsed: boolean;
+  mobilityPermitTime: MobilityPermitTime;
+} & Partial<Omit<CompletePayload, 'mobilityPermit'>>;
 
 export default class Poll extends React.Component<Props, State> {
   static contextType = AuthContext;
@@ -25,6 +29,8 @@ export default class Poll extends React.Component<Props, State> {
 
   state: State = {
     submitState: 'form',
+    mobilityPermitUsed: false,
+    mobilityPermitTime: 'both',
   };
 
   static getInitialProps({ query }) {
@@ -52,7 +58,7 @@ export default class Poll extends React.Component<Props, State> {
         lateness: this.state.lateness,
         satisfaction: this.state.satisfaction,
         communicationsIssues: this.state.communicationsIssues,
-        mobilityPermit: this.state.mobilityPermit === true,
+        mobilityPermit: this.state.mobilityPermitUsed ? this.state.mobilityPermitTime  : 'neither',
         reimbursementAmount: this.state.reimbursementAmount,
         anythingElse: this.state.anythingElse,
       }),
@@ -169,10 +175,13 @@ export default class Poll extends React.Component<Props, State> {
                           required
                           onChange={(e) => {
                             this.setState({
-                              mobilityPermit: e.currentTarget.value === 'true',
+                              mobilityPermitUsed:
+                                e.currentTarget.value === 'true',
                             });
                           }}
-                          value={this.state.mobilityPermit ? 'true' : 'false'}
+                          value={
+                            this.state.mobilityPermitUsed ? 'true' : 'false'
+                          }
                           className="custom-select"
                         >
                           <option value="true">Yes</option>
@@ -180,6 +189,28 @@ export default class Poll extends React.Component<Props, State> {
                         </select>
                       </label>
                     </div>
+
+                    {this.state.mobilityPermitUsed && (
+                      <div className="form-group">
+                        <label>
+                          <div>Permit used at *</div>
+                          <select
+                            required
+                            onChange={(e) => {
+                              this.setState({
+                                mobilityPermitTime: e.currentTarget.value as MobilityPermitTime,
+                              });
+                            }}
+                            value={this.state.mobilityPermitTime as string}
+                            className="custom-select"
+                          >
+                            <option value="pickup">Pick Up</option>
+                            <option value="dropoff">Drop Off</option>
+                            <option value="both">Both</option>
+                          </select>
+                        </label>
+                      </div>
+                    )}
 
                     <div className="form-group">
                       <label>

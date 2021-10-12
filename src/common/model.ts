@@ -66,6 +66,7 @@ export interface RideInput extends RideCommon {
 
 export type SatisfactionLevel = 'good' | 'ok' | 'couldBeBetter';
 export type PickupLateness = 'onTime' | 'fiveMinutesLate' | 'didNotHappen';
+export type MobilityPermit = 'start' | 'end' | 'both' | 'neither';
 
 /**
  * Payload for the complete ride endpoint
@@ -74,7 +75,7 @@ export interface CompletePayload {
   lateness: PickupLateness;
   satisfaction: SatisfactionLevel;
   communicationsIssues?: string;
-  mobilityPermit: boolean;
+  mobilityPermit: MobilityPermit;
   reimbursementAmount: number;
   anythingElse?: string;
 }
