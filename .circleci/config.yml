@@ -44,10 +44,10 @@ workflows:
               ignore: /.*/
           requires:
             - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
-          family: "hills-carpal-task-production"
-          cluster-name: "hills-carpal-cluster-production"
-          container-image-name-updates: "container=hills-carpal-task-production,tag=${CIRCLE_SHA1}"
-          service-name: "hills-carpal-service-production"
+          family: "hills-carpal-task-prod"
+          cluster-name: "hills-carpal-cluster-prod"
+          container-image-name-updates: "container=hills-carpal-task-prod,tag=${CIRCLE_SHA1}"
+          service-name: "hills-carpal-service-prod"
 
 
 
