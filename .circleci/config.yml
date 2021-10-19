@@ -18,6 +18,9 @@ workflows:
   build-and-deploy:
     jobs:
       - aws-ecr/build-and-push-image:
+          filters:
+            tags:
+              only: /^v.*/
           repo: "hills-carpal-repo"
           tag: "${CIRCLE_SHA1}"
 
