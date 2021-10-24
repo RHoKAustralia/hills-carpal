@@ -99,10 +99,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     databaseManager.closeConnection(connection);
   }
 };
-function isRideChanged(input: Partial<RideInput>, existingRide: Ride) {
-  console.log(input.pickupTimeAndDate);
-  console.log(existingRide.pickupTimeAndDate);
 
+function isRideChanged(input: Partial<RideInput>, existingRide: Ride) {
   return (
     input.clientId !== existingRide.client.id ||
     input.description !== existingRide.description ||

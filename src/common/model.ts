@@ -75,7 +75,9 @@ export interface CompletePayload {
   lateness: PickupLateness;
   satisfaction: SatisfactionLevel;
   communicationsIssues?: string;
-  mobilityPermit: MobilityPermit;
+  mobilityPermitUsedPickup: boolean;
+  mobilityPermitUsedDropOff: boolean;
+  mobilityPermitUsedOtherAddress?: string;
   reimbursementAmount: number;
   anythingElse?: string;
 }

@@ -16,11 +16,9 @@ interface Props {
 }
 
 type SubmitState = 'form' | 'saving' | 'done' | 'error';
-type MobilityPermitTime = Exclude<MobilityPermit, 'neither'>;
 type State = {
   submitState: SubmitState;
   mobilityPermitUsed: boolean;
-  mobilityPermitTime: MobilityPermitTime;
 } & Partial<Omit<CompletePayload, 'mobilityPermit'>>;
 
 export default class Poll extends React.Component<Props, State> {
@@ -30,7 +28,6 @@ export default class Poll extends React.Component<Props, State> {
   state: State = {
     submitState: 'form',
     mobilityPermitUsed: false,
-    mobilityPermitTime: 'both',
   };
 
   static getInitialProps({ query }) {
@@ -58,7 +55,10 @@ export default class Poll extends React.Component<Props, State> {
         lateness: this.state.lateness,
         satisfaction: this.state.satisfaction,
         communicationsIssues: this.state.communicationsIssues,
-        mobilityPermit: this.state.mobilityPermitUsed ? this.state.mobilityPermitTime  : 'neither',
+        mobilityPermitUsedPickup: this.state.mobilityPermitUsedPickup,
+        mobilityPermitUsedDropOff: this.state.mobilityPermitUsedDropOff,
+        mobilityPermitUsedOtherAddress:
+          this.state.mobilityPermitUsedOtherAddress,
         reimbursementAmount: this.state.reimbursementAmount,
         anythingElse: this.state.anythingElse,
       }),
@@ -191,25 +191,59 @@ export default class Poll extends React.Component<Props, State> {
                     </div>
 
                     {this.state.mobilityPermitUsed && (
-                      <div className="form-group">
-                        <label>
-                          <div>Permit used at *</div>
-                          <select
-                            required
-                            onChange={(e) => {
-                              this.setState({
-                                mobilityPermitTime: e.currentTarget.value as MobilityPermitTime,
-                              });
-                            }}
-                            value={this.state.mobilityPermitTime as string}
-                            className="custom-select"
-                          >
-                            <option value="pickup">Pick Up</option>
-                            <option value="dropoff">Drop Off</option>
-                            <option value="both">Both</option>
-                          </select>
-                        </label>
-                      </div>
+                      <>
+                        <div className="form-group">
+                          <div>Permit used at:</div>
+
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="permit-used-at-pick-up"
+                              checked={this.state.mobilityPermitUsedPickup}
+                              onChange={(e) => {
+                                this.setState({
+                                  mobilityPermitUsedPickup:
+                                    e.currentTarget.checked,
+                                });
+                              }}
+                            />
+                            Pick Up
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="permit-used-at-drop-off"
+                              checked={this.state.mobilityPermitUsedDropOff}
+                              onChange={(e) => {
+                                this.setState({
+                                  mobilityPermitUsedDropOff:
+                                    e.currentTarget.checked,
+                                });
+                              }}
+                            />
+                            Drop Off
+                          </label>
+                        </div>
+
+                        <div className="form-group">
+                          <label>
+                            <div>
+                              If the MPS was used at a "stop" on the Ride,
+                              please tell us the street address or location:
+                            </div>
+                            <input
+                              type="text"
+                              onChange={(e) => {
+                                this.setState({
+                                  mobilityPermitUsedOtherAddress:
+                                    e.currentTarget.value,
+                                });
+                              }}
+                              value={this.state.mobilityPermitUsedOtherAddress}
+                            />
+                          </label>
+                        </div>
+                      </>
                     )}
 
                     <div className="form-group">
