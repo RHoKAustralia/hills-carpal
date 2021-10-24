@@ -131,7 +131,9 @@ export default class RideRepository {
         lateness,
         satisfaction,
         communications_issues,
-        mobility_permit,
+        mobility_permit_used_pickup,
+        mobility_permit_used_dropoff,
+        mobility_permit_stop_address,
         reimbursement_amount,
         anything_else
       ) VALUES (
@@ -139,7 +141,9 @@ export default class RideRepository {
         ${escape(result.lateness)},
         ${escape(result.satisfaction)},
         ${escape(result.communicationsIssues)},
-        ${escape(result.mobilityPermit)},
+        ${escape(result.mobilityPermitUsedPickup || false)},
+        ${escape(result.mobilityPermitUsedDropOff || false)},
+        ${escape(result.mobilityPermitUsedOtherAddress)},
         ${escape(result.reimbursementAmount)},
         ${escape(result.anythingElse)}
       );

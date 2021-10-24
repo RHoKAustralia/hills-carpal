@@ -10,6 +10,7 @@ import {
 import { CompletePayload } from '../../../../src/common/model';
 import isRideInPast from '../../../../src/common/util';
 import writeSurvey from '../../../../src/server/google/sheets';
+import moment from 'moment';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -56,7 +57,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             ...body,
             clientName: newRide.client.name,
             driverName: newRide.driver.name,
-            rideDateTime: newRide.pickupTimeAndDate,
+            rideDateTime: moment(newRide.pickupTimeAndDate),
           })
 
           await databaseManager.commit(connection);

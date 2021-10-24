@@ -13,3 +13,11 @@
 .poll textarea {
     width: 100%;
 }
+
+.poll input[type=text] {
+    width: 100%;
+}
+
+.poll input[type=checkbox] {
+    margin-right: 0.5em;
+}
