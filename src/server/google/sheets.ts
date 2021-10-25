@@ -20,7 +20,7 @@ const writeSurvey = async (survey: SurveyDetails) => {
   const sheet = doc.sheetsByIndex[0];
 
   await sheet.addRow({
-    Timestamp: moment().format('DD/MM/YYYY HH:mm:ss'),
+    Timestamp: moment.tz(process.env.TIMEZONE).format('DD/MM/YYYY HH:mm:ss'),
     "Select your (Driver's) name:": survey.driverName,
     'Date of Ride': survey.rideDateTime.format('DD/MM/YYYY'),
     'Nominated pickup time (AM/PM)': survey.rideDateTime.format('HH:mm:ss'),
