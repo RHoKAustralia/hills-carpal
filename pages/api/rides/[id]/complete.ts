@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import _ from 'lodash';
+import _, { isNil } from 'lodash';
 
 import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
@@ -35,6 +35,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const oldRide = await rideRepository.get(id, connection, true);
           const body = req.body as CompletePayload;
 
+          if (
+            isNil(body.lateness) ||
+            isNil(body.mobilityPermitUsedDropOff) ||
+            isNil(body.mobilityPermitUsedPickup) ||
+            isNil(body.reimbursementAmount) ||
+            isNil(body.satisfaction)
+          ) {
+            res.status(400).json({
+              message: 'Required field was not supplied',
+            });
+            return;
+          }
+
           if (!isRideInPast(oldRide)) {
             res.status(400).json({
               message: "Cannot close ride that's yet to happen",
@@ -58,7 +71,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             clientName: newRide.client.name,
             driverName: newRide.driver.name,
             rideDateTime: moment(newRide.pickupTimeAndDate),
-          })
+          });
 
           await databaseManager.commit(connection);
           res.status(200).json(newRide);
