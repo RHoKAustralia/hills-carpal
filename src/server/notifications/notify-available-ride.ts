@@ -41,7 +41,7 @@ export default async function notifyAvailableRide(
   
           <p>To view and accept this ride, <a href="${
             process.env.EXTERNAL_URL
-          }/driver/rides/${ride.id}/details">click here</a>.</p>
+          }/driver/rides/find">click here</a>.</p>
  
           <p>
             Thanks,<br>
