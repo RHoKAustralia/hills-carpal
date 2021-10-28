@@ -25,7 +25,7 @@ export default async function notifyAvailableRide(
           <p>${
             type === 'new'
               ? 'A new ride has been created'
-              : 'The previous driver has had to withdraw their offer of a ride for'
+              : 'The previous driver has had to withdraw their offer of a ride'
           } for ${ride.client.name} in Hills Carpal, and it needs a driver.</p>
 
           <h3>Details</h3>
