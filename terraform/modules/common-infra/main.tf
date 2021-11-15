@@ -196,22 +196,22 @@ resource "aws_cloudwatch_event_rule" "daily_cron" {
   schedule_expression = "cron(0 22 * * ? *)"
 }
 
-resource "aws_cloudwatch_event_target" "sns" {
+resource "aws_cloudwatch_event_target" "daily_cron_sns" {
   rule      = aws_cloudwatch_event_rule.daily_cron.name
   target_id = "SendToSNS"
-  arn       = aws_sns_topic.daily_cron.arn
+  arn       = aws_sns_topic.daily_cron_sns_topic.arn
 }
 
-resource "aws_sns_topic" "daily_cron" {
+resource "aws_sns_topic" "daily_cron_sns_topic" {
   name = "daily-cron-${var.environment_id}"
 }
 
-resource "aws_sns_topic_policy" "default" {
-  arn    = aws_sns_topic.daily_cron.arn
-  policy = data.aws_iam_policy_document.sns_topic_policy.json
+resource "aws_sns_topic_policy" "daily_cron_sns_topic_policy" {
+  arn    = aws_sns_topic.daily_cron_sns_topic.arn
+  policy = data.aws_iam_policy_document.daily_cron_sns_topic_policy.json
 }
 
-data "aws_iam_policy_document" "sns_topic_policy" {
+data "aws_iam_policy_document" "daily_cron_sns_topic_policy" {
   statement {
     effect  = "Allow"
     actions = ["SNS:Publish"]
@@ -221,14 +221,57 @@ data "aws_iam_policy_document" "sns_topic_policy" {
       identifiers = ["events.amazonaws.com"]
     }
 
-    resources = [aws_sns_topic.daily_cron.arn]
+    resources = [aws_sns_topic.daily_cron_sns_topic.arn]
   }
 }
 
-resource "aws_sns_topic_subscription" "app_sns_target" {
-  topic_arn              = aws_sns_topic.daily_cron.arn
+resource "aws_sns_topic_subscription" "daily_cron_sns_target" {
+  topic_arn              = aws_sns_topic.daily_cron_sns_topic.arn
   protocol               = "https"
   endpoint               = "${var.external_url}/api/send-reminders"
+  endpoint_auto_confirms = true
+}
+
+resource "aws_cloudwatch_event_rule" "half_hourly_cron" {
+  name        = "half_hourly_cron-${var.environment_id}"
+  description = "Half-hourly cron"
+
+  schedule_expression = "cron(0,30 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "half_hourly_cron_sns" {
+  rule      = aws_cloudwatch_event_rule.half_hourly_cron.name
+  target_id = "SendToSNS"
+  arn       = aws_sns_topic.half_hourly_cron_sns_topic.arn
+}
+
+resource "aws_sns_topic" "half_hourly_cron_sns_topic" {
+  name = "half-hourly-cron-${var.environment_id}"
+}
+
+resource "aws_sns_topic_policy" "half_hourly_cron_sns_topic_policy" {
+  arn    = aws_sns_topic.half_hourly_cron_sns_topic.arn
+  policy = data.aws_iam_policy_document.half_hourly_cron_sns_topic_policy.json
+}
+
+data "aws_iam_policy_document" "half_hourly_cron_sns_topic_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    resources = [aws_sns_topic.half_hourly_cron_sns_topic.arn]
+  }
+}
+
+resource "aws_sns_topic_subscription" "half_hourly_cron_sns_target" {
+  topic_arn              = aws_sns_topic.half_hourly_cron_sns_topic.arn
+  protocol               = "https"
+  endpoint               = "${var.external_url}/api/backup-rides"
   endpoint_auto_confirms = true
 }
 
