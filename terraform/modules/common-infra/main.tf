@@ -233,10 +233,10 @@ resource "aws_sns_topic_subscription" "daily_cron_sns_target" {
 }
 
 resource "aws_cloudwatch_event_rule" "half_hourly_cron" {
-  name        = "half_hourly_cron-${var.environment_id}"
+  name        = "half-hourly-cron-${var.environment_id}"
   description = "Half-hourly cron"
 
-  schedule_expression = "cron(0,30 * * ? *)"
+  schedule_expression = "rate(30 minutes)"
 }
 
 resource "aws_cloudwatch_event_target" "half_hourly_cron_sns" {

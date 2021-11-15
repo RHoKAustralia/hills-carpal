@@ -37,34 +37,34 @@ export default (
     try {
       switch (method) {
         case 'POST':
-        //   const message = await new Promise<SnsMessage>((resolve, reject) => {
-        //     snsValidator.validate(req.body, (err, message) => {
-        //       if (err) {
-        //         reject(err);
-        //       } else {
-        //         resolve(message as SnsMessage);
-        //       }
-        //     });
-        //   });
+          const message = await new Promise<SnsMessage>((resolve, reject) => {
+            snsValidator.validate(req.body, (err, message) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(message as SnsMessage);
+              }
+            });
+          });
 
-        //   if (message.Type === 'SubscriptionConfirmation') {
-        //     // This is a subscriptionconfirmation - we have to call the subscribe url in the request
-        //     // otherwise we won't get notifications
-        //     const subscribeRes = await fetch(message.SubscribeURL);
+          if (message.Type === 'SubscriptionConfirmation') {
+            // This is a subscriptionconfirmation - we have to call the subscribe url in the request
+            // otherwise we won't get notifications
+            const subscribeRes = await fetch(message.SubscribeURL);
 
-        //     if (!subscribeRes.ok) {
-        //       throw new Error(
-        //         `Failed to respond to subscribe confirmation event with response ${
-        //           subscribeRes.status
-        //         } and event ${JSON.stringify(message)}`
-        //       );
-        //     }
+            if (!subscribeRes.ok) {
+              throw new Error(
+                `Failed to respond to subscribe confirmation event with response ${
+                  subscribeRes.status
+                } and event ${JSON.stringify(message)}`
+              );
+            }
 
-        //     res.status(200).end();
-        //   } else if (message.Type === 'Notification') {
+            res.status(200).end();
+          } else if (message.Type === 'Notification') {
             // this is a notification - this means that the cron job has gone off
             await fn(req, res);
-        //   }
+          }
 
           break;
         default:
