@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import _ from 'lodash';
-import fetch from 'node-fetch';
 import moment from 'moment';
 
 import snsValidatorEndpoint from '../../src/server/api/sns-validator-endpoint';

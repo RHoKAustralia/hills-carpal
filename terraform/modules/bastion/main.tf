@@ -1,11 +1,10 @@
 resource "aws_default_vpc" "default" {}
 
 data "aws_ami" "ubuntu" {
-  most_recent = true
-
+  # most_recent = true
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20211115"]
   }
 
   filter {
