@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { CompletePayload, Ride } from '../../common/model';
 
 const googlePrivateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
