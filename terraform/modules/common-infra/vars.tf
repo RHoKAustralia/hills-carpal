@@ -48,3 +48,5 @@ variable "environment_name" {
 }
 
 variable "db_instance" {}
+
+variable "backup_google_sheet_id" {}

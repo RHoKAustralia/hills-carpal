@@ -92,7 +92,8 @@ resource "aws_ecs_task_definition" "hills-carpal-task" {
           {"name": "EXTERNAL_URL", "value": "${var.external_url}"},
           {"name": "REQUIRE_USER_ROLE", "value": "${var.require_user_role}"},
           {"name": "ENVIRONMENT_NAME", "value": "${var.environment_name}"},
-          {"name": "GOOGLE_SERVICE_ACCOUNT_EMAIL", "value": "hillscarpalsheets@hills-carpal.iam.gserviceaccount.com"}
+          {"name": "GOOGLE_SERVICE_ACCOUNT_EMAIL", "value": "hillscarpalsheets@hills-carpal.iam.gserviceaccount.com"},
+          {"name": "BACKUP_GOOGLE_SHEET_ID", "value": "${var.backup_google_sheet_id}"}
       ]
     }
   ]

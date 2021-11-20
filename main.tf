@@ -102,7 +102,7 @@ module "bastion" {
 
 module "prod" {
   source                  = "./terraform/modules/common-infra"
-  docker_image_tag        = "082e511489bd55ad85c165ae5ec3ce00d497d2f0"
+  docker_image_tag        = "f868087c2a10689b90cebfead2a57ab922fce5f1"
   environment_id          = "prod"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
   hills_carpal_repo       = aws_ecr_repository.hills-carpal-repo
@@ -117,11 +117,12 @@ module "prod" {
   load_balancer           = aws_alb.application_load_balancer
   load_balancer_port      = 80
   db_instance             = module.prod_db.db
+  backup_google_sheet_id  = "1MFfENxjTsva5NZbzi9ArF2JS9NHv4ZxfkA0IJzhp8rM"
 }
 
 module "training" {
   source                  = "./terraform/modules/common-infra"
-  docker_image_tag        = "082e511489bd55ad85c165ae5ec3ce00d497d2f0"
+  docker_image_tag        = "ad5058328d59ee40e0f318fa668dca207a51ed2d"
   environment_id          = "training"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
   hills_carpal_repo       = aws_ecr_repository.hills-carpal-repo
@@ -136,4 +137,5 @@ module "training" {
   load_balancer           = aws_alb.application_load_balancer
   load_balancer_port      = 1024
   db_instance             = module.dev_db.db
+  backup_google_sheet_id  = "190aMCZO9QwXU-9dIep6OPkadc4-8T4kW0cHEO8gEXp4"
 }
