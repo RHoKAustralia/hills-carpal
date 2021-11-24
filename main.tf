@@ -102,7 +102,7 @@ module "bastion" {
 
 module "prod" {
   source                  = "./terraform/modules/common-infra"
-  docker_image_tag        = "f868087c2a10689b90cebfead2a57ab922fce5f1"
+  docker_image_tag        = "ad5058328d59ee40e0f318fa668dca207a51ed2d"
   environment_id          = "prod"
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role
   hills_carpal_repo       = aws_ecr_repository.hills-carpal-repo
