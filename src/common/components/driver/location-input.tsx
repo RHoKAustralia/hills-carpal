@@ -85,7 +85,7 @@ class LocationInput extends Component<Props> {
       longitude: value.center[0],
       latitude: value.center[1],
       postCode: LocationInput.getValueFromContext('postcode', value),
-      suburb: LocationInput.getValueFromContext('suburb', value),
+      suburb: LocationInput.getValueFromContext('locality', value),
     });
   };
 
