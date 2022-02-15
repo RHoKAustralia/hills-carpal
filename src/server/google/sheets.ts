@@ -23,8 +23,8 @@ const writeSurvey = async (survey: SurveyDetails) => {
   await sheet.addRow({
     Timestamp: moment.tz(process.env.TIMEZONE).format('DD/MM/YYYY HH:mm:ss'),
     "Select your (Driver's) name:": survey.driverName,
-    'Date of Ride': survey.rideDateTime.format('DD/MM/YYYY'),
-    'Nominated pickup time (AM/PM)': survey.rideDateTime.format('HH:mm:ss'),
+    'Date of Ride': survey.rideDateTime.tz(process.env.TIMEZONE).format('DD/MM/YYYY'),
+    'Nominated pickup time (AM/PM)': survey.rideDateTime.tz(process.env.TIMEZONE).format('HH:mm:ss'),
     'Select the name of the client who was transported': survey.clientName,
     'Tell us about the pickup': survey.lateness,
     'Overall, how satisfied are you about the Ride?': survey.satisfaction,
