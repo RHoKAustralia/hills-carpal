@@ -42,27 +42,28 @@ interface State {
   rideCreatedTimeAndDate: Date;
 }
 
+const blankState: State = {
+  clientId: null,
+  pickupTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
+  locationTo: undefined,
+  locationFrom: undefined,
+  description: '',
+  status: 'OPEN',
+  driver: null,
+  clients: [],
+  selectedClientId: -1,
+  loading: false,
+  loadingError: null,
+  updating: false,
+  updatingError: null,
+  originalRideState: undefined,
+  rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
+};
 class Ride extends Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
-  state: State = {
-    clientId: null,
-    pickupTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
-    locationTo: undefined,
-    locationFrom: undefined,
-    description: '',
-    status: 'OPEN',
-    driver: null,
-    clients: [],
-    selectedClientId: -1,
-    loading: false,
-    loadingError: null,
-    updating: false,
-    updatingError: null,
-    originalRideState: undefined,
-    rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
-  };
+  state: State = blankState;
 
   static getInitialProps({ query }) {
     return {
@@ -70,11 +71,27 @@ class Ride extends Component<Props, State> {
     };
   }
 
+  async componentDidUpdate(
+    prevProps: Readonly<Props>,
+    prevState: Readonly<State>,
+    snapshot?: any
+  ) {
+    if (this.props.id !== prevProps.id) {
+      console.log(this.props.id);
+      console.log(prevProps.id);
+      this.update();
+    }
+  }
+
   async componentDidMount() {
     if (!isAuthedWithRole(this.context, 'facilitator')) {
       return;
     }
 
+    this.update();
+  }
+
+  async update() {
     this.setState({ loading: true, loadingError: null });
 
     const ridePromise = (async () => {
@@ -108,6 +125,8 @@ class Ride extends Component<Props, State> {
         });
 
         return data;
+      } else {
+        this.setState(blankState);
       }
     })();
 
@@ -256,6 +275,15 @@ class Ride extends Component<Props, State> {
             <button className="btn btn-primary" type="submit">
               Save
             </button>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            {this.props.id ? (
+              <Link href={'/facilitator/rides/create'}>
+                <a className="btn btn-secondary">Duplicate</a>
+              </Link>
+            ) : (
+              <button className="btn btn-secondary" disabled={true}>Duplicate</button>
+            )}
           </div>
           <div className="btn-group mr-2" role="group">
             <Link href={'/facilitator'}>
