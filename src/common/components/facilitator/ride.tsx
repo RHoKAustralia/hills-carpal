@@ -22,6 +22,7 @@ import isAuthedWithRole from '../../redirect-if-no-role';
 
 interface Props {
   id?: number;
+  duplicate?: number;
 }
 
 interface State {
@@ -68,6 +69,7 @@ class Ride extends Component<Props, State> {
   static getInitialProps({ query }) {
     return {
       id: query.id && Number.parseInt(query.id),
+      duplicate: query.duplicate && Number.parseInt(query.duplicate)
     };
   }
 
@@ -77,9 +79,7 @@ class Ride extends Component<Props, State> {
     snapshot?: any
   ) {
     if (this.props.id !== prevProps.id) {
-      console.log(this.props.id);
-      console.log(prevProps.id);
-      this.update();
+      this.fetchData();
     }
   }
 
@@ -88,45 +88,46 @@ class Ride extends Component<Props, State> {
       return;
     }
 
-    this.update();
+    this.fetchData();
   }
 
-  async update() {
+  async fetchData() {
     this.setState({ loading: true, loadingError: null });
 
     const ridePromise = (async () => {
       if (this.props.id) {
-        const res = await fetch('/api/rides/' + this.props.id, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-          },
-        });
-
-        if (!res.ok) {
-          throw new Error('Bad response when getting rides');
-        }
-
-        const data = await res.json();
-        const client = this.state.clients.find(
-          (c: Client) => c.name === data.client
-        );
-        let clientId = -1;
-        if (client) {
-          clientId = client.id;
-        }
-        data.selectedClientId = clientId;
+        const data = await this.fetchRide(this.props.id);
+        
         this.setState({
           ...data,
           pickupTimeAndDate: moment.tz(
             data.pickupTimeAndDate,
             process.env.TIMEZONE
           ),
+          clientId: data.client.id,
+          selectedClientId: data.client.id,
           originalRideState: data,
         });
 
         return data;
+      } else if (this.props.duplicate) {
+        const data = await this.fetchRide(this.props.duplicate)
+        
+        this.setState({
+          clientId: data.client.id,
+          pickupTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
+          locationTo: data.locationTo,
+          locationFrom: data.locationFrom,
+          description: data.description,
+          status: data.status,
+          driver: null,
+          selectedClientId: data.client.id,
+          originalRideState: undefined,
+          rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
+        });
       } else {
         this.setState(blankState);
+        return {}
       }
     })();
 
@@ -149,10 +150,6 @@ class Ride extends Component<Props, State> {
 
       this.setState({ clients: data });
 
-      if (data.length) {
-        this.setNewClient(data[0].id, data);
-      }
-
       return data;
     })();
 
@@ -162,7 +159,7 @@ class Ride extends Component<Props, State> {
           loading: false,
         });
 
-        const clientId = (data && data.client.id) || clients[0].id;
+        const clientId = this.state.clientId || clients[0].id;
         const client = clients.find((c) => c.id === clientId);
 
         this.setState((state: State) => ({
@@ -252,6 +249,22 @@ class Ride extends Component<Props, State> {
       });
   };
 
+  private async fetchRide(rideId: number) : Promise<ModelRide> {
+    const res = await fetch('/api/rides/' + rideId, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error('Bad response when getting rides');
+    }
+
+    const data = await res.json();
+
+    return data;
+  }
+
   getHeadline() {
     if (this.props.id) {
       return <h1>Edit ride</h1>;
@@ -278,7 +291,7 @@ class Ride extends Component<Props, State> {
           </div>
           <div className="btn-group mr-2" role="group">
             {this.props.id ? (
-              <Link href={'/facilitator/rides/create'}>
+              <Link href={`/facilitator/rides/create?duplicate=${this.props.id}`} >
                 <a className="btn btn-secondary">Duplicate</a>
               </Link>
             ) : (
