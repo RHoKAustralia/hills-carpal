@@ -69,7 +69,7 @@ class Ride extends Component<Props, State> {
   static getInitialProps({ query }) {
     return {
       id: query.id && Number.parseInt(query.id),
-      duplicate: query.duplicate && Number.parseInt(query.duplicate)
+      duplicate: query.duplicate && Number.parseInt(query.duplicate),
     };
   }
 
@@ -97,22 +97,26 @@ class Ride extends Component<Props, State> {
     const ridePromise = (async () => {
       if (this.props.id) {
         const data = await this.fetchRide(this.props.id);
-        
+
         this.setState({
-          ...data,
-          pickupTimeAndDate: moment.tz(
-            data.pickupTimeAndDate,
-            process.env.TIMEZONE
-          ),
           clientId: data.client.id,
+          pickupTimeAndDate: moment
+            .tz(data.pickupTimeAndDate, process.env.TIMEZONE)
+            .toDate(),
+          locationTo: data.locationTo,
+          locationFrom: data.locationFrom,
+          description: data.description,
+          status: data.status,
+          driver: data.driver,
           selectedClientId: data.client.id,
           originalRideState: data,
+          rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate()
         });
 
         return data;
       } else if (this.props.duplicate) {
-        const data = await this.fetchRide(this.props.duplicate)
-        
+        const data = await this.fetchRide(this.props.duplicate);
+
         this.setState({
           clientId: data.client.id,
           pickupTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
@@ -127,7 +131,7 @@ class Ride extends Component<Props, State> {
         });
       } else {
         this.setState(blankState);
-        return {}
+        return {};
       }
     })();
 
@@ -249,7 +253,7 @@ class Ride extends Component<Props, State> {
       });
   };
 
-  private async fetchRide(rideId: number) : Promise<ModelRide> {
+  private async fetchRide(rideId: number): Promise<ModelRide> {
     const res = await fetch('/api/rides/' + rideId, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
@@ -291,11 +295,15 @@ class Ride extends Component<Props, State> {
           </div>
           <div className="btn-group mr-2" role="group">
             {this.props.id ? (
-              <Link href={`/facilitator/rides/create?duplicate=${this.props.id}`} >
+              <Link
+                href={`/facilitator/rides/create?duplicate=${this.props.id}`}
+              >
                 <a className="btn btn-secondary">Duplicate</a>
               </Link>
             ) : (
-              <button className="btn btn-secondary" disabled={true}>Duplicate</button>
+              <button className="btn btn-secondary" disabled={true}>
+                Duplicate
+              </button>
             )}
           </div>
           <div className="btn-group mr-2" role="group">
