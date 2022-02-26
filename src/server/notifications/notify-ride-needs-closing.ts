@@ -20,7 +20,7 @@ export default async function notifyRideNeedsClosing(ride: Ride) {
 
   await sendEmail({
     to: driver.email,
-    subject: `Hills Carpal needs feedback from your ride for ${ride.client.name}`,
+    subject: `Hills Carpal needs feedback from your ride for ${ride.client.name} at ${formattedRideDate}`,
     html: `
       <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 
