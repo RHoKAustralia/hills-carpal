@@ -13,18 +13,20 @@ export default async function notifyCancelled(ride: Ride) {
     `Sending cancellation notification to ${driver.email} for ride ${ride.id}`
   );
 
+  const formattedDate = moment
+    .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
+    .format(process.env.DATE_FORMAT);
+
   await sendEmail({
     to: driver.email,
-    subject: `Hills Carpal ride for ${ride.client.name} has been cancelled`,
+    subject: `Hills Carpal ride for ${ride.client.name} at ${formattedDate} has been cancelled`,
     html: `
           <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 
           <p>
             The ride you accepted for ${ride.client.name} from
             ${ride.locationFrom.placeName} to ${ride.locationTo.placeName} at 
-            ${moment
-              .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-              .format(process.env.DATE_FORMAT)} by facilitator
+            ${formattedDate} by facilitator
             ${ride.facilitatorEmail} is no longer needed. Thanks for 
             accepting it!
           </p>

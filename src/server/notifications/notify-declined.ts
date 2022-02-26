@@ -20,7 +20,7 @@ export default async function notifyDeclined(ride: Ride) {
 
   await sendEmail({
     to: ride.facilitatorEmail,
-    subject: `Hills Carpal ride for ${ride.client.name} has been withdrawn from by ${ride.driver.name}`,
+    subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} has been withdrawn from by ${ride.driver.name}`,
     html: `
           <p>Hi ${
             facilitator

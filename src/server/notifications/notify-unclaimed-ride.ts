@@ -19,7 +19,7 @@ export default async function notifyUnclaimedRide(ride: Ride) {
 
     await sendEmail({
       to: driver.email,
-      subject: `Hills Carpal ride for ${ride.client.name} still doesn't have a driver!`,
+      subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} still doesn't have a driver!`,
       html: `
           <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 

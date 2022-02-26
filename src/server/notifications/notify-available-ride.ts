@@ -16,9 +16,13 @@ export default async function notifyAvailableRide(
       `Sending new ride notification for ride ${ride.id} to ${driver.email} `
     );
 
+    const formattedDate = moment
+      .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
+      .format(process.env.DATE_FORMAT);
+
     await sendEmail({
       to: driver.email,
-      subject: `Hills Carpal: Driver needed for ${ride.client.name}`,
+      subject: `Hills Carpal: Driver needed for ${ride.client.name} at ${formattedDate}`,
       html: `
           <p>Hi ${driver.given_name || driver.nickname || ''},</p>
 
@@ -32,9 +36,7 @@ export default async function notifyAvailableRide(
           <p>
             <strong>From:</strong> ${ride.locationFrom.placeName} <br>
             <strong>To:</strong> ${ride.locationTo.placeName} <br>
-            <strong>Time:</strong> ${moment
-              .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-              .format(process.env.DATE_FORMAT)} <br>
+            <strong>Time:</strong> ${formattedDate} <br>
             <strong>Facilitator:</strong> ${ride.facilitatorEmail} <br>
             <strong>Description:</strong> ${ride.description} <br>
           </p>
