@@ -8,6 +8,7 @@ import { Ride, RideStatus } from '../../../common/model';
 import notifyDeclined from '../../notifications/notify-declined';
 import isRideInPast from '../../../common/util';
 import notifyAvailableRide from '../../notifications/notify-available-ride';
+import notifyOffered from '../../notifications/notify-offered';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -54,12 +55,14 @@ export default (statusToChangeTo: RideStatus) =>
               connection
             );
 
-            if (statusToChangeTo === 'OPEN') {
-              notifyDeclined(oldRide);
-              notifyAvailableRide(oldRide, 'declined');
-            }
-
             const newRide = await rideRepository.get(id, connection);
+
+            if (statusToChangeTo === 'OPEN') {
+              await notifyDeclined(oldRide);
+              await notifyAvailableRide(oldRide, 'declined');
+            } else if (statusToChangeTo === 'CONFIRMED') {
+              await notifyOffered(newRide) 
+            }
 
             await databaseManager.commit(connection);
             res.status(200).json(newRide);
