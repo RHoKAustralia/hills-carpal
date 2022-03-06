@@ -18,18 +18,25 @@ export default async function notifyOffered(ride: Ride) {
     .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
     .format(process.env.DATE_FORMAT);
 
+  const driver = await managementClient.getUser({ id: ride.driver.id });
+
   await sendEmail({
     to: ride.facilitatorEmail,
     subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} has been offered by ${ride.driver.name}`,
     html: `
           <p>Hi ${
             facilitator
-              ? facilitator.given_name || facilitator.nickname || ''
+              ? facilitator.given_name ||
+                facilitator.nickname ||
+                facilitator.name ||
+                ''
               : ''
           },</p>
 
           <p>
-            ${ride.driver.name} has offered to take ${ride.client.name} from
+            ${ride.driver.name} (${driver.email}) has offered to take ${
+      ride.client.name
+    } from
             ${ride.locationFrom.placeName} to ${ride.locationTo.placeName} at 
             ${formattedRideDate}.
           </p>

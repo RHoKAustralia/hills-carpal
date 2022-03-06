@@ -22,7 +22,7 @@ export default async function notifyRideNeedsClosing(ride: Ride) {
     to: driver.email,
     subject: `Hills Carpal needs feedback from your ride for ${ride.client.name} at ${formattedRideDate}`,
     html: `
-      <p>Hi ${driver.given_name || driver.nickname || ''},</p>
+      <p>Hi ${driver.given_name || driver.nickname || driver.name || ''},</p>
 
       <p>
         We still haven't received feedback for the ride you gave to ${
