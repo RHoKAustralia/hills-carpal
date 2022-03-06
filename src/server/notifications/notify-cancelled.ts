@@ -21,7 +21,9 @@ export default async function notifyCancelled(ride: Ride) {
     to: driver.email,
     subject: `Hills Carpal ride for ${ride.client.name} at ${formattedDate} has been cancelled`,
     html: `
-          <p>Hi ${driver.given_name || driver.nickname || ''},</p>
+          <p>Hi ${
+            driver.given_name || driver.nickname || driver.name || ''
+          },</p>
 
           <p>
             The ride you accepted for ${ride.client.name} from

@@ -48,3 +48,7 @@ export async function getUsersInRole(
     return users;
   }
 }
+
+export async function getUser(userId: string): Promise<auth0.User<auth0.AppMetadata, auth0.UserMetadata>> {
+  return managementClient.getUser({id: userId})
+}

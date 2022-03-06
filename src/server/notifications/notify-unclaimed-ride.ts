@@ -21,7 +21,9 @@ export default async function notifyUnclaimedRide(ride: Ride) {
       to: driver.email,
       subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} still doesn't have a driver!`,
       html: `
-          <p>Hi ${driver.given_name || driver.nickname || ''},</p>
+          <p>Hi ${
+            driver.given_name || driver.nickname || driver.name || ''
+          },</p>
 
           <p>A ride for ${
             ride.client.name

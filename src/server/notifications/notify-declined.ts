@@ -24,7 +24,10 @@ export default async function notifyDeclined(ride: Ride) {
     html: `
           <p>Hi ${
             facilitator
-              ? facilitator.given_name || facilitator.nickname || ''
+              ? facilitator.given_name ||
+                facilitator.nickname ||
+                facilitator.name ||
+                ''
               : ''
           },</p>
 

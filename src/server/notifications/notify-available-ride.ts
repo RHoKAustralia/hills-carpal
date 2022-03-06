@@ -24,7 +24,9 @@ export default async function notifyAvailableRide(
       to: driver.email,
       subject: `Hills Carpal: Driver needed for ${ride.client.name} at ${formattedDate}`,
       html: `
-          <p>Hi ${driver.given_name || driver.nickname || ''},</p>
+          <p>Hi ${
+            driver.given_name || driver.nickname || driver.name || ''
+          },</p>
 
           <p>${
             type === 'new'
