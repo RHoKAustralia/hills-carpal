@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment-timezone';
 import ImageGallery from 'react-image-gallery';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
 
 import DriverMap from '../../../../src/common/components/driver/driver-map';
 import { AuthContext } from '../../../../src/client/auth';
@@ -280,9 +281,15 @@ export default class RideDetail extends React.Component<Props, State> {
               <dt>Facilitator Email</dt>
               <dd>{this.state.ride.facilitatorEmail}</dd>
               <dt>Client Description</dt>
-              <dd>{this.state.ride.client.clientDescription}</dd>
+              <dd>
+                <ReactMarkdown>
+                  {this.state.ride.client.clientDescription}
+                </ReactMarkdown>
+              </dd>
               <dt>Ride Description</dt>
-              <dd>{this.state.ride.description}</dd>
+              <dd>
+                <ReactMarkdown>{this.state.ride.description}</ReactMarkdown>
+              </dd>
             </dl>
 
             <h5>Directions</h5>
