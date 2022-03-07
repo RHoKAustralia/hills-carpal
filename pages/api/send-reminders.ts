@@ -8,6 +8,7 @@ import RideRepository from '../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../src/server/api/database/database-manager';
 import notifyUnclaimedRide from '../../src/server/notifications/notify-unclaimed-ride';
 import notifyRideNeedsClosing from '../../src/server/notifications/notify-ride-needs-closing';
+import remindDriverOfRide from '../../src/server/notifications/remind-driver-ride';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -57,14 +58,30 @@ export default snsValidatorEndpoint(
         connection
       );
 
+      const rideReminderFromDate = startOfToday.clone().add(1, 'days');
+      const rideReminderToDate = startOfToday.clone().add(2, 'days');
+      const rideReminderRides = await rideRepository.list(
+        {
+          filters: {
+            status: 'CONFIRMED',
+            date: {
+              from: rideReminderFromDate,
+              to: rideReminderToDate,
+            },
+          },
+          size: Number.MAX_SAFE_INTEGER,
+        },
+        connection
+      );
+
       // SNS will only wait 15 seconds before retrying and this might take
       // way longer, so return a 200 before actually sending emails
       res.status(200).send('');
 
+      console.log('Received reminder notification');
+
       console.log(
-        'Received reminder notification, sending reminders for ' +
-          unclaimedRides.length +
-          ' rides'
+        'Sending unclaimed reminders for ' + unclaimedRides.length + ' rides'
       );
 
       // We do these one by one so that we don't hit a rate limit on SES
@@ -73,12 +90,19 @@ export default snsValidatorEndpoint(
       }
 
       console.log(
-        'Received unclosed notification, sending reminders for ' +
-          closingReminderRides.length +
-          ' rides'
+        'Sending close reminders for ' + closingReminderRides.length + ' rides'
       );
       for (let ride of closingReminderRides) {
         await notifyRideNeedsClosing(ride);
+      }
+
+      console.log(
+        'Sending imminent ride reminders for ' +
+          rideReminderRides.length +
+          ' rides'
+      );
+      for (let ride of rideReminderRides) {
+        await remindDriverOfRide(ride);
       }
     } catch (e) {
       console.error(e);
