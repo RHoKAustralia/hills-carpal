@@ -3,6 +3,7 @@ import moment from 'moment-timezone';
 import ImageGallery from 'react-image-gallery';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import DriverMap from '../../../../src/common/components/driver/driver-map';
 import { AuthContext } from '../../../../src/client/auth';
@@ -288,7 +289,9 @@ export default class RideDetail extends React.Component<Props, State> {
               </dd>
               <dt>Ride Description</dt>
               <dd>
-                <ReactMarkdown>{this.state.ride.description}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {this.state.ride.description}
+                </ReactMarkdown>
               </dd>
             </dl>
 
