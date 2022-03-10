@@ -44,8 +44,10 @@
     "react-dropzone": "^10.2.2",
     "react-image-gallery": "^1.1.1",
     "react-leaflet": "^2.8.0",
+    "react-markdown": "^6.0.3",
     "react-select": "^3.2.0",
     "react-table-v6": "^6.8.6",
+    "remark-gfm": "^1.0.0",
     "sns-validator": "^0.3.4",
     "turf-linestring": "^1.0.2"
   },
