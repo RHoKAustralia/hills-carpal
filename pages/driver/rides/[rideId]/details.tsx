@@ -10,7 +10,7 @@ import { AuthContext } from '../../../../src/client/auth';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
 import '../../../../src/common/components/driver/ride-detail.css';
-import { Ride, Image } from '../../../../src/common/model';
+import { Ride, Image, Location } from '../../../../src/common/model';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 import isRideInPast from '../../../../src/common/util';
 
@@ -26,6 +26,9 @@ interface State {
   updateError?: Error;
   error?: Error;
 }
+
+const formatAddress = (location: Location) =>
+  encodeURIComponent(`${location.placeName ?? ''} ${location.suburb ?? ''}`);
 
 export default class RideDetail extends React.Component<Props, State> {
   static contextType = AuthContext;
@@ -297,6 +300,18 @@ export default class RideDetail extends React.Component<Props, State> {
 
             <h5>Directions</h5>
             <DriverMap rides={[this.state.ride]} />
+            <a
+              className="btn btn-outline btn-secondary ride-detail__google-maps-button"
+              target="blank"
+              ref="nofollower noreferrer"
+              href={`https://www.google.com/maps/dir/?api=1&waypoints=${formatAddress(
+                this.state.ride.locationFrom
+              )}&destination=${formatAddress(
+                this.state.ride.locationTo
+              )}&travelmode=driving&`}
+            >
+              Open in Google Maps
+            </a>
 
             <h5>Images</h5>
             <div className="ride-detail__image-gallery">
