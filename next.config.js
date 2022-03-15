@@ -16,7 +16,7 @@ module.exports = withPlugins([
           process.env.REACT_APP_UNSAFE_GOD_MODE || false,
         DATE_FORMAT: process.env.DATE_FORMAT || 'DD/MM/YYYY hh:mma',
         TIMEZONE: process.env.TIMEZONE || 'Australia/Sydney',
-        REMINDER_DIFFERENCE_DAYS: process.env.REMINDER_DIFFERENCE_DAYS || '2'
+        REMINDER_DIFFERENCE_DAYS: process.env.REMINDER_DIFFERENCE_DAYS || '3'
       },
       publicRuntimeConfig: {
         // For putting a role (e.g. "training") that users must have
