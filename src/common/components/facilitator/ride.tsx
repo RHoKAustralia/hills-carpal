@@ -110,7 +110,7 @@ class Ride extends Component<Props, State> {
           driver: data.driver,
           selectedClientId: data.client.id,
           originalRideState: data,
-          rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate()
+          rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
         });
 
         return data;
@@ -276,7 +276,7 @@ class Ride extends Component<Props, State> {
     return <h1>Create new ride</h1>;
   }
 
-  buttons() {
+  buttons(disabled: boolean) {
     if (this.state.updating) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
     } else {
@@ -289,7 +289,11 @@ class Ride extends Component<Props, State> {
             </span>
           )}
           <div className="btn-group mr-2" role="group">
-            <button className="btn btn-primary" type="submit">
+            <button
+              disabled={disabled}
+              className="btn btn-primary"
+              type="submit"
+            >
               Save
             </button>
           </div>
@@ -349,14 +353,15 @@ class Ride extends Component<Props, State> {
       );
     }
 
-    const dateInFuture = moment(this.state.pickupTimeAndDate).isAfter(
-      moment.now()
-    );
-    const cannotReopen =
-      !dateInFuture && this.state.originalRideState?.status === 'CANCELLED';
-    const disabled =
+    const dateInPast =
       this.state.originalRideState &&
-      this.state.originalRideState.status !== 'OPEN';
+      moment(this.state.originalRideState.pickupTimeAndDate).isBefore(
+        moment.now()
+      );
+    const disabled =
+      (this.state.originalRideState &&
+        this.state.originalRideState.status !== 'OPEN') ||
+      dateInPast;
 
     return (
       <React.Fragment>
@@ -364,8 +369,15 @@ class Ride extends Component<Props, State> {
         <form onSubmit={this.handleSubmit}>
           {disabled && (
             <p className="alert alert-warning" role="alert">
-              This ride can't be edited because the status is{' '}
-              {this.state.originalRideState?.status}
+              {this.state.originalRideState && // don't change this to originalRideState?.status, it's not the same!!
+              this.state.originalRideState.status !== 'OPEN' ? (
+                <>
+                  This ride can't be edited because the status is{' '}
+                  {this.state.originalRideState?.status}
+                </>
+              ) : (
+                <>This ride can't be edited because it occurred in the past</>
+              )}
             </p>
           )}
           <div className="form-group">
@@ -395,6 +407,7 @@ class Ride extends Component<Props, State> {
             <DatePicker
               required
               disabled={disabled}
+              minDate={new Date()}
               value={moment
                 .tz(
                   this.state.pickupTimeAndDate || Date.now(),
@@ -473,21 +486,22 @@ class Ride extends Component<Props, State> {
                       status: e.currentTarget.value as RideStatus,
                     });
                   }}
+                  disabled={disabled}
                   value={this.state.status}
                   className="custom-select"
                 >
-                  <option value="OPEN" disabled={cannotReopen}>
+                  <option value="OPEN">
                     Open
                   </option>
                   <option
                     value="CONFIRMED"
-                    disabled={!this.state.driver || cannotReopen}
+                    disabled={!this.state.driver}
                   >
                     Confirmed
                   </option>
                   <option
                     value="ENDED"
-                    disabled={!this.state.driver || cannotReopen}
+                    disabled={!this.state.driver}
                   >
                     Ended
                   </option>
@@ -502,7 +516,7 @@ class Ride extends Component<Props, State> {
               )}
             </React.Fragment>
           )}
-          {this.buttons()}
+          {this.buttons(disabled)}
         </form>
       </React.Fragment>
     );
