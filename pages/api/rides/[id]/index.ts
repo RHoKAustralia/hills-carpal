@@ -32,7 +32,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // ride must be in the future
           if (
-            moment(input.pickupTimeAndDate).isBefore(moment.now())
+            moment(input.pickupTimeAndDate).isBefore(moment.now()) ||
+            moment(existingRide.pickupTimeAndDate).isBefore(moment.now())
           ) {
             res.status(409).json({
               status: 'Error',
@@ -54,7 +55,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
           }
 
-          if (input.status === "OPEN") {
+          if (input.status === 'OPEN') {
             input.driver = undefined;
           }
 
