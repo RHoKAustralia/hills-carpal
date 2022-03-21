@@ -30,15 +30,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           const input = req.body as Partial<RideInput>;
 
-          // If the ride is being reopened, it needs to be in the future
+          // ride must be in the future
           if (
-            existingRide.status === 'CANCELLED' &&
-            (input.status === 'OPEN' || input.status === 'CONFIRMED') &&
             moment(input.pickupTimeAndDate).isBefore(moment.now())
           ) {
             res.status(409).json({
               status: 'Error',
-              message: 'Cannot open a cancelled ride after the ride date',
+              message: 'Cannot edit a ride in the past',
             });
             return;
           }
