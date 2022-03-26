@@ -110,7 +110,7 @@ class Ride extends Component<Props, State> {
           driver: data.driver,
           selectedClientId: data.client.id,
           originalRideState: data,
-          rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate()
+          rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
         });
 
         return data;
@@ -153,6 +153,12 @@ class Ride extends Component<Props, State> {
       }
 
       this.setState({ clients: data });
+
+      // Get the client's address to pre-populate even if no client has been selected (e.g. new ride)
+      // in this case we treat it as if the first client had been selected.
+      if (data.length) {
+        this.setNewClient(data[0].id, data);
+      }
 
       return data;
     })();
@@ -394,6 +400,7 @@ class Ride extends Component<Props, State> {
             <label>Date (all dates and times are in the Sydney timezone)</label>
             <DatePicker
               required
+              minDate={new Date()}
               disabled={disabled}
               value={moment
                 .tz(
