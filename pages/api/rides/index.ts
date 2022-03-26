@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import _ from 'lodash';
-import moment from 'moment';
 
 import RideRepository from '../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
@@ -32,17 +31,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             driverGender: req.body.driverGender || 'any',
             carType: req.body.carType || 'All',
           };
-
-          // ride must be in the future
-          if (
-            moment(rideInput.pickupTimeAndDate).isBefore(moment.now())
-          ) {
-            res.status(409).json({
-              status: 'Error',
-              message: 'Cannot create a ride in the past',
-            });
-            return;
-          }
 
           const rideId = await rideRepository.create(rideInput, connection);
           const newRide = await rideRepository.get(rideId, connection);
