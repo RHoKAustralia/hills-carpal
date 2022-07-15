@@ -18,11 +18,11 @@ export default async function notifyAvailableRide(
 
     const formattedDate = moment
       .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-      .format(process.env.DATE_FORMAT);
+      .format('dddd DD/MM/YYYY hh:mma');
 
     await sendEmail({
       to: driver.email,
-      subject: `Hills Carpal: Driver needed for ${ride.client.name} at ${formattedDate}`,
+      subject: `Carpal: Driver needed for ${ride.client.name} at ${formattedDate}`,
       html: `
           <p>Hi ${
             driver.given_name || driver.nickname || driver.name || ''
@@ -32,7 +32,7 @@ export default async function notifyAvailableRide(
             type === 'new'
               ? 'A new ride has been created'
               : 'The previous driver has had to withdraw their offer of a ride'
-          } for ${ride.client.name} in Hills Carpal, and it needs a driver.</p>
+          } for ${ride.client.name} in Carpal, and it needs a driver.</p>
 
           <h3>Details</h3>
           <p>
@@ -40,7 +40,7 @@ export default async function notifyAvailableRide(
             <strong>To:</strong> ${ride.locationTo.placeName} <br>
             <strong>Time:</strong> ${formattedDate} <br>
             <strong>Facilitator:</strong> ${ride.facilitatorEmail} <br>
-            <strong>Description:</strong> ${ride.description} <br>
+            <strong>Ride Description:</strong> ${ride.description} <br>
           </p>
   
           <p>To view and accept this ride, <a href="${
@@ -49,7 +49,7 @@ export default async function notifyAvailableRide(
  
           <p>
             Thanks,<br>
-            Hills Carpal
+            Carpal
           </p>
        `,
     });

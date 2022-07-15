@@ -16,11 +16,11 @@ export default async function notifyDeclined(ride: Ride) {
 
   const formattedRideDate = moment
     .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-    .format(process.env.DATE_FORMAT);
+    .format('dddd DD/MM/YYYY hh:mma');
 
   await sendEmail({
     to: ride.facilitatorEmail,
-    subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} has been withdrawn from by ${ride.driver.name}`,
+    subject: `Carpal ride for ${ride.client.name} at ${formattedRideDate} has been withdrawn from by ${ride.driver.name}`,
     html: `
           <p>Hi ${
             facilitator
@@ -45,7 +45,7 @@ export default async function notifyDeclined(ride: Ride) {
  
           <p>
             Thanks,<br>
-            Hills Carpal
+            Carpal
           </p>
        `,
   });

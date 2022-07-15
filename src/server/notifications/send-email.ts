@@ -27,7 +27,7 @@ export default async function sendEmail(email: Email) {
     to: email.to,
     subject: email.subject,
     html: email.html,
-    from: 'Hills Carpal <no-reply@ride.carpal.org.au>',
+    from: 'Carpal <no-reply@ride.carpal.org.au>',
   };
   if (process.env.NODE_ENV === 'production') {
     await transporter.sendMail(emailDetails);

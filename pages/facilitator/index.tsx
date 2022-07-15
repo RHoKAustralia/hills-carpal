@@ -22,7 +22,7 @@ const getColumns = (table) => {
       accessor: (cell: Ride) =>
         moment
           .tz(cell.pickupTimeAndDate, process.env.TIMEZONE)
-          .format(process.env.DATE_FORMAT),
+          .format('dddd DD/MM/YYYY hh:mma'),
     },
     {
       Header: 'Location from',

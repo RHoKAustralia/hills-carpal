@@ -15,11 +15,11 @@ export default async function notifyCancelled(ride: Ride) {
 
   const formattedDate = moment
     .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-    .format(process.env.DATE_FORMAT);
+    .format('dddd DD/MM/YYYY hh:mma');
 
   await sendEmail({
     to: driver.email,
-    subject: `Hills Carpal ride for ${ride.client.name} at ${formattedDate} has been cancelled`,
+    subject: `Carpal ride for ${ride.client.name} at ${formattedDate} has been cancelled`,
     html: `
           <p>Hi ${
             driver.given_name || driver.nickname || driver.name || ''
@@ -39,7 +39,7 @@ export default async function notifyCancelled(ride: Ride) {
  
           <p>
             Thanks,<br>
-            Hills Carpal
+            Carpal
           </p>
        `,
   });

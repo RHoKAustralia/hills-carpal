@@ -323,7 +323,7 @@ class Clients extends Component<Props, State> {
             </div>
           </div>
         </div>
-
+        <br></br>
         <div className="row">
           <div className="col-3">
             <ul className="nav nav-fill nav-pills client-nav flex-column">
@@ -450,7 +450,7 @@ class Clients extends Component<Props, State> {
                   </label>
                 </div>
                 <div className="form-group">
-                  <label>Description</label>
+                  <label>Client Description</label>
                   <textarea
                     rows={5}
                     maxLength={1024}

@@ -246,10 +246,13 @@ export default class RideDetail extends React.Component<Props, State> {
         </span>
       );
     }
-
+  
     return (
+      
       <div>
         <div className="card">
+
+          
           <div className="card-header">
             <h1>{this.state.ride.client.name} is asking for a ride</h1>
           </div>
@@ -260,7 +263,7 @@ export default class RideDetail extends React.Component<Props, State> {
               <dd>
                 {moment
                   .tz(this.state.ride.pickupTimeAndDate, process.env.TIMEZONE)
-                  .format(process.env.DATE_FORMAT)}
+                  .format('dddd DD/MM/YYYY hh:mma')}
               </dd>
               <dt>Client Name</dt>
               <dd>{this.state.ride.client.name}</dd>
