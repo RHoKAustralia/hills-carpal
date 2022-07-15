@@ -16,13 +16,13 @@ export default async function notifyOffered(ride: Ride) {
 
   const formattedRideDate = moment
     .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-    .format(process.env.DATE_FORMAT);
+    .format('dddd DD/MM/YYYY hh:mma');
 
   const driver = await managementClient.getUser({ id: ride.driver.id });
 
   await sendEmail({
     to: ride.facilitatorEmail,
-    subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} has been offered by ${ride.driver.name}`,
+    subject: `Carpal ride for ${ride.client.name} at ${formattedRideDate} has been offered by ${ride.driver.name}`,
     html: `
           <p>Hi ${
             facilitator
@@ -47,7 +47,7 @@ export default async function notifyOffered(ride: Ride) {
  
           <p>
             Thanks,<br>
-            Hills Carpal
+            Carpal
           </p>
        `,
   });

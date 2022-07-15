@@ -457,7 +457,7 @@ class Ride extends Component<Props, State> {
             />
           </div>
           <div className="form-group">
-            <label>Description</label>
+            <label>Ride Description</label>
 
             <textarea
               disabled={disabled}

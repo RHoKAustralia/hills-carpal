@@ -15,11 +15,11 @@ export default async function notifyUnclaimedRide(ride: Ride) {
 
     const formattedRideDate = moment
       .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-      .format(process.env.DATE_FORMAT);
+      .format('dddd DD/MM/YYYY hh:mma');
 
     await sendEmail({
       to: driver.email,
-      subject: `Hills Carpal ride for ${ride.client.name} at ${formattedRideDate} still doesn't have a driver!`,
+      subject: `Carpal ride for ${ride.client.name} at ${formattedRideDate} still doesn't have a driver!`,
       html: `
           <p>Hi ${
             driver.given_name || driver.nickname || driver.name || ''
@@ -27,7 +27,7 @@ export default async function notifyUnclaimedRide(ride: Ride) {
 
           <p>A ride for ${
             ride.client.name
-          } at ${formattedRideDate} in Hills Carpal still hasn't been claimed by any driver. Please consider claiming it if you're available!</p>
+          } at ${formattedRideDate} in Carpal still hasn't been claimed by any driver. Please consider claiming it if you're available!</p>
 
           <h3>Details</h3>
           <p>
@@ -35,7 +35,7 @@ export default async function notifyUnclaimedRide(ride: Ride) {
             <strong>To:</strong> ${ride.locationTo.placeName} <br>
             <strong>Time:</strong> ${formattedRideDate} <br>
             <strong>Facilitator:</strong> ${ride.facilitatorEmail} <br>
-            <strong>Description:</strong> ${ride.description} <br>
+            <strong>Ride Description:</strong> ${ride.description} <br>
           </p>
   
           <p>To view and accept this ride, <a href="${
@@ -44,7 +44,7 @@ export default async function notifyUnclaimedRide(ride: Ride) {
  
           <p>
             Thanks,<br>
-            Hills Carpal
+            Carpal
           </p>
        `,
     });

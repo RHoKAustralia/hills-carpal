@@ -16,11 +16,11 @@ export default async function remindDriverOfRide(ride: Ride) {
 
   const formattedRideDate = moment
     .tz(ride.pickupTimeAndDate, process.env.TIMEZONE)
-    .format(process.env.DATE_FORMAT);
+    .format('dddd DD/MM/YYYY hh:mma');
 
   await sendEmail({
     to: driver.email,
-    subject: `Hills Carpal Ride Reminder: ${ride.client.name} at ${formattedRideDate}`,
+    subject: `Carpal Ride Reminder: ${ride.client.name} at ${formattedRideDate}`,
     html: `
       <p>Hi ${driver.given_name || driver.nickname || driver.name || ''},</p>
 
@@ -36,7 +36,7 @@ export default async function remindDriverOfRide(ride: Ride) {
       
       <p>
         Thanks,<br>
-        Hills Carpal
+        Carpal
       </p>
     `,
   });
