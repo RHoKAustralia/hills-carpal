@@ -5,7 +5,7 @@
 node_modules
 
 .next
-.env
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
