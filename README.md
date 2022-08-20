@@ -5,7 +5,12 @@ Hill Carpal is an application to organise Hills Community Aids' programme to pro
 The app is a next.js monolith that uses mysql as a database. It also integrates with Auth0 for authentication.
 
 ## Running locally
-1. First get a local db running, which is easiest with docker
+1. Install
+```
+npm install
+```
+
+2. First get a local db running, which is easiest with docker
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d -v hillscarpaldb:/var/lib/mysql mysql:5.7
 npm run create-db
@@ -19,11 +24,6 @@ MYSQL_USER=myuser MYSQL_PW=myPassword MYSQL_HOST=myHost MYSQL_PORT=3316 MYSQL_DB
 ```
 
 You might end up with an error "Client does not support authentication protocol" - to fix refer to https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server.
-
-2. Install
-```
-npm install
-```
 
 3. Get the `.env.local` file that provides certain environment variables from @AlexGilleran. If you skip this step you'll get annoying error messages about a missing client secret.
 
