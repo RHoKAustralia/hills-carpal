@@ -31,7 +31,7 @@
     "lodash": "^4.17.21",
     "match-sorter": "^4.2.1",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "mysql": "^2.18.1",
     "next": "9.3.2",
     "next-compose-plugins": "^2.2.1",
