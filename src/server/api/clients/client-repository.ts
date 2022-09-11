@@ -31,7 +31,8 @@ export default class ClientRepository {
           driverGender,
           carType,
           homeLocation,
-          hasMps
+          hasMps,
+          inactive
         ) VALUES (
         ${[
           escape(client.name),
@@ -41,6 +42,7 @@ export default class ClientRepository {
           escape(client.preferredCarType),
           escape(homeLocationId),
           client.hasMps ? 'true' : 'false',
+          client.inactive ? 'true' : 'false',
         ].join(',')})`;
 
       await this.databaseManager.query(query, connection);
@@ -81,6 +83,7 @@ export default class ClientRepository {
         clients.driverGender = ${escape(client.preferredDriverGender)},
         clients.carType = ${escape(client.preferredCarType)},
         clients.hasMps = ${escape(client.hasMps)},
+        clients.inactive = ${escape(client.inactive)},
         locations.name = ${escape(client.homeLocation.placeName)},
         locations.point = ${homeLocationPoint},
         locations.suburb = ${escape(client.homeLocation.suburb)},
@@ -94,7 +97,7 @@ export default class ClientRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  async list(connection): Promise<Client[]> {
+  async list(connection,inactive?: boolean): Promise<Client[]> {
     // const escape = (data) => connection.escape(data);
 
     const query = `
@@ -106,6 +109,7 @@ export default class ClientRepository {
         clients.driverGender,
         clients.carType,
         clients.hasMps,
+        clients.inactive, 
         locations.point,
         locations.name AS locationName,
         locations.suburb,
@@ -113,6 +117,7 @@ export default class ClientRepository {
       FROM ${this.dbName}.clients AS clients
         INNER JOIN ${this.dbName}.locations AS locations
         ON clients.homeLocation = locations.id
+      ${typeof inactive !== 'undefined' ? `WHERE inactive = ${inactive ? '1' : '0'}` : ''}
       ORDER BY name ASC;
     `;
 
@@ -130,6 +135,7 @@ export default class ClientRepository {
           preferredDriverGender: result.driverGender,
           preferredCarType: result.carType,
           hasMps: result.hasMps,
+          inactive: result.inactive,
           homeLocation: {
             longitude: result.point.x,
             latitude: result.point.y,

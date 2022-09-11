@@ -58,7 +58,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           await rideRepository.setSurvey(id, body, connection);
           await rideRepository.setStatus(
             id,
-            'ENDED',
+            body.lateness == 'didNotHappen' ? 'CANCELLED' : 'ENDED',
             jwt.userId,
             jwt.name,
             connection

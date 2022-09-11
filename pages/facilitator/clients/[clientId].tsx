@@ -22,6 +22,7 @@ const defaultClient: OptionalClient = {
   preferredCarType: undefined,
   homeLocation: undefined,
   hasMps: false,
+  inactive: false,
 };
 
 const clientSort = (lhs, rhs) => {
@@ -225,6 +226,7 @@ class Clients extends Component<Props, State> {
     client.driverGender = this.state.currentClient.preferredDriverGender;
     client.carType = this.state.currentClient.preferredCarType;
     client.hasMps = this.state.currentClient.hasMps;
+    client.inactive = this.state.currentClient.inactive;
     client.locationHome = this.state.currentClient.homeLocation;
     clients.sort(clientSort);
     this.setState({ clients: clients });
@@ -349,10 +351,28 @@ class Clients extends Component<Props, State> {
             </ul>
           </div>
           <div className="col-9">
+            {this.state.currentClient.inactive==true && <div className="p-3 mb-2 bg-danger text-white">This Client is now deactivated</div>}
             <section className="client-form-section">
               <form onSubmit={this.saveClient.bind(this)}>
                 <h5>Details</h5>
                 <div className="form-group">
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="aflag"
+                    checked={this.state.currentClient.inactive}
+                    onChange={(e) => {
+                      let curr = { ...this.state.currentClient };
+                      curr.inactive = e.currentTarget.checked;
+                      this.setState({ currentClient: curr });
+                    }}
+                  />
+                  <label className="form-check-label" htmlFor="aflag">
+                    Inactive Status
+                  </label>
+                </div>
+
                   <label>Name</label>
                   <input
                     value={this.state.currentClient.name}
@@ -449,6 +469,10 @@ class Clients extends Component<Props, State> {
                     Has Mobility Parking Sticker
                   </label>
                 </div>
+                
+
+
+
                 <div className="form-group">
                   <label>Client Description</label>
                   <textarea

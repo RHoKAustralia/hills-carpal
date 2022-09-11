@@ -16,8 +16,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'GET':
-          const clients = await clientRepository.list(connection);
-          res.status(200).json(clients);
+          const inactive = typeof req.query.inactive !== 'undefined'? req.query.inactive == 'true'?true:false:undefined;
+        
+            const clients = await clientRepository.list(connection,inactive);
+            res.status(200).json(clients);
+          
+         
+        
+        
+         
+          
 
           break;
         case 'POST':

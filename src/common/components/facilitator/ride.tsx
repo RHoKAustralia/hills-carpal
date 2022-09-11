@@ -136,10 +136,14 @@ class Ride extends Component<Props, State> {
     })();
 
     const clientPromise = (async () => {
-      const res = await fetch('/api/clients', {
+      const res = await fetch('/api/clients?inactive=false', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`
+          
+
         },
+        
+  
       });
 
       if (!res.ok) {
@@ -148,12 +152,11 @@ class Ride extends Component<Props, State> {
 
       const data = await res.json();
 
-      if (data.length === 0) {
-        throw new Error('Please add a client before adding a ride');
-      }
+
+     
 
       this.setState({ clients: data });
-
+      console.log(data)
       // Get the client's address to pre-populate even if no client has been selected (e.g. new ride)
       // in this case we treat it as if the first client had been selected.
       if (data.length) {
@@ -388,11 +391,15 @@ class Ride extends Component<Props, State> {
             >
               <option disabled={true}>Select from following</option>
               {this.state.clients.map((c) => {
+               
                 return (
                   <option key={c.id} value={c.id}>
                     {c.name}
+                  
+                  
                   </option>
                 );
+                
               })}
             </select>
           </div>

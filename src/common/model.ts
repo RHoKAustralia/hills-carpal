@@ -43,6 +43,7 @@ export interface OptionalClient {
   preferredCarType?: CarType;
   homeLocation?: Location;
   hasMps?: boolean;
+  inactive?: boolean;
 }
 
 type Complete<T> = {
