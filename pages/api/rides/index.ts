@@ -39,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           res.status(200).json(newRide);
           break;
-          default:
+        default:
           res.setHeader('Allow', ['POST']);
           res.status(405).end(`Method ${method} Not Allowed`);
       }

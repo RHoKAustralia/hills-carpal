@@ -52,7 +52,7 @@ export async function requireFacilitatorPermissions(
   if (!claims) {
     claims = await decodeJwt(req);
   }
-  
+
   const isAdmin = hasRole('admin', claims);
   const isFacilitator = hasRole('facilitator', claims);
 

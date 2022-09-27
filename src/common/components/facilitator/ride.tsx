@@ -149,7 +149,7 @@ class Ride extends Component<Props, State> {
       const data = await res.json();
 
       this.setState({ clients: data });
-      
+
       // Get the client's address to pre-populate even if no client has been selected (e.g. new ride)
       // in this case we treat it as if the first client had been selected.
       if (data.length) {

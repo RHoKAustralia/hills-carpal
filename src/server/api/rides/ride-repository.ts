@@ -124,7 +124,7 @@ export default class RideRepository {
 
   async setSurvey(id: number, result: CompletePayload, connection: Connection) {
     const escape = (data) => connection.escape(data);
-    
+
     const query = `
       REPLACE INTO ${this.dbName}.ride_surveys(
         ride_id,

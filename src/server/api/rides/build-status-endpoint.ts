@@ -61,7 +61,7 @@ export default (statusToChangeTo: RideStatus) =>
               await notifyDeclined(oldRide);
               await notifyAvailableRide(oldRide, 'declined');
             } else if (statusToChangeTo === 'CONFIRMED') {
-              await notifyOffered(newRide) 
+              await notifyOffered(newRide);
             }
 
             await databaseManager.commit(connection);

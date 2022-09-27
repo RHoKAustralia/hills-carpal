@@ -46,7 +46,7 @@ const getColumns = (table) => {
       id: 'facilitatorEmail',
       accessor: 'facilitatorEmail',
       filterable: false,
-      Header: 'Facilitator Email'
+      Header: 'Facilitator Email',
     },
     {
       id: 'status',
@@ -70,7 +70,7 @@ class Facilitator extends React.Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
-  state: State = { rides: [], loading: false, pages: -1};
+  state: State = { rides: [], loading: false, pages: -1 };
 
   async componentDidMount() {
     isAuthedWithRole(this.context, 'facilitator');
@@ -151,7 +151,7 @@ class Facilitator extends React.Component<Props, State> {
                     const data = await res.json();
                     this.setState({
                       loading: false,
-                      rides : data.rides,
+                      rides: data.rides,
                       pages: data.pages,
                     });
                   } else {

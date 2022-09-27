@@ -25,7 +25,9 @@ export default async function getDrivers(ride: Ride) {
       )
     : allDrivers;
 
-  console.log(`${validDrivers.length} have both role driver and the environment required role`);
+  console.log(
+    `${validDrivers.length} have both role driver and the environment required role`
+  );
 
   let filteredDrivers: User<AppMetadata, UserMetadata>[] = [];
   for (let driver of validDrivers) {

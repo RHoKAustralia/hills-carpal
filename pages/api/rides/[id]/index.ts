@@ -56,7 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
           }
 
-          if (input.status === "OPEN") {
+          if (input.status === 'OPEN') {
             input.driver = undefined;
           }
 

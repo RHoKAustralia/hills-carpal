@@ -49,17 +49,16 @@ export default class Poll extends React.Component<Props, State> {
       submitState: 'saving',
     });
 
-    const payload : CompletePayload = {
+    const payload: CompletePayload = {
       lateness: this.state.lateness,
       satisfaction: this.state.satisfaction,
       communicationsIssues: this.state.communicationsIssues,
       mobilityPermitUsedPickup: this.state.mobilityPermitUsedPickup || false,
       mobilityPermitUsedDropOff: this.state.mobilityPermitUsedDropOff || false,
-      mobilityPermitUsedOtherAddress:
-        this.state.mobilityPermitUsedOtherAddress,
+      mobilityPermitUsedOtherAddress: this.state.mobilityPermitUsedOtherAddress,
       reimbursementAmount: this.state.reimbursementAmount,
       anythingElse: this.state.anythingElse,
-    }
+    };
 
     fetch(`/api/rides/${this.props.rideId}/complete`, {
       method: 'PUT',

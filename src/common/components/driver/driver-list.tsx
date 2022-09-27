@@ -35,7 +35,9 @@ export default function DriverList({ rides }) {
                         {ride.locationTo.placeName}
                       </div>
                       <div className="ride_list_facilitator">
-                        <span className="ride_list_facilitator_prefix">Facilitator:</span>{' '}
+                        <span className="ride_list_facilitator_prefix">
+                          Facilitator:
+                        </span>{' '}
                         {ride.facilitatorEmail}
                       </div>
                     </div>
