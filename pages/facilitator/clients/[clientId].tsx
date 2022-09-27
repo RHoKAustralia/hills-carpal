@@ -351,27 +351,31 @@ class Clients extends Component<Props, State> {
             </ul>
           </div>
           <div className="col-9">
-            {this.state.currentClient.inactive==true && <div className="p-3 mb-2 bg-danger text-white">This Client is now deactivated</div>}
+            {this.state.currentClient.inactive && (
+              <div className="p-3 mb-2 bg-danger text-white">
+                This Client is now deactivated
+              </div>
+            )}
             <section className="client-form-section">
               <form onSubmit={this.saveClient.bind(this)}>
                 <h5>Details</h5>
                 <div className="form-group">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="aflag"
-                    checked={this.state.currentClient.inactive}
-                    onChange={(e) => {
-                      let curr = { ...this.state.currentClient };
-                      curr.inactive = e.currentTarget.checked;
-                      this.setState({ currentClient: curr });
-                    }}
-                  />
-                  <label className="form-check-label" htmlFor="aflag">
-                    Inactive Status
-                  </label>
-                </div>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="aflag"
+                      checked={this.state.currentClient.inactive}
+                      onChange={(e) => {
+                        const curr = { ...this.state.currentClient };
+                        curr.inactive = e.currentTarget.checked;
+                        this.setState({ currentClient: curr });
+                      }}
+                    />
+                    <label className="form-check-label" htmlFor="aflag">
+                      Inactive Status
+                    </label>
+                  </div>
 
                   <label>Name</label>
                   <input
@@ -469,9 +473,6 @@ class Clients extends Component<Props, State> {
                     Has Mobility Parking Sticker
                   </label>
                 </div>
-                
-
-
 
                 <div className="form-group">
                   <label>Client Description</label>

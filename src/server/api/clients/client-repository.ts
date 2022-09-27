@@ -97,7 +97,7 @@ export default class ClientRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  async list(connection,inactive?: boolean): Promise<Client[]> {
+  async list(connection, inactive?: boolean): Promise<Client[]> {
     // const escape = (data) => connection.escape(data);
 
     const query = `
@@ -117,7 +117,11 @@ export default class ClientRepository {
       FROM ${this.dbName}.clients AS clients
         INNER JOIN ${this.dbName}.locations AS locations
         ON clients.homeLocation = locations.id
-      ${typeof inactive !== 'undefined' ? `WHERE inactive = ${inactive ? '1' : '0'}` : ''}
+      ${
+        typeof inactive !== 'undefined'
+          ? `WHERE inactive = ${inactive ? '1' : '0'}`
+          : ''
+      }
       ORDER BY name ASC;
     `;
 
