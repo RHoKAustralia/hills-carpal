@@ -11,6 +11,10 @@
     "build": "next build",
     "start": "db-migrate up -e auto && next start"
   },
+  "engines": {
+    "node": ">= 16",
+    "npm": ">= 8"
+  },
   "dependencies": {
     "@turf/bbox": "^6.4.0",
     "@types/auth0-js": "^9.14.4",
