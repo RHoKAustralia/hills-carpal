@@ -239,7 +239,7 @@ class DriverMap extends Component<Props> {
           </div>
         </div>
 
-        <this.ReactLeaflet.Map
+        <this.ReactLeaflet.MapComponent
           style={{ height: '500px' }}
           center={[-24.554411, 133.865766]}
           zoom={5}
@@ -253,7 +253,7 @@ class DriverMap extends Component<Props> {
           {this.renderMarkers()}
           {this.renderClientsDirections()}
           {this.renderDriverDirections()}
-        </this.ReactLeaflet.Map>
+        </this.ReactLeaflet.MapComponent>
       </div>
     );
   }
