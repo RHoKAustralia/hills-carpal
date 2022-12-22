@@ -1,20 +1,22 @@
 import React from 'react';
-import ReactTable from 'react-table-v6';
+import DataGrid, { Column } from 'react-data-grid';
 
-import 'react-table-v6/react-table.css';
+interface Props<T> {
+  rows: T[];
+  columns: Column<T>[];
+}
 
-const Table = (props) => {
-  return (
-    <ReactTable
-      filterable={!!props.filterable}
-      className="-striped -highlight"
-      data={props.data}
-      defaultPageSize={10}
-      columns={props.columns}
-      width="100%"
-      {...props}
-    />
-  );
+const Table = <T,>(props: Props<T>) => {
+  // const table = useTable({
+  //   filterable: !!props.filterable,
+  //   data: props.data,
+  //   defaultPageSize: 10,
+  //   columns: props.columns,
+  //   width: '100%',
+  //   ...props,
+  // });
+
+  return <DataGrid columns={props.columns} rows={props.rows} />;
 };
 
 export default Table;

@@ -7,7 +7,6 @@ import Link from 'next/link';
 import LocationInput from '../driver/location-input';
 import { AuthContext } from '../../../client/auth';
 
-import './Ride.css';
 import {
   Location,
   RideDriver,

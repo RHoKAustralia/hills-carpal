@@ -26,7 +26,7 @@ export default class DatabaseManager {
   }
 
   _setTimeZone(connection) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       connection.query("SET time_zone='+00:00';", (error) => {
         if (error) {
           console.error('Error setting timezone', error);
@@ -93,7 +93,7 @@ export default class DatabaseManager {
   }
 
   rollback(connection: mysql.Connection) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       connection.rollback(function (error) {
         if (error) {
           return reject(error);
@@ -104,7 +104,7 @@ export default class DatabaseManager {
   }
 
   commit(connection: mysql.Connection) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       connection.commit(function (error) {
         if (error) {
           return reject(error);

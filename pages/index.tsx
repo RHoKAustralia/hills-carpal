@@ -10,8 +10,6 @@ import {
 } from '../src/client/auth';
 const { publicRuntimeConfig } = getConfig();
 
-import './login.css';
-
 class Home extends Component {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;

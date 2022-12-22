@@ -121,12 +121,8 @@ function logout() {
 }
 
 function isAuthenticated(authState: AuthState) {
-  if (typeof window === 'undefined') {
-    return false;
-  } else {
-    const expiresAt = authState.expiresAt;
-    return new Date().getTime() < expiresAt;
-  }
+  const expiresAt = authState.expiresAt;
+  return new Date().getTime() < expiresAt;
 }
 
 export function hasFacilitatorPrivilege(auth: AuthState | undefined) {
@@ -160,13 +156,24 @@ export type WrappedComponentProps = {
   auth: Auth;
 };
 
-const AuthProvider: FunctionComponent<{}> = ({ children }) => {
+const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
+  children,
+}) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(() =>
     getFromStorage()
   );
 
+  const [onClient, setOnClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setOnClient(true);
+  }, []);
+
   const value = {
-    authState: authState && isAuthenticated(authState) ? authState : undefined,
+    authState:
+      onClient && authState && isAuthenticated(authState)
+        ? authState
+        : undefined,
     logout: () => {
       setAuthState(undefined);
       logout();

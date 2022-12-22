@@ -6,7 +6,6 @@ import router from 'next/router';
 import Table from '../../src/common/components/table';
 import { AuthContext } from '../../src/client/auth';
 
-import './index.css';
 import { Ride } from '../../src/common/model';
 import isAuthedWithRole from '../../src/common/redirect-if-no-role';
 import getUserEmail from '../../src/common/components/facilitator/getUserEmail';
@@ -14,10 +13,10 @@ import { filter } from 'lodash';
 
 const getColumns = (table) => {
   return [
-    { accessor: 'client.name', id: 'clientName', Header: 'Client' },
+    { accessor: 'client.name', key: 'clientName', name: 'Client' },
     {
-      Header: 'Pickup Time',
-      id: 'pickupTimeAndDate',
+      name: 'Pickup Time',
+      key: 'pickupTimeAndDate',
       filterable: false,
       accessor: (cell: Ride) =>
         moment
@@ -25,34 +24,34 @@ const getColumns = (table) => {
           .format('dddd DD/MM/YYYY hh:mma'),
     },
     {
-      Header: 'Location from',
-      id: 'locationFrom',
+      name: 'Location from',
+      key: 'locationFrom',
       filterable: false,
       accessor: (cell) => cell.locationFrom.placeName,
     },
     {
-      id: 'locationTo',
-      Header: 'Location to',
+      key: 'locationTo',
+      name: 'Location to',
       filterable: false,
       accessor: (cell) => cell.locationTo.placeName,
     },
     {
-      id: 'driverName',
+      key: 'driverName',
       accessor: 'driver.name',
       filterable: false,
-      Header: 'Driver',
+      name: 'Driver',
     },
     {
-      id: 'facilitatorEmail',
+      key: 'facilitatorEmail',
       accessor: 'facilitatorEmail',
       filterable: false,
-      Header: 'Facilitator Email',
+      name: 'Facilitator Email',
     },
     {
-      id: 'status',
+      key: 'status',
       accessor: 'status',
       filterable: false,
-      Header: 'Status',
+      name: 'Status',
     },
   ];
 };
@@ -76,9 +75,9 @@ class Facilitator extends React.Component<Props, State> {
     isAuthedWithRole(this.context, 'facilitator');
   }
 
-  handleRowClick = (id: number) => {
-    router.push(`/facilitator/rides/[id]`, '/facilitator/rides/' + id);
-  };
+  // handleRowClick = (key: number) => {
+  //   router.push(`/facilitator/rides/[id]`, '/facilitator/rides/' + id);
+  // };
 
   render() {
     if (this.state.error) {
@@ -90,7 +89,7 @@ class Facilitator extends React.Component<Props, State> {
       );
     }
 
-    const handleRowClick = this.handleRowClick;
+    // const handleRowClick = this.handleRowClick;
 
     return (
       <React.Fragment>
@@ -112,61 +111,61 @@ class Facilitator extends React.Component<Props, State> {
         <div className="row">
           <div className="col-12">
             <Table
-              getTrProps={(state, rowInfo, column) => ({
-                onClick() {
-                  handleRowClick((rowInfo.row._original as Ride).id);
-                },
-              })}
-              pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
-              loading={this.state.loading}
-              data={this.state.rides}
-              manual
+              // getTrProps={(state, rowInfo, column) => ({
+              //   onClick() {
+              //     handleRowClick((rowInfo.row._original as Ride).id);
+              //   },
+              // })}
+              // pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
+              // loading={this.state.loading}
+              rows={this.state.rides}
+              // manual
               columns={getColumns(this)}
-              onFetchData={async (state, instance) => {
-                // show the loading overlay
-                this.setState({ loading: true });
+              // onFetchData={async (state) => {
+              //   // show the loading overlay
+              //   this.setState({ loading: true });
 
-                try {
-                  const sorted = state.sorted
-                    .map(
-                      (sortColumn) =>
-                        `&sort=${sortColumn.id}&sortDirection=${
-                          sortColumn.desc ? 'desc' : 'asc'
-                        }`
-                    )
-                    .join('');
+              //   try {
+              //     const sorted = state.sorted
+              //       .map(
+              //         (sortColumn) =>
+              //           `&sort=${sortColumn.id}&sortDirection=${
+              //             sortColumn.desc ? 'desc' : 'asc'
+              //           }`
+              //       )
+              //       .join('');
 
-                  const res = await fetch(
-                    `/api/rides/facilitator?page=${state.page}&pageSize=${
-                      state.pageSize
-                    }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                          'id_token'
-                        )}`,
-                      },
-                    }
-                  );
+              //     const res = await fetch(
+              //       `/api/rides/facilitator?page=${state.page}&pageSize=${
+              //         state.pageSize
+              //       }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
+              //       {
+              //         headers: {
+              //           Authorization: `Bearer ${localStorage.getItem(
+              //             'id_token'
+              //           )}`,
+              //         },
+              //       }
+              //     );
 
-                  if (res.status === 200) {
-                    const data = await res.json();
-                    this.setState({
-                      loading: false,
-                      rides: data.rides,
-                      pages: data.pages,
-                    });
-                  } else {
-                    throw new Error('Could not list rides');
-                  }
-                } catch (e) {
-                  console.error(e);
-                  this.setState({
-                    loading: false,
-                    error: e,
-                  });
-                }
-              }}
+              //     if (res.status === 200) {
+              //       const data = await res.json();
+              //       this.setState({
+              //         loading: false,
+              //         rides: data.rides,
+              //         pages: data.pages,
+              //       });
+              //     } else {
+              //       throw new Error('Could not list rides');
+              //     }
+              //   } catch (e) {
+              //     console.error(e);
+              //     this.setState({
+              //       loading: false,
+              //       error: e,
+              //     });
+              //   }
+              // }}
             />
           </div>
         </div>

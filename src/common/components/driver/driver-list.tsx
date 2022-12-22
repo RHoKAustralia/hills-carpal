@@ -2,7 +2,6 @@ import React from 'react';
 import moment from 'moment-timezone';
 import Link from 'next/link';
 
-import './driver-list.css';
 
 export default function DriverList({ rides }) {
   return (

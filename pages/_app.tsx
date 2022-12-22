@@ -9,10 +9,22 @@ import AuthProvider, {
   hasFacilitatorPrivilege,
 } from '../src/client/auth';
 
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-data-grid/lib/styles.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'react-image-gallery/styles/css/image-gallery.css';
+
 import './app.css';
 import './document.css';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-datepicker/dist/react-datepicker.css';
+import './login.css';
+import './facilitator/clients/clients.css';
+import './facilitator/index.css';
+import './driver/rides/[rideId]/poll.css';
+import '../src/common/components/driver/driver-list.css';
+import '../src/common/components/driver/ride-detail.css';
+import '../src/common/components/driver/driver-map';
+import '../src/common/components/facilitator/client-images.css';
+import '../src/common/components/facilitator/ride.css';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -126,8 +138,14 @@ function getLinksForRoles(roles) {
 const Nav = () => {
   const { authState, logout } = React.useContext(AuthContext);
 
+  const [onClient, setOnClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setOnClient(true);
+  }, []);
+
   const getLogoHref = () => {
-    if (typeof window === 'undefined' || !authState) {
+    if (!onClient || !authState) {
       return '/';
     } else if (hasFacilitatorPrivilege(authState)) {
       return '/facilitator';
@@ -152,7 +170,7 @@ const Nav = () => {
       <div className="App-environment-name">
         {publicRuntimeConfig.environmentName} Environment
       </div>
-      {typeof window !== 'undefined' ? (
+      {onClient ? (
         <>
           {!authState && <Links links={loggedOutLinks} />}
           {authState && (

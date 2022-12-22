@@ -5,7 +5,6 @@ import LocationInput from '../../../src/common/components/driver/location-input'
 import ClientImages from '../../../src/common/components/facilitator/client-images';
 import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 
-import './clients.css';
 import {
   Client,
   OptionalClient,

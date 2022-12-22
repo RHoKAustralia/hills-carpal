@@ -8,8 +8,6 @@ import remarkGfm from 'remark-gfm';
 import DriverMap from '../../../../src/common/components/driver/driver-map';
 import { AuthContext } from '../../../../src/client/auth';
 
-import 'react-image-gallery/styles/css/image-gallery.css';
-import '../../../../src/common/components/driver/ride-detail.css';
 import { Ride, Image, Location } from '../../../../src/common/model';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 import isRideInPast from '../../../../src/common/util';

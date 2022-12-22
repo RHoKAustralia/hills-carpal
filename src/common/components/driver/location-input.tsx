@@ -2,7 +2,6 @@ import debounce from 'debounce-promise';
 import React, { Component } from 'react';
 import Async from 'react-select/async';
 import { Location } from '../../model';
-// import 'react-select/dist/react-select.css';
 
 // New south wales coordinates
 const bbox = [143, -38, 154, -28];
@@ -101,9 +100,9 @@ class LocationInput extends Component<Props> {
         value={this.getValue()}
         onChange={this.handleChange}
         required={this.props.required}
-        clearable={this.props.clearable}
+        isClearable={this.props.clearable}
         placeholder={'Type your address, suburb or postcode'}
-        filterOptions={(x) => x} // The mapbox api does the filtering for us
+        filterOption={(x) => !!x} // The mapbox api does the filtering for us
         isDisabled={this.props.disabled}
       />
     );

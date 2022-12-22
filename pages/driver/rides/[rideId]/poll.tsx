@@ -1,7 +1,6 @@
 import React, { FormEvent } from 'react';
 import Link from 'next/link';
 
-import './poll.css';
 import isAuthedWithRole from '../../../../src/common/redirect-if-no-role';
 import { AuthContext } from '../../../../src/client/auth';
 import {

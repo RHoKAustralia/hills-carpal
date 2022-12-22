@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
-import './client-images.css';
 import { Image } from '../../model';
 
 function ImageComponent({ image, deleteImage, onSave }) {

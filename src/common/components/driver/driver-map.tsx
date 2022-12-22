@@ -7,7 +7,6 @@ import Head from 'next/head';
 
 import { Ride } from '../../model';
 
-import './driver-map.css';
 
 const token =
   'pk.eyJ1Ijoic21hbGxtdWx0aXBsZXMiLCJhIjoiRk4xSUp6OCJ9.GilBdBaV0oKMZgBwBqRMWA';
