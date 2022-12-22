@@ -8,11 +8,11 @@ export default function DriverMenu() {
       <div className="row justify-content-center">
         <div className="col-xs-12 col-sm-9 col-md-8 text-center">
           <div className="btn-group" role="group">
-            <Link href="/driver/rides/find">
-              <a className="btn btn-success">Find a ride</a>
+            <Link href="/driver/rides/find" className="btn btn-success">
+              Find a ride
             </Link>
-            <Link href="/driver/queue">
-              <a className="btn btn-success">My rides</a>
+            <Link href="/driver/queue" className="btn btn-success">
+              My rides
             </Link>
           </div>
         </div>

@@ -99,11 +99,13 @@ class Facilitator extends React.Component<Props, State> {
             <h4>Rides</h4>
           </div>
           <div className="col-6 create-button-row">
-            <Link href={'/facilitator/clients'}>
-              <a className="btn btn-primary create-button">Clients</a>
+            <Link href={'/facilitator/clients'} className="btn btn-primary create-button">
+              Clients
             </Link>
-            <Link href={'/facilitator/rides/create'}>
-              <a className="btn btn-primary create-button">Create new</a>
+            <Link
+              href={'/facilitator/rides/create'}
+              className="btn btn-primary create-button">
+              Create new
             </Link>
           </div>
         </div>

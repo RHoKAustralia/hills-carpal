@@ -34,8 +34,8 @@ class Home extends Component {
 
     if (isAuthorised) {
       return (
-        <Link href="/facilitator">
-          <a className="btn btn-success">Facilitator</a>
+        <Link href="/facilitator" className="btn btn-success">
+          Facilitator
         </Link>
       );
     } else {
@@ -48,8 +48,8 @@ class Home extends Component {
 
     if (isAuthorised) {
       return (
-        <Link href="/driver">
-          <a className="btn btn-success">Driver</a>
+        <Link href="/driver" className="btn btn-success">
+          Driver
         </Link>
       );
     } else {

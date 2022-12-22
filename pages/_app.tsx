@@ -55,8 +55,8 @@ function Links(props: LinksProps) {
                   {link.caption}
                 </a>
               ) : (
-                <Link href={link.route}>
-                  <a className="links nav-link">{link.caption}</a>
+                <Link href={link.route} className="links nav-link">
+                  {link.caption}
                 </Link>
               )}
             </li>

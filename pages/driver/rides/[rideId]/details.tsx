@@ -200,10 +200,12 @@ export default class RideDetail extends React.Component<Props, State> {
     return this.state.ride.driver.id === this.context.authState.userId ? (
       <div className="btn-group" role="group">
         {isRideInPast(this.state.ride) ? (
-          <Link href={`/driver/rides/${this.props.rideId}/poll`}>
-            <a className="card-link btn btn-outline btn-success">
+          <Link
+            href={`/driver/rides/${this.props.rideId}/poll`}
+            className="card-link btn btn-outline btn-success">
+            
               Complete the ride
-            </a>
+            
           </Link>
         ) : (
           <button

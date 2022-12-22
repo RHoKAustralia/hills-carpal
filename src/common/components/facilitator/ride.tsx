@@ -299,8 +299,8 @@ class Ride extends Component<Props, State> {
             {this.props.id ? (
               <Link
                 href={`/facilitator/rides/create?duplicate=${this.props.id}`}
-              >
-                <a className="btn btn-secondary">Duplicate</a>
+                className="btn btn-secondary">
+                Duplicate
               </Link>
             ) : (
               <button className="btn btn-secondary" disabled={true}>
@@ -309,8 +309,8 @@ class Ride extends Component<Props, State> {
             )}
           </div>
           <div className="btn-group mr-2" role="group">
-            <Link href={'/facilitator'}>
-              <a className="btn btn-secondary">Back</a>
+            <Link href={'/facilitator'} className="btn btn-secondary">
+              Back
             </Link>
           </div>
         </React.Fragment>

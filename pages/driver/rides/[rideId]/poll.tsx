@@ -314,7 +314,7 @@ export default class Poll extends React.Component<Props, State> {
               <div>
                 Thanks!{' '}
                 <Link href="/driver/rides/find">
-                  <a>Find another ride</a>
+                  Find another ride
                 </Link>
               </div>
             );

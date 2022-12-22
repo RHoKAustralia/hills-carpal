@@ -336,14 +336,12 @@ class Clients extends Component<Props, State> {
                       scroll={false}
                       href={`/facilitator/clients/[clientId]`}
                       as={`/facilitator/clients/${c.id}`}
-                    >
-                      <a
-                        className={`nav-link ${
-                          c.id === this.state.currentClient.id ? 'active' : ''
-                        }`}
-                      >
-                        {c.name}
-                      </a>
+                      className={`nav-link ${
+                        c.id === this.state.currentClient.id ? 'active' : ''
+                      }`}>
+
+                      {c.name}
+
                     </Link>
                   </li>
                 );

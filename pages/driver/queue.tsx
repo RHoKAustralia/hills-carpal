@@ -77,7 +77,7 @@ class Queue extends Component {
           <React.Fragment>
             You don't have any rides right now! Go to{' '}
             <Link href="/driver/rides/find">
-              <a>find a ride</a>
+              find a ride
             </Link>{' '}
             to accept one!
           </React.Fragment>
