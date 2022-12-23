@@ -10,51 +10,47 @@ import { Ride } from '../../src/common/model';
 import isAuthedWithRole from '../../src/common/redirect-if-no-role';
 import getUserEmail from '../../src/common/components/facilitator/getUserEmail';
 import { filter } from 'lodash';
+import { TableColumn } from 'react-data-table-component';
 
-const getColumns = (table) => {
-  return [
-    { accessor: 'client.name', key: 'clientName', name: 'Client' },
-    {
-      name: 'Pickup Time',
-      key: 'pickupTimeAndDate',
-      filterable: false,
-      accessor: (cell: Ride) =>
-        moment
-          .tz(cell.pickupTimeAndDate, process.env.TIMEZONE)
-          .format('dddd DD/MM/YYYY hh:mma'),
-    },
-    {
-      name: 'Location from',
-      key: 'locationFrom',
-      filterable: false,
-      accessor: (cell) => cell.locationFrom.placeName,
-    },
-    {
-      key: 'locationTo',
-      name: 'Location to',
-      filterable: false,
-      accessor: (cell) => cell.locationTo.placeName,
-    },
-    {
-      key: 'driverName',
-      accessor: 'driver.name',
-      filterable: false,
-      name: 'Driver',
-    },
-    {
-      key: 'facilitatorEmail',
-      accessor: 'facilitatorEmail',
-      filterable: false,
-      name: 'Facilitator Email',
-    },
-    {
-      key: 'status',
-      accessor: 'status',
-      filterable: false,
-      name: 'Status',
-    },
-  ];
-};
+const columns: TableColumn<Ride>[] = [
+  { selector: (ride) => ride.client.name, name: 'Client', wrap: true },
+  {
+    name: 'Pickup Time',
+    selector: (cell: Ride) =>
+      moment
+        .tz(cell.pickupTimeAndDate, process.env.TIMEZONE)
+        .format('dddd DD/MM/YYYY hh:mma'),
+    wrap: true,
+  },
+  {
+    name: 'Location from',
+    selector: (cell) => cell.locationFrom.placeName,
+    grow: 1,
+    wrap: true,
+  },
+  {
+    name: 'Location to',
+    selector: (cell) => cell.locationTo.placeName,
+    grow: 1,
+    wrap: true,
+  },
+  {
+    selector: (cell) => cell.driver?.name,
+    grow: 1,
+    name: 'Driver',
+    wrap: true,
+  },
+  {
+    selector: (cell) => cell.facilitatorEmail,
+    name: 'Facilitator Email',
+    grow: 1,
+    wrap: true,
+  },
+  {
+    selector: (cell) => cell.status,
+    name: 'Status',
+  },
+];
 
 interface Props {}
 
@@ -98,12 +94,16 @@ class Facilitator extends React.Component<Props, State> {
             <h4>Rides</h4>
           </div>
           <div className="col-6 create-button-row">
-            <Link href={'/facilitator/clients'} className="btn btn-primary create-button">
+            <Link
+              href={'/facilitator/clients'}
+              className="btn btn-primary create-button"
+            >
               Clients
             </Link>
             <Link
               href={'/facilitator/rides/create'}
-              className="btn btn-primary create-button">
+              className="btn btn-primary create-button"
+            >
               Create new
             </Link>
           </div>
@@ -118,54 +118,45 @@ class Facilitator extends React.Component<Props, State> {
               // })}
               // pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
               // loading={this.state.loading}
-              rows={this.state.rides}
               // manual
-              columns={getColumns(this)}
-              // onFetchData={async (state) => {
-              //   // show the loading overlay
-              //   this.setState({ loading: true });
+              columns={columns}
+              fetchData={async (state) => {
+                const sorted = state.sorted
+                  .map(
+                    (sortColumn) =>
+                      `&sort=${sortColumn.id}&sortDirection=${
+                        sortColumn.desc ? 'desc' : 'asc'
+                      }`
+                  )
+                  .join('');
 
-              //   try {
-              //     const sorted = state.sorted
-              //       .map(
-              //         (sortColumn) =>
-              //           `&sort=${sortColumn.id}&sortDirection=${
-              //             sortColumn.desc ? 'desc' : 'asc'
-              //           }`
-              //       )
-              //       .join('');
+                const res = await fetch(
+                  `/api/rides/facilitator?page=${state.page - 1}&pageSize=${
+                    state.pageSize
+                  }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem(
+                        'id_token'
+                      )}`,
+                    },
+                  }
+                );
 
-              //     const res = await fetch(
-              //       `/api/rides/facilitator?page=${state.page}&pageSize=${
-              //         state.pageSize
-              //       }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
-              //       {
-              //         headers: {
-              //           Authorization: `Bearer ${localStorage.getItem(
-              //             'id_token'
-              //           )}`,
-              //         },
-              //       }
-              //     );
+                if (res.status === 200) {
+                  const data = (await res.json()) as {
+                    rides: Ride[];
+                    count: number;
+                  };
 
-              //     if (res.status === 200) {
-              //       const data = await res.json();
-              //       this.setState({
-              //         loading: false,
-              //         rides: data.rides,
-              //         pages: data.pages,
-              //       });
-              //     } else {
-              //       throw new Error('Could not list rides');
-              //     }
-              //   } catch (e) {
-              //     console.error(e);
-              //     this.setState({
-              //       loading: false,
-              //       error: e,
-              //     });
-              //   }
-              // }}
+                  return {
+                    rows: data.rides,
+                    total: data.count,
+                  };
+                } else {
+                  throw new Error('Could not list rides');
+                }
+              }}
             />
           </div>
         </div>

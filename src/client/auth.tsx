@@ -150,6 +150,7 @@ export type Auth = {
   authState: AuthState;
   logout: () => void;
   handleAuthentication: (requireUserRole?: string) => Promise<void>;
+  onClient: boolean;
 };
 
 export type WrappedComponentProps = {
@@ -170,6 +171,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
   }, []);
 
   const value = {
+    onClient,
     authState:
       onClient && authState && isAuthenticated(authState)
         ? authState
@@ -182,7 +184,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
       try {
         const authResult = await handleAuthentication(requireUserRole);
         setAuthState(getFromStorage());
-
+        debugger;
         window.location.href = authResult.appState.redirectTo;
       } catch (e) {
         console.error(e);

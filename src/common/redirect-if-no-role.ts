@@ -5,7 +5,11 @@ export default function isAuthedWithRole(
   context: Auth,
   role: 'facilitator' | 'driver'
 ) {
-  const { authState } = context;
+  const { authState, onClient } = context;
+
+  if (!onClient) {
+    return false;
+  }
 
   if (!authState) {
     login();

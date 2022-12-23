@@ -63,7 +63,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           res
             .status(200)
-            .json({ rides, pages: Math.ceil(count / parsedPageSize) });
+            .json({ rides, count });
           break;
         default:
           res.setHeader('Allow', ['GET']);
