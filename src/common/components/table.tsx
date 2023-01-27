@@ -16,6 +16,7 @@ interface Props<T> {
   columns: TableColumn<T>[];
   fetchData: (state: FetchState) => Promise<{ rows: T[]; total: number }>;
   defaultSort: Sort;
+  onRowClicked: (row: T, e: React.MouseEvent) => void;
 }
 
 const customStyles = {
@@ -45,7 +46,7 @@ const Table = <T,>(props: Props<T>) => {
   const [error, setError] = React.useState<Error | null>(null);
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<T[]>([]);
   const [totalRows, setTotalRows] = React.useState(0);
   const [sort, setSort] = React.useState<{
     column: string;
@@ -109,6 +110,8 @@ const Table = <T,>(props: Props<T>) => {
           defaultSortFieldId={sort.column}
           defaultSortAsc={sort.direction === 'asc'}
           onSort={onSort}
+          onRowClicked={props.onRowClicked}
+          pointerOnHover={true}
         />
       )}
     </div>

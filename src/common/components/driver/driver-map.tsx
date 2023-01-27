@@ -7,7 +7,6 @@ import Head from 'next/head';
 
 import { Ride } from '../../model';
 
-
 const token =
   'pk.eyJ1Ijoic21hbGxtdWx0aXBsZXMiLCJhIjoiRk4xSUp6OCJ9.GilBdBaV0oKMZgBwBqRMWA';
 export const getBoundsFromLngLatArray = (latlng: number[][]) => {
@@ -31,8 +30,8 @@ interface Props {
 }
 
 class DriverMap extends Component<Props> {
-  L: any;
-  ReactLeaflet: any;
+  L: typeof import('leaflet');
+  ReactLeaflet: typeof import('react-leaflet');
 
   state = {
     directionsById: null,
@@ -42,6 +41,7 @@ class DriverMap extends Component<Props> {
   };
 
   async componentDidMount() {
+    console.log('hello');
     this.L = await import('leaflet');
     this.ReactLeaflet = await import('react-leaflet');
 
@@ -74,6 +74,7 @@ class DriverMap extends Component<Props> {
   }
 
   componentDidUpdate(prevProps) {
+    console.log('hello2');
     if (!isEqual(prevProps.driverCoords, this.props.driverCoords)) {
       return fetch(rideToDirectionUrl(this.props.driverCoords))
         .then((res) => {
@@ -109,43 +110,46 @@ class DriverMap extends Component<Props> {
         </this.ReactLeaflet.Popup>
       );
       // console.log(ride.locationTo);
-      return [
-        <this.ReactLeaflet.Marker
-          key={ride.id + 'from'}
-          icon={this.L.icon({
-            iconUrl: '/leaflet/marker-start.svg',
-            iconSize: [18, 23.5], // size of the icon
-            iconAnchor: [9, 23.5],
-          })}
-          position={this.L.latLng(
-            ride.locationFrom.latitude,
-            ride.locationFrom.longitude
-          )}
-        >
-          {popup}
-        </this.ReactLeaflet.Marker>,
-        <this.ReactLeaflet.Marker
-          key={ride.id + 'to'}
-          icon={this.L.icon({
-            iconUrl: '/leaflet/marker-end.svg',
-            iconSize: [18, 23.5], // size of the icon
-            iconAnchor: [9, 23.5],
-          })}
-          position={this.L.latLng(
-            ride.locationTo.latitude,
-            ride.locationTo.longitude
-          )}
-        >
-          {popup}
-        </this.ReactLeaflet.Marker>,
-      ];
+      return (
+        <React.Fragment>
+          <this.ReactLeaflet.Marker
+            key={ride.id + 'from'}
+            icon={this.L.icon({
+              iconUrl: '/leaflet/marker-start.svg',
+              iconSize: [18, 23.5], // size of the icon
+              iconAnchor: [9, 23.5],
+            })}
+            position={this.L.latLng(
+              ride.locationFrom.latitude,
+              ride.locationFrom.longitude
+            )}
+          >
+            {popup}
+          </this.ReactLeaflet.Marker>
+          ,
+          <this.ReactLeaflet.Marker
+            key={ride.id + 'to'}
+            icon={this.L.icon({
+              iconUrl: '/leaflet/marker-end.svg',
+              iconSize: [18, 23.5], // size of the icon
+              iconAnchor: [9, 23.5],
+            })}
+            position={this.L.latLng(
+              ride.locationTo.latitude,
+              ride.locationTo.longitude
+            )}
+          >
+            {popup}
+          </this.ReactLeaflet.Marker>
+        </React.Fragment>
+      );
     });
 
     return markers.reduce((acc, val) => acc.concat(val), []);
   }
   renderClientsDirections() {
     const { directionsGeojsonById } = this.state;
-    if (!directionsGeojsonById) return;
+    if (!directionsGeojsonById) return <React.Fragment />;
     return this.props.rides.map((ride) => {
       return (
         <this.ReactLeaflet.GeoJSON
@@ -159,7 +163,7 @@ class DriverMap extends Component<Props> {
     });
   }
   renderDriverDirections() {
-    if (!this.state.driverRoute) return;
+    if (!this.state.driverRoute) return <React.Fragment />;
 
     return (
       <this.ReactLeaflet.GeoJSON
@@ -194,7 +198,7 @@ class DriverMap extends Component<Props> {
   }
 
   renderYourRouteLegendItem() {
-    if (!this.state.driverRoute) return;
+    if (!this.state.driverRoute) return <React.Fragment />;
 
     return (
       <div className="legend-col">
@@ -210,12 +214,9 @@ class DriverMap extends Component<Props> {
     if (!this.ReactLeaflet) {
       return 'Loading...';
     }
-
+    
     return (
       <div>
-        <Head>
-          <link rel="stylesheet" href="/leaflet/leaflet.css" />
-        </Head>
         <div className="legend-back-btn-row">
           <div className="legend">
             {this.renderYourRouteLegendItem()}
@@ -238,12 +239,9 @@ class DriverMap extends Component<Props> {
           </div>
         </div>
 
-        <this.ReactLeaflet.MapComponent
+        <this.ReactLeaflet.MapContainer
           style={{ height: '500px' }}
-          center={[-24.554411, 133.865766]}
-          zoom={5}
           bounds={this.getBounds()}
-          useFlyTo={true}
         >
           <this.ReactLeaflet.TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -252,7 +250,7 @@ class DriverMap extends Component<Props> {
           {this.renderMarkers()}
           {this.renderClientsDirections()}
           {this.renderDriverDirections()}
-        </this.ReactLeaflet.MapComponent>
+        </this.ReactLeaflet.MapContainer>
       </div>
     );
   }

@@ -83,9 +83,9 @@ class Facilitator extends React.Component<Props, State> {
     isAuthedWithRole(this.context, 'facilitator');
   }
 
-  // handleRowClick = (key: number) => {
-  //   router.push(`/facilitator/rides/[id]`, '/facilitator/rides/' + id);
-  // };
+  handleRowClick = (ride: Ride) => {
+    router.push(`/facilitator/rides/[id]`, '/facilitator/rides/' + ride.id);
+  };
 
   render() {
     if (this.state.error) {
@@ -96,8 +96,6 @@ class Facilitator extends React.Component<Props, State> {
         </span>
       );
     }
-
-    // const handleRowClick = this.handleRowClick;
 
     return (
       <React.Fragment>
@@ -136,6 +134,7 @@ class Facilitator extends React.Component<Props, State> {
                 direction: 'desc',
               }}
               columns={columns}
+              onRowClicked={this.handleRowClick}
               fetchData={async (state) => {
                 const sorted = `&sort=${state.sorted.column}&sortDirection=${state.sorted.direction}`;
 

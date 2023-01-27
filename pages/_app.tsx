@@ -22,9 +22,10 @@ import './facilitator/index.css';
 import './driver/rides/[rideId]/poll.css';
 import '../src/common/components/driver/driver-list.css';
 import '../src/common/components/driver/ride-detail.css';
-import '../src/common/components/driver/driver-map';
+import '../src/common/components/driver/driver-map.css';
 import '../src/common/components/facilitator/client-images.css';
 import '../src/common/components/facilitator/ride.css';
+import '../src/common/components/driver//leaflet/leaflet.css'
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -58,7 +59,7 @@ function Links(props: LinksProps) {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav ml-auto">
           {props.links.map((link) => (
-            <li className="nav-item hcp-nav-item">
+            <li key={link.route} className="nav-item hcp-nav-item">
               {link.type === 'external' ? (
                 <a
                   className="links nav-link"
