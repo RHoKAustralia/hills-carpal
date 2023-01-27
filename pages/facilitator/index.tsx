@@ -15,6 +15,8 @@ import { TableColumn } from 'react-data-table-component';
 const columns: TableColumn<Ride>[] = [
   { selector: (ride) => ride.client.name, name: 'Client', wrap: true },
   {
+    id: 'pickupTimeAndDate',
+    sortable: true,
     name: 'Pickup Time',
     selector: (cell: Ride) =>
       moment
@@ -23,31 +25,41 @@ const columns: TableColumn<Ride>[] = [
     wrap: true,
   },
   {
+    id: 'locationFrom',
     name: 'Location from',
+    sortable: true,
     selector: (cell) => cell.locationFrom.placeName,
     grow: 1,
     wrap: true,
   },
   {
+    id: 'locationTo',
     name: 'Location to',
+    sortable: true,
     selector: (cell) => cell.locationTo.placeName,
     grow: 1,
     wrap: true,
   },
   {
+    id: 'driverName',
     selector: (cell) => cell.driver?.name,
     grow: 1,
+    sortable: true,
     name: 'Driver',
     wrap: true,
   },
   {
+    id: 'facilitatorEmail',
     selector: (cell) => cell.facilitatorEmail,
     name: 'Facilitator Email',
+    sortable: true,
     grow: 1,
     wrap: true,
   },
   {
+    id: 'status',
     selector: (cell) => cell.status,
+    sortable: true,
     name: 'Status',
   },
 ];
@@ -119,16 +131,13 @@ class Facilitator extends React.Component<Props, State> {
               // pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
               // loading={this.state.loading}
               // manual
+              defaultSort={{
+                column: 'pickupTimeAndDate',
+                direction: 'desc',
+              }}
               columns={columns}
               fetchData={async (state) => {
-                const sorted = state.sorted
-                  .map(
-                    (sortColumn) =>
-                      `&sort=${sortColumn.id}&sortDirection=${
-                        sortColumn.desc ? 'desc' : 'asc'
-                      }`
-                  )
-                  .join('');
+                const sorted = `&sort=${state.sorted.column}&sortDirection=${state.sorted.direction}`;
 
                 const res = await fetch(
                   `/api/rides/facilitator?page=${state.page - 1}&pageSize=${

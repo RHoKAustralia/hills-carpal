@@ -1,16 +1,21 @@
 import React from 'react';
-import DataTable, { TableColumn } from 'react-data-table-component';
+import DataTable, { SortOrder, TableColumn } from 'react-data-table-component';
+
+interface Sort {
+  column: string;
+  direction: 'asc' | 'desc';
+}
 
 interface FetchState {
   filtered: string[];
-  sorted: { id: string; desc: boolean }[];
+  sorted: Sort;
   page: number;
   pageSize: number;
 }
-
 interface Props<T> {
   columns: TableColumn<T>[];
   fetchData: (state: FetchState) => Promise<{ rows: T[]; total: number }>;
+  defaultSort: Sort;
 }
 
 const customStyles = {
@@ -42,6 +47,10 @@ const Table = <T,>(props: Props<T>) => {
   const [perPage, setPerPage] = React.useState(10);
   const [data, setData] = React.useState([]);
   const [totalRows, setTotalRows] = React.useState(0);
+  const [sort, setSort] = React.useState<{
+    column: string;
+    direction: 'asc' | 'desc';
+  }>(props.defaultSort);
 
   React.useEffect(() => {
     setLoading(true);
@@ -52,7 +61,7 @@ const Table = <T,>(props: Props<T>) => {
         const response = await props.fetchData({
           page,
           filtered: [],
-          sorted: [],
+          sorted: sort,
           pageSize: perPage,
         });
 
@@ -65,7 +74,7 @@ const Table = <T,>(props: Props<T>) => {
         setLoading(false);
       }
     })();
-  }, [page, perPage])
+  }, [page, perPage, sort]);
 
   const onChangePage = (page: number) => {
     setPage(page);
@@ -74,6 +83,10 @@ const Table = <T,>(props: Props<T>) => {
   const onPerRowsChange = (newPerPage: number, page: number) => {
     setPage(page);
     setPerPage(newPerPage);
+  };
+
+  const onSort = (selectedColumn: TableColumn<T>, sortDirection: SortOrder) => {
+    setSort({ column: selectedColumn.id.toString(), direction: sortDirection });
   };
 
   return (
@@ -92,6 +105,10 @@ const Table = <T,>(props: Props<T>) => {
           paginationTotalRows={totalRows}
           onChangePage={onChangePage}
           onChangeRowsPerPage={onPerRowsChange}
+          sortServer
+          defaultSortFieldId={sort.column}
+          defaultSortAsc={sort.direction === 'asc'}
+          onSort={onSort}
         />
       )}
     </div>
