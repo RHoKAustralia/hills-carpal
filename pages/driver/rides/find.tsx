@@ -34,7 +34,7 @@ class FindRides extends Component<{}, State> {
   };
 
   componentDidMount() {
-    if (!isAuthedWithRole(this.context, 'driver')) {
+    if (!isAuthedWithRole(this.context.authState, 'driver')) {
       return;
     }
 

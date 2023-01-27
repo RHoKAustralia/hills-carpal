@@ -17,7 +17,7 @@ class Queue extends Component {
   };
 
   componentDidMount() {
-    if (!isAuthedWithRole(this.context, 'driver')) {
+    if (!isAuthedWithRole(this.context.authState, 'driver')) {
       return;
     }
 

@@ -36,7 +36,7 @@ export default class Poll extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    if (!isAuthedWithRole(this.context, 'driver')) {
+    if (!isAuthedWithRole(this.context.authState, 'driver')) {
       return;
     }
   }

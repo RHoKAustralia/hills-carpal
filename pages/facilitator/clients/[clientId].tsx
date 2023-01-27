@@ -69,7 +69,7 @@ class Clients extends Component<Props, State> {
   }
 
   componentDidMount() {
-    if (!isAuthedWithRole(this.context, 'facilitator')) {
+    if (!isAuthedWithRole(this.context.authState, 'facilitator')) {
       return;
     }
 

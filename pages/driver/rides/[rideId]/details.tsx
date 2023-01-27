@@ -46,7 +46,7 @@ export default class RideDetail extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    if (!isAuthedWithRole(this.context, 'driver')) {
+    if (!isAuthedWithRole(this.context.authState, 'driver')) {
       return;
     }
 

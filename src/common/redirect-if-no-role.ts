@@ -1,16 +1,10 @@
 import router from 'next/router';
-import { Auth, login } from '../client/auth';
+import { AuthState, login } from '../client/auth';
 
 export default function isAuthedWithRole(
-  context: Auth,
+  authState: AuthState,
   role: 'facilitator' | 'driver'
 ) {
-  const { authState, onClient } = context;
-
-  if (!onClient) {
-    return false;
-  }
-
   if (!authState) {
     login();
     return false;

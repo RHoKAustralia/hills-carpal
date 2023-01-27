@@ -80,7 +80,7 @@ class Facilitator extends React.Component<Props, State> {
   state: State = { rides: [], loading: false, pages: -1 };
 
   async componentDidMount() {
-    isAuthedWithRole(this.context, 'facilitator');
+    isAuthedWithRole(this.context.authState, 'facilitator');
   }
 
   handleRowClick = (ride: Ride) => {

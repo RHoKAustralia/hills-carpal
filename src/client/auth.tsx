@@ -150,7 +150,6 @@ export type Auth = {
   authState: AuthState;
   logout: () => void;
   handleAuthentication: (requireUserRole?: string) => Promise<void>;
-  onClient: boolean;
 };
 
 export type WrappedComponentProps = {
@@ -164,16 +163,9 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
     getFromStorage()
   );
 
-  const [onClient, setOnClient] = React.useState(false);
-
-  React.useEffect(() => {
-    setOnClient(true);
-  }, []);
-
   const value = {
-    onClient,
     authState:
-      onClient && authState && isAuthenticated(authState)
+      authState && isAuthenticated(authState)
         ? authState
         : undefined,
     logout: () => {
@@ -184,7 +176,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
       try {
         const authResult = await handleAuthentication(requireUserRole);
         setAuthState(getFromStorage());
-        debugger;
+        console.log('set auth state');
         window.location.href = authResult.appState.redirectTo;
       } catch (e) {
         console.error(e);
