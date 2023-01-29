@@ -139,7 +139,7 @@ export default class ClientRepository {
           preferredDriverGender: result.driverGender,
           preferredCarType: result.carType,
           hasMps: result.hasMps,
-          inactive: result.inactive,
+          inactive: result.inactive ? true : false,
           homeLocation: {
             longitude: result.point.x,
             latitude: result.point.y,

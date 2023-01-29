@@ -1,4 +1,4 @@
-import Busboy from 'busboy';
+import busboy from 'busboy';
 import { NextApiRequest } from 'next';
 
 type Result = {
@@ -14,13 +14,13 @@ function parser(req: NextApiRequest): Promise<Result> {
       headers[key.toLowerCase()] = req.headers[key];
     });
 
-    const busboy = new Busboy({
-      headers,
+    const bb = busboy({
+      headers, 
     });
 
     const result: any = {};
 
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    bb.on('file', (name, file, { filename, encoding, mimeType } ) => {
       file.on('data', (chunk: Buffer) => {
         result.chunk = result.chunk
           ? Buffer.concat([result.chunk, chunk])
@@ -29,19 +29,19 @@ function parser(req: NextApiRequest): Promise<Result> {
 
       file.on('end', () => {
         result.filename = filename;
-        result.contentType = mimetype;
+        result.contentType = mimeType;
       });
     });
 
-    busboy.on('field', (fieldname, value) => {
+    bb.on('field', (fieldname, value) => {
       result[fieldname] = value;
     });
 
-    busboy.on('error', (error) => reject(error));
+    bb.on('error', (error) => reject(error));
 
-    busboy.on('finish', () => resolve(result));
+    bb.on('close', () => resolve(result));
 
-    req.pipe(busboy);
+    req.pipe(bb);
   });
 }
 
