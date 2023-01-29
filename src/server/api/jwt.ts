@@ -105,7 +105,7 @@ export async function decodeJwt(
     let decodedToken: any = await new Promise((resolve, reject) =>
       jsonwebtoken.verify(
         tokenValue,
-        (header: any, callback: (error?: Error, value?: string) => {}) => {
+        (header: jsonwebtoken.JwtHeader, callback: (error?: Error, value?: string) => void) => {
           client.getSigningKey(header.kid, (err: Error, key: any) => {
             if (err) {
               callback(err);
