@@ -8,12 +8,16 @@ import { AuthContext } from '../../src/client/auth';
 
 import { Ride } from '../../src/common/model';
 import isAuthedWithRole from '../../src/common/redirect-if-no-role';
-import getUserEmail from '../../src/common/components/facilitator/getUserEmail';
-import { filter } from 'lodash';
 import { TableColumn } from 'react-data-table-component';
 
 const columns: TableColumn<Ride>[] = [
-  { selector: (ride) => ride.client.name, name: 'Client', wrap: true },
+  {
+    id: 'clientName',
+    selector: (ride) => ride.client.name,
+    name: 'Client',
+    wrap: true,
+    sortable: true,
+  },
   {
     id: 'pickupTimeAndDate',
     sortable: true,
@@ -121,14 +125,6 @@ class Facilitator extends React.Component<Props, State> {
         <div className="row">
           <div className="col-12">
             <Table
-              // getTrProps={(state, rowInfo, column) => ({
-              //   onClick() {
-              //     handleRowClick((rowInfo.row._original as Ride).id);
-              //   },
-              // })}
-              // pages={this.state.pages} // should default to -1 (which means we don't know how many pages we have)
-              // loading={this.state.loading}
-              // manual
               defaultSort={{
                 column: 'pickupTimeAndDate',
                 direction: 'desc',

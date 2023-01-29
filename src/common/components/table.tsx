@@ -33,15 +33,6 @@ const customStyles = {
 };
 
 const Table = <T,>(props: Props<T>) => {
-  // const table = useTable({
-  //   filterable: !!props.filterable,
-  //   data: props.data,
-  //   defaultPageSize: 10,
-  //   columns: props.columns,
-  //   width: '100%',
-  //   ...props,
-  // });
-
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
   const [page, setPage] = React.useState(1);
