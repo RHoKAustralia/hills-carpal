@@ -62,7 +62,7 @@ class Home extends Component {
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-9 col-md-8 text-center">
             <div className="outerForm">
-              {!this.context.authState && (
+              {this.context.onClient && !this.context.authState && (
                 <React.Fragment>
                   <div className="quote">Share the ride, share the life</div>
 
@@ -75,7 +75,7 @@ class Home extends Component {
                   </button>
                 </React.Fragment>
               )}
-              {this.context.authState && (
+              {this.context.onClient &&this.context.authState && (
                 <React.Fragment>
                   Pick your action:{' '}
                   <div className="btn-group" role="group">

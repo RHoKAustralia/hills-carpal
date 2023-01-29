@@ -147,6 +147,7 @@ export type AuthState = {
 };
 
 export type Auth = {
+  onClient: boolean;
   authState: AuthState;
   logout: () => void;
   handleAuthentication: (requireUserRole?: string) => Promise<void>;
@@ -163,7 +164,14 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
     getFromStorage()
   );
 
+  const [onClient, setOnClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setOnClient(true);
+  }, []);
+
   const value = {
+    onClient,
     authState:
       authState && isAuthenticated(authState)
         ? authState
