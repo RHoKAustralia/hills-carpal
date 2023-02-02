@@ -41,6 +41,7 @@
     "node-cache": "^5.1.2",
     "nodemailer": "^6.6.2",
     "react": "^18.2.0",
+    "react-beforeunload": "^2.5.3",
     "react-data-grid": "^7.0.0-beta.20",
     "react-data-table-component": "^7.5.3",
     "react-datepicker": "^4.8.0",
@@ -52,6 +53,7 @@
     "react-select": "^5.7.0",
     "remark-gfm": "^1.0.0",
     "sns-validator": "^0.3.4",
+    "styled-components": "^5.3.6",
     "turf-linestring": "^1.0.2"
   },
   "devDependencies": {

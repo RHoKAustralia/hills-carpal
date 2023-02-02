@@ -159,7 +159,7 @@ const Nav = () => {
 
   return (
     <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
-      <a className="navbar-brand" href={getLogoHref()}>
+      <Link className="navbar-brand" href={getLogoHref()}>
         <img
           src="/styles/CarPal-Logo-emma-transparent.png"
           width="100"
@@ -167,7 +167,7 @@ const Nav = () => {
           alt="HillsCarPal"
           id="icon"
         />
-      </a>
+      </Link>
       <div className="App-environment-name">
         {publicRuntimeConfig.environmentName} Environment
       </div>
@@ -178,13 +178,7 @@ const Nav = () => {
             <React.Fragment>
               <Links links={getLinksForRoles(authState.roles)} />
               <div>
-                <button
-                  className="btn btn-success"
-                  id="logOutButton"
-                  onClick={logout}
-                >
-                  Log Out
-                </button>
+              <button className="btn btn-success" id="logOutButton" onClick={()=>{if(window.confirm("Are you sure you want to logout?")){logout()}}} > Log Out </button>
               </div>
             </React.Fragment>
           )}

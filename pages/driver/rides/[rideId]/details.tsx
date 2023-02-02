@@ -284,11 +284,11 @@ export default class RideDetail extends React.Component<Props, State> {
               <dd>{this.state.ride.locationTo.placeName}</dd>
               <dt>Facilitator Email</dt>
               <dd>{this.state.ride.facilitatorEmail}</dd>
-              <dt>Client Description</dt>
-              <dd>
-                <ReactMarkdown>
-                  {this.state.ride.client.clientDescription}
-                </ReactMarkdown>
+              <dt>Client Description</dt> 
+              <dd> 
+                <ReactMarkdown  remarkPlugins={[remarkGfm]}>
+                   {this.state.ride.client.clientDescription} 
+                </ReactMarkdown> 
               </dd>
               <dt>Ride Description</dt>
               <dd>

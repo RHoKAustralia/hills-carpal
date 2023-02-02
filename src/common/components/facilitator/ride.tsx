@@ -3,10 +3,11 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment-timezone';
 import router from 'next/router';
 import Link from 'next/link';
+import { Beforeunload } from 'react-beforeunload'
 
 import LocationInput from '../driver/location-input';
 import { AuthContext } from '../../../client/auth';
-
+import isRideInPast from "../../../common/util"
 import {
   Location,
   RideDriver,
@@ -40,6 +41,7 @@ interface State {
   updatingError: Error | null;
   originalRideState?: ModelRide;
   rideCreatedTimeAndDate: Date;
+  isSaved:Boolean;
 }
 
 const blankState: State = {
@@ -58,6 +60,7 @@ const blankState: State = {
   updatingError: null,
   originalRideState: undefined,
   rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
+  isSaved:false
 };
 class Ride extends Component<Props, State> {
   static contextType = AuthContext;
@@ -65,11 +68,34 @@ class Ride extends Component<Props, State> {
 
   state: State = blankState;
 
-  static getInitialProps({ query }) {
+  static getInitialProps({ query}) {
     return {
       id: query.id && Number.parseInt(query.id),
       duplicate: query.duplicate && Number.parseInt(query.duplicate),
+      
     };
+  }
+
+  handleRouteChange = () => {
+    
+    if(this.state.isSaved==true){
+     
+      
+
+    }
+   
+    else{
+      if(window.confirm("Are you sure you want to leave this page? Unsaved Changed will be lost")){
+      
+
+
+      }
+      else{
+        throw 'Abort route change. Please ignore this error.'
+
+      }
+
+    }
   }
 
   async componentDidUpdate(
@@ -88,6 +114,17 @@ class Ride extends Component<Props, State> {
     }
 
     this.fetchData();
+  }
+
+  async componentWillMount(){
+    
+    router.events.on('routeChangeStart',this.handleRouteChange)
+
+   }
+
+   async componentWillUnmount() {
+    router.events.off('routeChangeStart',this.handleRouteChange)
+ 
   }
 
   async fetchData() {
@@ -196,6 +233,14 @@ class Ride extends Component<Props, State> {
       pickupTimeAndDate: this.state.pickupTimeAndDate.toISOString(),
     };
 
+    if(moment(rideFromState.pickupTimeAndDate).isBefore(moment.now())){
+      this.setState({
+        
+        updatingError: new Error('Invalid Date and time'),
+      });
+      return window.alert("You can't create ride in the past")
+    }
+
     this.setState({
       updating: true,
       updatingError: null,
@@ -213,7 +258,10 @@ class Ride extends Component<Props, State> {
         body: JSON.stringify(rideFromState),
       }).then((res) => {
         if (res.ok) {
-          router.push('/facilitator');
+          this.setState({
+            isSaved:true
+          }, function(){router.push('/facilitator')})
+          
         } else {
           this.setState({
             updatingError: new Error('Could not update'),
@@ -230,7 +278,10 @@ class Ride extends Component<Props, State> {
         body: JSON.stringify(rideFromState),
       }).then((res) => {
         if (res.ok) {
-          router.push('/facilitator');
+          this.setState({
+            isSaved:true
+          }, function(){router.push('/facilitator')})
+          
         } else {
           this.setState({
             updatingError: new Error('Could not update'),
@@ -358,8 +409,11 @@ class Ride extends Component<Props, State> {
     const disabled =
       this.state.originalRideState &&
       this.state.originalRideState.status !== 'OPEN';
+    const confirmstatus= !dateInFuture && this.state.originalRideState?.status === 'CONFIRMED';
 
     return (
+      <>
+      <Beforeunload onBeforeunload={() => 'You’ll lose your data!'}>
       <React.Fragment>
         {this.getHeadline()}
         <form onSubmit={this.handleSubmit}>
@@ -478,18 +532,18 @@ class Ride extends Component<Props, State> {
                   value={this.state.status}
                   className="custom-select"
                 >
-                  <option value="OPEN" disabled={cannotReopen}>
+                  <option value="OPEN" disabled={cannotReopen||confirmstatus}>
                     Open
                   </option>
                   <option
                     value="CONFIRMED"
-                    disabled={!this.state.driver || cannotReopen}
+                    disabled={!this.state.driver || cannotReopen||confirmstatus}
                   >
                     Confirmed
                   </option>
                   <option
                     value="ENDED"
-                    disabled={!this.state.driver || cannotReopen}
+                    disabled={!this.state.driver || cannotReopen||confirmstatus}
                   >
                     Ended
                   </option>
@@ -507,6 +561,11 @@ class Ride extends Component<Props, State> {
           {this.buttons()}
         </form>
       </React.Fragment>
+</Beforeunload>
+     
+   
+   
+    </>
     );
   }
 }
