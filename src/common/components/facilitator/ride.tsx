@@ -78,24 +78,11 @@ class Ride extends Component<Props, State> {
 
   handleRouteChange = () => {
     
-    if(this.state.isSaved==true){
-     
-      
-
+    if (!this.state.isSaved && !window.confirm("Are you sure you want to leave this page? Unsaved Changed will be lost")) {
+      throw ('Abort route change, Please ignore this error.')
     }
-   
-    else{
-      if(window.confirm("Are you sure you want to leave this page? Unsaved Changed will be lost")){
-      
-
-
-      }
-      else{
-        throw 'Abort route change. Please ignore this error.'
-
-      }
-
-    }
+    
+  
   }
 
   async componentDidUpdate(
@@ -233,12 +220,12 @@ class Ride extends Component<Props, State> {
       pickupTimeAndDate: this.state.pickupTimeAndDate.toISOString(),
     };
 
-    if(moment(rideFromState.pickupTimeAndDate).isBefore(moment.now())){
+    if(this.state.originalRideState?.status != 'CONFIRMED' && moment(rideFromState.pickupTimeAndDate).isBefore(moment.now())){
       this.setState({
         
         updatingError: new Error('Invalid Date and time'),
       });
-      return window.alert("You can't create ride in the past")
+      return 
     }
 
     this.setState({
@@ -405,15 +392,15 @@ class Ride extends Component<Props, State> {
       moment.now()
     );
     const cannotReopen =
-      !dateInFuture && this.state.originalRideState?.status === 'CANCELLED';
+      !dateInFuture && (this.state.originalRideState?.status === 'CANCELLED'||this.state.originalRideState?.status === 'CONFIRMED');
     const disabled =
       this.state.originalRideState &&
       this.state.originalRideState.status !== 'OPEN';
-    const confirmstatus= !dateInFuture && this.state.originalRideState?.status === 'CONFIRMED';
+   
 
     return (
       <>
-      <Beforeunload onBeforeunload={() => 'You’ll lose your data!'}>
+      <Beforeunload onBeforeunload={() => ''}>
       <React.Fragment>
         {this.getHeadline()}
         <form onSubmit={this.handleSubmit}>
@@ -532,18 +519,18 @@ class Ride extends Component<Props, State> {
                   value={this.state.status}
                   className="custom-select"
                 >
-                  <option value="OPEN" disabled={cannotReopen||confirmstatus}>
+                  <option value="OPEN" disabled={cannotReopen}>
                     Open
                   </option>
                   <option
                     value="CONFIRMED"
-                    disabled={!this.state.driver || cannotReopen||confirmstatus}
+                    disabled={!this.state.driver || cannotReopen}
                   >
                     Confirmed
                   </option>
                   <option
                     value="ENDED"
-                    disabled={!this.state.driver || cannotReopen||confirmstatus}
+                    disabled={!this.state.driver || cannotReopen}
                   >
                     Ended
                   </option>

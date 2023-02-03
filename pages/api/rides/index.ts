@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const claims = await decodeJwt(req);
   if(isRideInPast(req.body)){
-    res.status(500).json({ status: 'Error please make sure date is valid' });
+    res.status(400).json({ status: 'Error please make sure date is valid' });
 
   }
   else{
