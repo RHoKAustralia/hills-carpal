@@ -200,10 +200,9 @@ export default class RideDetail extends React.Component<Props, State> {
         {isRideInPast(this.state.ride) ? (
           <Link
             href={`/driver/rides/${this.props.rideId}/poll`}
-            className="card-link btn btn-outline btn-success">
-            
-              Complete the ride
-            
+            className="card-link btn btn-outline btn-success"
+          >
+            Complete the ride
           </Link>
         ) : (
           <button
@@ -284,11 +283,11 @@ export default class RideDetail extends React.Component<Props, State> {
               <dd>{this.state.ride.locationTo.placeName}</dd>
               <dt>Facilitator Email</dt>
               <dd>{this.state.ride.facilitatorEmail}</dd>
-              <dt>Client Description</dt> 
-              <dd> 
-                <ReactMarkdown  remarkPlugins={[remarkGfm]}>
-                   {this.state.ride.client.clientDescription} 
-                </ReactMarkdown> 
+              <dt>Client Description</dt>
+              <dd>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {this.state.ride.client.clientDescription}
+                </ReactMarkdown>
               </dd>
               <dt>Ride Description</dt>
               <dd>

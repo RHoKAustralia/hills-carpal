@@ -25,7 +25,7 @@ import '../src/common/components/driver/ride-detail.css';
 import '../src/common/components/driver/driver-map.css';
 import '../src/common/components/facilitator/client-images.css';
 import '../src/common/components/facilitator/ride.css';
-import '../src/common/components/driver//leaflet/leaflet.css'
+import '../src/common/components/driver//leaflet/leaflet.css';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -178,7 +178,18 @@ const Nav = () => {
             <React.Fragment>
               <Links links={getLinksForRoles(authState.roles)} />
               <div>
-              <button className="btn btn-success" id="logOutButton" onClick={()=>{if(window.confirm("Are you sure you want to logout?")){logout()}}} > Log Out </button>
+                <button
+                  className="btn btn-success"
+                  id="logOutButton"
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to logout?')) {
+                      logout();
+                    }
+                  }}
+                >
+                  {' '}
+                  Log Out{' '}
+                </button>
               </div>
             </React.Fragment>
           )}

@@ -9,7 +9,7 @@ import {
 } from '../../../src/server/api/jwt';
 import { RideInput } from '../../../src/common/model';
 import notifyAvailableRide from '../../../src/server/notifications/notify-available-ride';
-import isRideInPast from "../../../src/common/util"
+import isRideInPast from '../../../src/common/util';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -19,29 +19,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const connection = databaseManager.createConnection();
 
   const claims = await decodeJwt(req);
-  if(isRideInPast(req.body)){
+  if (isRideInPast(req.body)) {
     res.status(400).json({ status: 'Error please make sure date is valid' });
-
-  }
-  else{
+  } else {
     try {
       if (await requireFacilitatorPermissions(req, res, claims)) {
         switch (method) {
           case 'POST':
             const rideInput: RideInput = {
               ...req.body,
-  
+
               facilitatorEmail: claims.email,
               status: 'OPEN',
               driverGender: req.body.driverGender || 'any',
               carType: req.body.carType || 'All',
             };
-  
+
             const rideId = await rideRepository.create(rideInput, connection);
             const newRide = await rideRepository.get(rideId, connection);
-  
+
             notifyAvailableRide(newRide, 'new');
-  
+
             res.status(200).json(newRide);
             break;
           default:
@@ -55,8 +53,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     } finally {
       databaseManager.closeConnection(connection);
     }
-
   }
-
-
 };

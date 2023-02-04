@@ -10,7 +10,8 @@
     "build:prod": "npm run build",
     "build": "next build",
     "start": "db-migrate up -e auto && next start",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format": "pretty-quick"
   },
   "engines": {
     "node": ">= 16",
