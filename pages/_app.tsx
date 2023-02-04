@@ -25,7 +25,7 @@ import '../src/common/components/driver/ride-detail.css';
 import '../src/common/components/driver/driver-map.css';
 import '../src/common/components/facilitator/client-images.css';
 import '../src/common/components/facilitator/ride.css';
-import '../src/common/components/driver//leaflet/leaflet.css'
+import '../src/common/components/driver//leaflet/leaflet.css';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -159,7 +159,7 @@ const Nav = () => {
 
   return (
     <nav className="navbar navbar-light bg-light navbar-expand-md hcp-navbar justify-content-between">
-      <a className="navbar-brand" href={getLogoHref()}>
+      <Link className="navbar-brand" href={getLogoHref()}>
         <img
           src="/styles/CarPal-Logo-emma-transparent.png"
           width="100"
@@ -167,7 +167,7 @@ const Nav = () => {
           alt="HillsCarPal"
           id="icon"
         />
-      </a>
+      </Link>
       <div className="App-environment-name">
         {publicRuntimeConfig.environmentName} Environment
       </div>
@@ -181,9 +181,14 @@ const Nav = () => {
                 <button
                   className="btn btn-success"
                   id="logOutButton"
-                  onClick={logout}
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to logout?')) {
+                      logout();
+                    }
+                  }}
                 >
-                  Log Out
+                  {' '}
+                  Log Out{' '}
                 </button>
               </div>
             </React.Fragment>

@@ -3,10 +3,11 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment-timezone';
 import router from 'next/router';
 import Link from 'next/link';
+import { Beforeunload } from 'react-beforeunload';
 
 import LocationInput from '../driver/location-input';
 import { AuthContext } from '../../../client/auth';
-
+import isRideInPast from '../../../common/util';
 import {
   Location,
   RideDriver,
@@ -40,6 +41,7 @@ interface State {
   updatingError: Error | null;
   originalRideState?: ModelRide;
   rideCreatedTimeAndDate: Date;
+  isSaved: Boolean;
 }
 
 const blankState: State = {
@@ -58,6 +60,7 @@ const blankState: State = {
   updatingError: null,
   originalRideState: undefined,
   rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
+  isSaved: false,
 };
 class Ride extends Component<Props, State> {
   static contextType = AuthContext;
@@ -71,6 +74,17 @@ class Ride extends Component<Props, State> {
       duplicate: query.duplicate && Number.parseInt(query.duplicate),
     };
   }
+
+  handleRouteChange = () => {
+    if (
+      !this.state.isSaved &&
+      !window.confirm(
+        'Are you sure you want to leave this page? Unsaved Changed will be lost'
+      )
+    ) {
+      throw 'Abort route change, Please ignore this error.';
+    }
+  };
 
   async componentDidUpdate(
     prevProps: Readonly<Props>,
@@ -88,6 +102,14 @@ class Ride extends Component<Props, State> {
     }
 
     this.fetchData();
+  }
+
+  async componentWillMount() {
+    router.events.on('routeChangeStart', this.handleRouteChange);
+  }
+
+  async componentWillUnmount() {
+    router.events.off('routeChangeStart', this.handleRouteChange);
   }
 
   async fetchData() {
@@ -196,6 +218,16 @@ class Ride extends Component<Props, State> {
       pickupTimeAndDate: this.state.pickupTimeAndDate.toISOString(),
     };
 
+    if (
+      this.state.originalRideState?.status != 'CONFIRMED' &&
+      moment(rideFromState.pickupTimeAndDate).isBefore(moment.now())
+    ) {
+      this.setState({
+        updatingError: new Error('Invalid Date and time'),
+      });
+      return;
+    }
+
     this.setState({
       updating: true,
       updatingError: null,
@@ -213,7 +245,14 @@ class Ride extends Component<Props, State> {
         body: JSON.stringify(rideFromState),
       }).then((res) => {
         if (res.ok) {
-          router.push('/facilitator');
+          this.setState(
+            {
+              isSaved: true,
+            },
+            function () {
+              router.push('/facilitator');
+            }
+          );
         } else {
           this.setState({
             updatingError: new Error('Could not update'),
@@ -230,7 +269,14 @@ class Ride extends Component<Props, State> {
         body: JSON.stringify(rideFromState),
       }).then((res) => {
         if (res.ok) {
-          router.push('/facilitator');
+          this.setState(
+            {
+              isSaved: true,
+            },
+            function () {
+              router.push('/facilitator');
+            }
+          );
         } else {
           this.setState({
             updatingError: new Error('Could not update'),
@@ -298,7 +344,8 @@ class Ride extends Component<Props, State> {
             {this.props.id ? (
               <Link
                 href={`/facilitator/rides/create?duplicate=${this.props.id}`}
-                className="btn btn-secondary">
+                className="btn btn-secondary"
+              >
                 Duplicate
               </Link>
             ) : (
@@ -354,159 +401,167 @@ class Ride extends Component<Props, State> {
       moment.now()
     );
     const cannotReopen =
-      !dateInFuture && this.state.originalRideState?.status === 'CANCELLED';
+      !dateInFuture &&
+      (this.state.originalRideState?.status === 'CANCELLED' ||
+        this.state.originalRideState?.status === 'CONFIRMED');
     const disabled =
       this.state.originalRideState &&
       this.state.originalRideState.status !== 'OPEN';
 
     return (
-      <React.Fragment>
-        {this.getHeadline()}
-        <form onSubmit={this.handleSubmit}>
-          {disabled && (
-            <p className="alert alert-warning" role="alert">
-              This ride can't be edited because the status is{' '}
-              {this.state.originalRideState?.status}
-            </p>
-          )}
-          <div className="form-group">
-            <label>Client</label>
-            <select
-              disabled={disabled}
-              required
-              onChange={(e) => {
-                const clientId = parseInt(e.currentTarget.value, 10);
-                this.setNewClient(clientId);
-              }}
-              value={this.state.selectedClientId}
-              className="custom-select"
-            >
-              <option disabled={true}>Select from following</option>
-              {this.state.clients.map((c) => {
-                return (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Date (all dates and times are in the Sydney timezone)</label>
-            <DatePicker
-              required
-              minDate={new Date()}
-              disabled={disabled}
-              value={moment
-                .tz(
-                  this.state.pickupTimeAndDate || Date.now(),
-                  process.env.TIMEZONE
-                )
-                .format('LLL')}
-              selected={moment
-                .tz(
-                  this.state.pickupTimeAndDate || Date.now(),
-                  process.env.TIMEZONE
-                )
-                .toDate()}
-              onChange={(date: Date) =>
-                this.setState((state) => {
-                  const wasCancelled =
-                    state.originalRideState?.status === 'CANCELLED';
-                  const isInPast = date.valueOf() <= new Date().valueOf();
-                  return {
-                    status:
-                      isInPast && wasCancelled ? 'CANCELLED' : state.status,
-                    pickupTimeAndDate: date,
-                  };
-                })
-              }
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="LLL"
-              timeCaption="time"
-              className="form-control"
-            />
-          </div>
-          <div className="form-group">
-            <label>Location from</label>
-            <LocationInput
-              disabled={disabled}
-              required={true}
-              value={this.state.locationFrom}
-              onChange={(value) => {
-                this.setState({ locationFrom: value });
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>Location to</label>
-            <LocationInput
-              disabled={disabled}
-              required={true}
-              value={this.state.locationTo}
-              onChange={(value) => {
-                this.setState({ locationTo: value });
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>Ride Description</label>
-
-            <textarea
-              disabled={disabled}
-              onChange={(e) => {
-                this.setState({ description: e.target.value });
-              }}
-              rows={5}
-              maxLength={1024}
-              className="form-control"
-              value={this.state.description}
-            />
-          </div>
-          {this.props.id && (
-            <React.Fragment>
+      <>
+        <Beforeunload onBeforeunload={() => ''}>
+          <React.Fragment>
+            {this.getHeadline()}
+            <form onSubmit={this.handleSubmit}>
+              {disabled && (
+                <p className="alert alert-warning" role="alert">
+                  This ride can't be edited because the status is{' '}
+                  {this.state.originalRideState?.status}
+                </p>
+              )}
               <div className="form-group">
-                <label>Status</label>
+                <label>Client</label>
                 <select
+                  disabled={disabled}
+                  required
                   onChange={(e) => {
-                    this.setState({
-                      status: e.currentTarget.value as RideStatus,
-                    });
+                    const clientId = parseInt(e.currentTarget.value, 10);
+                    this.setNewClient(clientId);
                   }}
-                  value={this.state.status}
+                  value={this.state.selectedClientId}
                   className="custom-select"
                 >
-                  <option value="OPEN" disabled={cannotReopen}>
-                    Open
-                  </option>
-                  <option
-                    value="CONFIRMED"
-                    disabled={!this.state.driver || cannotReopen}
-                  >
-                    Confirmed
-                  </option>
-                  <option
-                    value="ENDED"
-                    disabled={!this.state.driver || cannotReopen}
-                  >
-                    Ended
-                  </option>
-                  <option value="CANCELLED">Cancelled</option>
+                  <option disabled={true}>Select from following</option>
+                  {this.state.clients.map((c) => {
+                    return (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
-              {this.state.driver && (
-                <div className="form-group">
-                  <label>Driver Name</label>
-                  <div>{this.state.driver.name}</div>
-                </div>
+              <div className="form-group">
+                <label>
+                  Date (all dates and times are in the Sydney timezone)
+                </label>
+                <DatePicker
+                  required
+                  minDate={new Date()}
+                  disabled={disabled}
+                  value={moment
+                    .tz(
+                      this.state.pickupTimeAndDate || Date.now(),
+                      process.env.TIMEZONE
+                    )
+                    .format('LLL')}
+                  selected={moment
+                    .tz(
+                      this.state.pickupTimeAndDate || Date.now(),
+                      process.env.TIMEZONE
+                    )
+                    .toDate()}
+                  onChange={(date: Date) =>
+                    this.setState((state) => {
+                      const wasCancelled =
+                        state.originalRideState?.status === 'CANCELLED';
+                      const isInPast = date.valueOf() <= new Date().valueOf();
+                      return {
+                        status:
+                          isInPast && wasCancelled ? 'CANCELLED' : state.status,
+                        pickupTimeAndDate: date,
+                      };
+                    })
+                  }
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  dateFormat="LLL"
+                  timeCaption="time"
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group">
+                <label>Location from</label>
+                <LocationInput
+                  disabled={disabled}
+                  required={true}
+                  value={this.state.locationFrom}
+                  onChange={(value) => {
+                    this.setState({ locationFrom: value });
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label>Location to</label>
+                <LocationInput
+                  disabled={disabled}
+                  required={true}
+                  value={this.state.locationTo}
+                  onChange={(value) => {
+                    this.setState({ locationTo: value });
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label>Ride Description</label>
+
+                <textarea
+                  disabled={disabled}
+                  onChange={(e) => {
+                    this.setState({ description: e.target.value });
+                  }}
+                  rows={5}
+                  maxLength={1024}
+                  className="form-control"
+                  value={this.state.description}
+                />
+              </div>
+              {this.props.id && (
+                <React.Fragment>
+                  <div className="form-group">
+                    <label>Status</label>
+                    <select
+                      onChange={(e) => {
+                        this.setState({
+                          status: e.currentTarget.value as RideStatus,
+                        });
+                      }}
+                      value={this.state.status}
+                      className="custom-select"
+                    >
+                      <option value="OPEN" disabled={cannotReopen}>
+                        Open
+                      </option>
+                      <option
+                        value="CONFIRMED"
+                        disabled={!this.state.driver || cannotReopen}
+                      >
+                        Confirmed
+                      </option>
+                      <option
+                        value="ENDED"
+                        disabled={!this.state.driver || cannotReopen}
+                      >
+                        Ended
+                      </option>
+                      <option value="CANCELLED">Cancelled</option>
+                    </select>
+                  </div>
+                  {this.state.driver && (
+                    <div className="form-group">
+                      <label>Driver Name</label>
+                      <div>{this.state.driver.name}</div>
+                    </div>
+                  )}
+                </React.Fragment>
               )}
-            </React.Fragment>
-          )}
-          {this.buttons()}
-        </form>
-      </React.Fragment>
+              {this.buttons()}
+            </form>
+          </React.Fragment>
+        </Beforeunload>
+      </>
     );
   }
 }
