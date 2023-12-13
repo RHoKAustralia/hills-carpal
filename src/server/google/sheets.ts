@@ -1,4 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { JWT } from 'google-auth-library';
 import moment from 'moment-timezone';
 import { CompletePayload, Ride } from '../../common/model';
 
@@ -10,13 +11,15 @@ type SurveyDetails = CompletePayload & {
   clientName: string;
 };
 
-const writeSurvey = async (survey: SurveyDetails) => {
-  const doc = new GoogleSpreadsheet(process.env.SURVEY_GOOGLE_SHEET_ID);
+const generateJwt = () => new JWT({
+  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+  key: googlePrivateKey,
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
 
-  await doc.useServiceAccountAuth({
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: googlePrivateKey,
-  });
+const writeSurvey = async (survey: SurveyDetails) => {
+  const doc = new GoogleSpreadsheet(process.env.SURVEY_GOOGLE_SHEET_ID, generateJwt());
+
   await doc.loadInfo();
   const sheet = doc.sheetsByIndex[0];
 
@@ -52,12 +55,8 @@ const writeSurvey = async (survey: SurveyDetails) => {
 
 /** Dumps the rides provided into the ride backup spreadsheet, erasing its current contents */
 export const dumpBackupRides = async (rides: Ride[]) => {
-  const doc = new GoogleSpreadsheet(process.env.BACKUP_GOOGLE_SHEET_ID);
+  const doc = new GoogleSpreadsheet(process.env.BACKUP_GOOGLE_SHEET_ID, generateJwt());
 
-  await doc.useServiceAccountAuth({
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: googlePrivateKey,
-  });
   await doc.loadInfo();
   const sheet = doc.sheetsByIndex[0];
 
