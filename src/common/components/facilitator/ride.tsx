@@ -409,7 +409,7 @@ class Ride extends Component<Props, State> {
       this.state.originalRideState.status !== 'OPEN';
 
     return (
-      <>
+      <div className="container">
         <Beforeunload onBeforeunload={() => ''}>
           <React.Fragment>
             {this.getHeadline()}
@@ -561,7 +561,7 @@ class Ride extends Component<Props, State> {
             </form>
           </React.Fragment>
         </Beforeunload>
-      </>
+      </div>
     );
   }
 }

@@ -30,6 +30,12 @@ const customStyles = {
       fontSize: '16px',
     },
   },
+  cells: {
+    style: {
+      paddingTop: '8px',
+      paddingBottom: '8px'
+    }
+  }
 };
 
 const Table = <T,>(props: Props<T>) => {

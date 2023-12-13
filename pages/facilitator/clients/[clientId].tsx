@@ -309,7 +309,7 @@ class Clients extends Component<Props, State> {
     }
 
     return (
-      <React.Fragment>
+      <div className="container">
         <h1>Clients</h1>
 
         <div className="row">
@@ -504,7 +504,7 @@ class Clients extends Component<Props, State> {
             </section>
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

@@ -102,69 +102,73 @@ class Facilitator extends React.Component<Props, State> {
     }
 
     return (
-      <React.Fragment>
-        <div className="row">
-          <div className="col-6">
-            <h4>Rides</h4>
-          </div>
-          <div className="col-6 create-button-row">
-            <Link
-              href={'/facilitator/clients'}
-              className="btn btn-primary create-button"
-            >
-              Clients
-            </Link>
-            <Link
-              href={'/facilitator/rides/create'}
-              className="btn btn-primary create-button"
-            >
-              Create new
-            </Link>
+      <>
+        <div className="container">
+          <div className="row">
+            <div className="col-6">
+              <h4>Rides</h4>
+            </div>
+            <div className="col-6 create-button-row">
+              <Link
+                href={'/facilitator/clients'}
+                className="btn btn-primary create-button"
+              >
+                Clients
+              </Link>
+              <Link
+                href={'/facilitator/rides/create'}
+                className="btn btn-primary create-button"
+              >
+                Create new
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-12">
-            <Table
-              defaultSort={{
-                column: 'pickupTimeAndDate',
-                direction: 'desc',
-              }}
-              columns={columns}
-              onRowClicked={this.handleRowClick}
-              fetchData={async (state) => {
-                const sorted = `&sort=${state.sorted.column}&sortDirection=${state.sorted.direction}`;
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col">
+              <Table
+                defaultSort={{
+                  column: 'pickupTimeAndDate',
+                  direction: 'desc',
+                }}
+                columns={columns}
+                onRowClicked={this.handleRowClick}
+                fetchData={async (state) => {
+                  const sorted = `&sort=${state.sorted.column}&sortDirection=${state.sorted.direction}`;
 
-                const res = await fetch(
-                  `/api/rides/facilitator?page=${state.page - 1}&pageSize=${
-                    state.pageSize
-                  }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem(
-                        'id_token'
-                      )}`,
-                    },
+                  const res = await fetch(
+                    `/api/rides/facilitator?page=${state.page - 1}&pageSize=${
+                      state.pageSize
+                    }${sorted}&filtered=${JSON.stringify(state.filtered)}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                          'id_token'
+                        )}`,
+                      },
+                    }
+                  );
+
+                  if (res.status === 200) {
+                    const data = (await res.json()) as {
+                      rides: Ride[];
+                      count: number;
+                    };
+
+                    return {
+                      rows: data.rides,
+                      total: data.count,
+                    };
+                  } else {
+                    throw new Error('Could not list rides');
                   }
-                );
-
-                if (res.status === 200) {
-                  const data = (await res.json()) as {
-                    rides: Ride[];
-                    count: number;
-                  };
-
-                  return {
-                    rows: data.rides,
-                    total: data.count,
-                  };
-                } else {
-                  throw new Error('Could not list rides');
-                }
-              }}
-            />
+                }}
+              />
+            </div>
           </div>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

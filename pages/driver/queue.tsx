@@ -65,7 +65,7 @@ class Queue extends Component {
       );
     }
     return (
-      <React.Fragment>
+      <div className="container">
         <div className="row">
           <div className="col-12 col-sm-6">
             <h4>Your Rides</h4>
@@ -82,7 +82,7 @@ class Queue extends Component {
             to accept one!
           </React.Fragment>
         )}
-      </React.Fragment>
+      </div>
     );
   }
 }

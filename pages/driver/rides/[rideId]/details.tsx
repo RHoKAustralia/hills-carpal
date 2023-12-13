@@ -247,7 +247,7 @@ export default class RideDetail extends React.Component<Props, State> {
     }
 
     return (
-      <div>
+      <div className="container">
         <div className="card">
           <div className="card-header">
             <h1>{this.state.ride.client.name} is asking for a ride</h1>

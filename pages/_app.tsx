@@ -207,9 +207,7 @@ class App extends Component<AppProps> {
       <AuthProvider>
         <div className="hcp-app">
           <Nav />
-          <div className="container">
-            <this.props.Component {...this.props.pageProps} />
-          </div>
+          <this.props.Component {...this.props.pageProps} />
         </div>
       </AuthProvider>
     );

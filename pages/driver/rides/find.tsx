@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 
-import history from 'next/router';
 import qs from 'qs';
 
-import auth, {
-  AuthContext,
-  hasDriverPrivilege,
-} from '../../../src/client/auth';
+import { AuthContext } from '../../../src/client/auth';
 import LocationSearch from '../../../src/common/components/driver/location-search';
 import DriverList from '../../../src/common/components/driver/driver-list';
 import DriverMap from '../../../src/common/components/driver/driver-map';
@@ -172,7 +168,7 @@ class FindRides extends Component<{}, State> {
       );
     }
     return (
-      <React.Fragment>
+      <div className="container">
         <div className="row">
           <div className="col-12 col-sm-6">
             <h4>Available Rides</h4>
@@ -187,7 +183,7 @@ class FindRides extends Component<{}, State> {
         {this.state.rides && this.state.rides.length > 0
           ? this.renderPage()
           : 'There are no rides available right now - try again later!'}
-      </React.Fragment>
+      </div>
     );
   }
 }
