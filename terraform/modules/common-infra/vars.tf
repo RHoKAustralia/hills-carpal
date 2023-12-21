@@ -50,3 +50,9 @@ variable "environment_name" {
 variable "db_instance" {}
 
 variable "backup_google_sheet_id" {}
+
+variable "ecs_task_revision" {
+  type = string
+  description = "The task revision for ECS - auto deploys from CI will increment this separate from Terraform, so if you deploy terraform on an existing instance you might need to set this manually"
+  default = null
+}

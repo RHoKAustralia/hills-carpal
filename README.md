@@ -12,7 +12,7 @@ npm install
 
 2. First get a local db running, which is easiest with docker
 ```
-docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d -v hillscarpaldb:/var/lib/mysql mysql:5.7
+docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d -v hillscarpaldb:/var/lib/mysql mysql:8.0
 npm run create-db
 npm run refresh-db
 ```
@@ -37,4 +37,15 @@ It'll be available at http://localhost:3000.
 5. Huzzah!
 
 ## Deploying
+### App
 This is automatically deployed to AWS now. Anything that's pushed to master goes to the training environment, anything pushed with a tag goes to the prod environment. You should be able to see the results of the builds on github.
+
+### Terraform
+If you need to make infra changes, you should be able to do so using the terraform files included in the repo - run
+
+```
+terraform init
+terraform apply
+```
+
+You'll need an AWS CLI that's logged into the Hills Carpal AWS account.

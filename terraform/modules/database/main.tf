@@ -24,15 +24,13 @@ resource "aws_db_instance" "hills-carpal-db" {
   identifier              = "hillscarpal-db-${var.database_id}"
   allocated_storage       = 20
   engine                  = "mysql"
-  engine_version          = "5.7"
+  engine_version          = "8.0.35"
   instance_class          = "db.t3.micro"
-  name                    = "carpal"
   username                = "foo"
   password                = "foobarbaz" # Change this to a password of your choice!
-  parameter_group_name    = "makedumpswork" #"default.mysql5.7"
   backup_retention_period = 3
   deletion_protection     = true
-  publicly_accessible     = true
+  publicly_accessible     = false
   apply_immediately       = true
   storage_encrypted       = true
   vpc_security_group_ids  = ["${aws_security_group.db_security_group.id}"]

@@ -1,5 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      version = "~> 5"
+    }
+  }
+}
+
 provider "aws" {
-  version = "~> 2.0"
   region  = "ap-southeast-2"
   profile = "hills-carpal"
 }
@@ -118,6 +125,7 @@ module "prod" {
   load_balancer_port      = 80
   db_instance             = module.prod_db.db
   backup_google_sheet_id  = "1MFfENxjTsva5NZbzi9ArF2JS9NHv4ZxfkA0IJzhp8rM"
+  ecs_task_revision       = 68
 }
 
 module "training" {
