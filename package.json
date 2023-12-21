@@ -38,6 +38,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "mysql": "^2.18.1",
+    "mysql2": "^3.6.5",
     "next": "^13.0.7",
     "next-images": "^1.8.4",
     "node-cache": "^5.1.2",

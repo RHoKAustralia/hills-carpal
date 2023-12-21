@@ -1,4 +1,4 @@
-import mysql, { Connection } from 'mysql';
+import mysql, { Connection } from 'mysql2';
 import fs from 'fs';
 
 export default class DatabaseManager {
@@ -12,11 +12,8 @@ export default class DatabaseManager {
       password: process.env.MYSQL_PW || 'admin',
       database: process.env.MYSQL_DB || 'carpal',
       multipleStatements: true,
-      connectTimeout: 60000, // Needs to be super high to wait for serverless aurora to wake up
       timezone: 'UTC',
-      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ?? {
-        ca: fs.readFileSync(__dirname + '/rds-ca-2019-root.pem'),
-      },
+      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ?? 'Amazon RDS',
       // debug: true
     };
   }
@@ -58,13 +55,13 @@ export default class DatabaseManager {
               let closePromise = this.closeConnection(connection);
               return closePromise
                 .then(() => {
-                  resolve(results);
+                  resolve(results as unknown as T);
                 })
                 .catch((error1) => {
                   reject(error1 || error);
                 });
             }
-            return resolve(results);
+            return resolve(results as unknown as T);
           });
         })
     );
