@@ -1,6 +1,6 @@
 import DatabaseManager from '../database/database-manager';
 import { Client } from '../../../common/model';
-import { Connection } from 'mysql';
+import { Connection } from 'mysql2';
 import LocationRepository from '../location-repository';
 
 export default class ClientRepository {

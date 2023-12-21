@@ -1,4 +1,4 @@
-import { Connection } from 'mysql';
+import { Connection } from 'mysql2';
 
 import DatabaseManager from '../database/database-manager';
 import { Image } from '../../../common/model';
