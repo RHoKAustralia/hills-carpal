@@ -78,7 +78,7 @@ export default (statusToChangeTo: RideStatus) =>
       await connection.rollback();
       res.status(500).json({ status: 'Error' });
     } finally {
-      databaseManager.closeConnection(connection);
+      await connection.end();
     }
   };
 

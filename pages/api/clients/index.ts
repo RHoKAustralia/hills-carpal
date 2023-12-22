@@ -56,6 +56,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(e);
     res.status(500).json({ status: 'Error' });
   } finally {
-    await databaseManager.closeConnection(connection);
+    await await connection.end();
   }
 };
