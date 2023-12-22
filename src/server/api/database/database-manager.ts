@@ -14,7 +14,7 @@ export default class DatabaseManager {
       multipleStatements: true,
       timezone: '+00:00',
       ssl: process.env.MYSQL_USE_SSL === 'TRUE' ? {
-        ca: fs.readFileSync(__dirname + '/global-budle.pem'),
+        ca: fs.readFileSync(__dirname + '/global-bundle.pem'),
       } : undefined,
       // debug: true
     };
