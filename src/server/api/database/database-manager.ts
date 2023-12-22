@@ -13,7 +13,7 @@ export default class DatabaseManager {
       database: process.env.MYSQL_DB || 'carpal',
       multipleStatements: true,
       timezone: '+00:00',
-      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ?? 'Amazon RDS',
+      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ? 'Amazon RDS' : undefined,
       // debug: true
     };
   }
