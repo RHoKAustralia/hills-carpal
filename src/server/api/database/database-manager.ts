@@ -1,5 +1,6 @@
 import mysql, { Connection } from 'mysql2/promise';
 import fs from 'fs';
+import path from 'path';
 
 export default class DatabaseManager {
   databaseConfig: any;
@@ -13,9 +14,12 @@ export default class DatabaseManager {
       database: process.env.MYSQL_DB || 'carpal',
       multipleStatements: true,
       timezone: '+00:00',
-      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ? {
-        ca: fs.readFileSync(__dirname + '/global-bundle.pem'),
-      } : undefined,
+      ssl:
+        process.env.MYSQL_USE_SSL === 'TRUE'
+          ? {
+              ca: fs.readFileSync(path.join(process.cwd(), 'src', 'server', 'api', 'database', 'global-bundle.pem')),
+            }
+          : undefined,
       // debug: true
     };
   }
@@ -45,7 +49,7 @@ export default class DatabaseManager {
     if (closeConnection) {
       await connection.end();
     }
-    
+
     return results as unknown as T;
   }
 }
