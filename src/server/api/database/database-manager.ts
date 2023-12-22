@@ -13,7 +13,9 @@ export default class DatabaseManager {
       database: process.env.MYSQL_DB || 'carpal',
       multipleStatements: true,
       timezone: '+00:00',
-      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ? 'Amazon RDS' : undefined,
+      ssl: process.env.MYSQL_USE_SSL === 'TRUE' ? {
+        ca: fs.readFileSync(__dirname + '/global-budle.pem'),
+      } : undefined,
       // debug: true
     };
   }
