@@ -1,4 +1,4 @@
-import { Connection } from 'mysql2';
+import { Connection } from 'mysql2/promise';
 
 import DatabaseManager from '../database/database-manager';
 import { Image } from '../../../common/model';
@@ -17,7 +17,7 @@ class ImageRepository {
     connection: Connection
   ): Promise<Image> {
     try {
-      await this.databaseManager.beginTransaction(connection);
+      await connection.beginTransaction();
 
       const addImageQuery = `
         INSERT INTO ${this.dbName}.images(mime_type, content) 
@@ -43,7 +43,7 @@ class ImageRepository {
         )`;
 
       await this.databaseManager.query(addJoinQuery, connection);
-      await this.databaseManager.commit(connection);
+      await connection.commit();
 
       const images = await this.databaseManager.query(
         `SELECT
@@ -58,7 +58,7 @@ class ImageRepository {
       return images[0];
     } catch (e) {
       console.error(e);
-      await this.databaseManager.rollback(connection);
+      await connection.rollback();
       throw e;
     }
   }

@@ -1,6 +1,6 @@
 import DatabaseManager from './database/database-manager';
 import { Location } from '../../common/model';
-import { Connection } from 'mysql2';
+import { Connection } from 'mysql2/promise';
 
 export default class LocationRepository {
   private dbName: string;

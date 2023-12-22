@@ -16,7 +16,7 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
-  const connection = databaseManager.createConnection();
+  const connection = await databaseManager.createConnection();
 
   const claims = await decodeJwt(req);
   if (isRideInPast(req.body)) {

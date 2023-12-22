@@ -19,7 +19,7 @@ const reminderDifferenceDays = Number.parseInt(
 
 export default snsValidatorEndpoint(
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const connection = databaseManager.createConnection();
+    const connection = await databaseManager.createConnection();
 
     try {
       // find all rides that are unclaimed and due in a week

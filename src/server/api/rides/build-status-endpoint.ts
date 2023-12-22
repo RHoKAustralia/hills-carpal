@@ -16,12 +16,12 @@ const rideRepository = new RideRepository(databaseManager);
 export default (statusToChangeTo: RideStatus) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
-    const connection = databaseManager.createConnection();
+    const connection = await databaseManager.createConnection();
     await databaseManager.query(
       'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
       connection
     );
-    await databaseManager.beginTransaction(connection);
+    await connection.beginTransaction();
 
     try {
       const jwt = await decodeJwt(req);
@@ -64,7 +64,7 @@ export default (statusToChangeTo: RideStatus) =>
               await notifyOffered(newRide);
             }
 
-            await databaseManager.commit(connection);
+            await connection.commit();
             res.status(200).json(newRide);
             break;
           default:
@@ -75,7 +75,7 @@ export default (statusToChangeTo: RideStatus) =>
     } catch (e) {
       console.error(e);
 
-      await databaseManager.rollback(connection);
+      await connection.rollback();
       res.status(500).json({ status: 'Error' });
     } finally {
       databaseManager.closeConnection(connection);

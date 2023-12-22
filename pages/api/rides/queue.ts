@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (method) {
     case 'GET':
-      const connection = databaseManager.createConnection();
+      const connection = await databaseManager.createConnection();
 
       try {
         const jwt = await decodeJwt(req);

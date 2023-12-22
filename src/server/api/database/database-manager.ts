@@ -1,4 +1,4 @@
-import mysql, { Connection } from 'mysql2';
+import mysql, { Connection } from 'mysql2/promise';
 import fs from 'fs';
 
 export default class DatabaseManager {
@@ -18,7 +18,7 @@ export default class DatabaseManager {
     };
   }
 
-  createConnection(): mysql.Connection {
+  createConnection(): Promise<mysql.Connection> {
     return mysql.createConnection(this.databaseConfig);
   }
 
@@ -35,10 +35,10 @@ export default class DatabaseManager {
     });
   }
 
-  query<T = any>(queryString: string, connection: Connection): Promise<T> {
+  async query<T = any>(queryString: string, connection: Connection): Promise<T> {
     let closeConnection = false;
     if (!connection) {
-      connection = this.createConnection();
+      connection = await this.createConnection();
       closeConnection = true;
     }
 
@@ -78,38 +78,6 @@ export default class DatabaseManager {
     });
   }
 
-  beginTransaction(connection: mysql.Connection): Promise<void> {
-    return new Promise((resolve, reject) => {
-      connection.beginTransaction(function (error) {
-        if (error) {
-          return reject(error);
-        }
-        resolve();
-      });
-    });
-  }
-
-  rollback(connection: mysql.Connection) {
-    return new Promise<void>((resolve, reject) => {
-      connection.rollback(function (error) {
-        if (error) {
-          return reject(error);
-        }
-        resolve();
-      });
-    });
-  }
-
-  commit(connection: mysql.Connection) {
-    return new Promise<void>((resolve, reject) => {
-      connection.commit(function (error) {
-        if (error) {
-          return reject(error);
-        }
-        resolve();
-      });
-    });
-  }
 }
 
 module.exports = DatabaseManager;

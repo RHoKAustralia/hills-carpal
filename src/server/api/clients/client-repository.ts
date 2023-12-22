@@ -1,6 +1,6 @@
 import DatabaseManager from '../database/database-manager';
 import { Client } from '../../../common/model';
-import { Connection } from 'mysql2';
+import { Connection } from 'mysql2/promise';
 import LocationRepository from '../location-repository';
 
 export default class ClientRepository {
@@ -16,7 +16,7 @@ export default class ClientRepository {
     const escape = (data) => connection.escape(data);
 
     try {
-      await this.databaseManager.beginTransaction(connection);
+      await connection.beginTransaction();
 
       const homeLocationId = await this.locationRepository.create(
         client.homeLocation,
@@ -55,10 +55,10 @@ export default class ClientRepository {
       )[0]['lastInsertId'];
     } catch (e) {
       console.error(e);
-      await this.databaseManager.rollback(connection);
+      await connection.rollback();
       throw e;
     } finally {
-      await this.databaseManager.commit(connection);
+      await connection.commit();
     }
   }
 

@@ -20,7 +20,7 @@ const imageRepository = new ImageRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
-  const connection = databaseManager.createConnection();
+  const connection = await databaseManager.createConnection();
   try {
     switch (method) {
       case 'POST':

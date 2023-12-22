@@ -12,7 +12,7 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default snsValidatorEndpoint(
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const connection = databaseManager.createConnection();
+    const connection = await databaseManager.createConnection();
 
     try {
       console.log(`Dumping open rides to google sheets`);

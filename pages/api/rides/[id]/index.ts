@@ -17,7 +17,7 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
-  const connection = databaseManager.createConnection();
+  const connection = await databaseManager.createConnection();
 
   try {
     switch (method) {

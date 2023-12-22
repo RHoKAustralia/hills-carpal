@@ -11,7 +11,7 @@ const clientRepository = new ClientRepository(databaseManager);
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
 
-  const connection = databaseManager.createConnection();
+  const connection = await databaseManager.createConnection();
   try {
     if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {

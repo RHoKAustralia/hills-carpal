@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
 import _ from 'lodash';
-import { Connection } from 'mysql2';
+import { Connection } from 'mysql2/promise';
 
 import DatabaseManager from '../database/database-manager';
 import {
@@ -64,7 +64,7 @@ export default class RideRepository {
     const escape = (data) => connection.escape(data);
 
     try {
-      connection.beginTransaction();
+      await connection.beginTransaction();
 
       const locationFromId = await this.locationRepository.create(
         ride.locationFrom,
@@ -117,7 +117,7 @@ export default class RideRepository {
 
       return id;
     } catch (e) {
-      connection.rollback();
+      await connection.rollback()
       throw e;
     }
   }
@@ -166,7 +166,7 @@ export default class RideRepository {
     const escape = (data) => connection.escape(data);
 
     try {
-      await this.databaseManager.beginTransaction(connection);
+      await connection.beginTransaction();
       let extraQuery: string | null = null;
       let query = `UPDATE ${this.dbName}.rides 
       SET 
@@ -193,9 +193,9 @@ export default class RideRepository {
 
       await this.databaseManager.query(query, connection);
       extraQuery && (await this.databaseManager.query(extraQuery, connection));
-      this.databaseManager.commit(connection);
+      await connection.commit()
     } catch (e) {
-      this.databaseManager.rollback(connection);
+      await connection.rollback()
       throw e;
     }
   }
@@ -206,7 +206,7 @@ export default class RideRepository {
     }
 
     try {
-      await this.databaseManager.beginTransaction(connection);
+      await connection.beginTransaction();
 
       const escape = (data) => connection.escape(data);
 
@@ -257,11 +257,11 @@ export default class RideRepository {
       // console.log(query + extraQuery);
 
       await this.databaseManager.query(query + extraQuery, connection);
-      this.databaseManager.commit(connection);
+      connection.commit();
 
       return this.get(id, connection);
     } catch (e) {
-      this.databaseManager.rollback(connection);
+      await connection.rollback()
       throw e;
     }
   }
