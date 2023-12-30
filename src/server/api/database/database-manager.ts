@@ -32,10 +32,10 @@ export default class DatabaseManager {
     await connection.query("SET time_zone='+00:00'");
   }
 
-  async query<T = any>(
+  async query(
     queryString: string,
     connection: Connection,
-  ): Promise<T> {
+  ): Promise<mysql.RowDataPacket[]> {
     let closeConnection = false;
     if (!connection) {
       connection = await this.createConnection();
@@ -50,7 +50,7 @@ export default class DatabaseManager {
       await connection.end();
     }
 
-    return results as unknown as T;
+    return results as unknown as mysql.RowDataPacket[];
   }
 }
 
