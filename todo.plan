@@ -1,0 +1,31 @@
+TODO
+====
+
+
+# Drivers Screen
+- Big list of drivers, same as clients page
+- Click on a driver -> edit their details
+    - Details includes auth0 dropdown
+    - This is not visible to non-facilitators
+- Create driver -> first field is auth0 dropdown, doesn't show options that are already associated with users
+- APIs:
+    - list drivers (only bring back own record for driver role)
+    - update driver
+
+# Facilitators screen
+- Same deal as drivers, including auth0 details
+- Only visible to facilitators
+- APIS:
+    - list facilitators
+    - update facilitator
+
+# Associate rides with facilitator
+- Get facilitator id on creation via auth 0 id
+
+# Roles
+- Stop getting roles from auth0, move to using database
+    - Client side
+    - Server side
+- APIs:
+    - Get roles for current user
+
