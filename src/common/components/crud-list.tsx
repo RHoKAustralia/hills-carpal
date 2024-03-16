@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import Link from 'next/link';
 import { AuthContext, hasFacilitatorPrivilege } from '../../client/auth';
+import router from 'next/router';
 
 import {
   Client,
@@ -24,13 +25,20 @@ const clientSort = (lhs, rhs) => {
 
 interface Props<Model> {
   blankModel: Model;
-  id: number;
+  id: string;
   getData: () => Promise<Complete<Model>[]>;
   validate: (data: Model) => boolean | Error;
   update: (data: Model) => Promise<void>;
   create: (data: Model) => Promise<Complete<Model>>;
   delete: (id: number) => Promise<void>;
-  children: (data: Model) => ReactNode;
+  children: (
+    data: Model,
+    buttons: () => JSX.Element,
+    update: (model: Model) => void,
+    save: () => void
+  ) => ReactNode;
+  onSelected: (data: Model) => void;
+  baseRoute: string;
 }
 
 interface State<Model> {
@@ -71,10 +79,24 @@ export default class CrudList<
     }
   };
 
-  setCurrent(id: number) {
+  setCurrent(id: string) {
+    const current =
+      id === 'new'
+        ? { ...this.props.blankModel }
+        : this.find(Number.parseInt(id));
+
+    if (!current) {
+      throw new Error(
+        `Tried to find model with id ${id} but it wasn't in list with ids ${this.state.list.map(
+          (x) => x.id
+        )}`
+      );
+    }
+
     this.setState({
-      current: this.find(id),
+      current,
     });
+    this.props.onSelected(current);
   }
 
   fetchData = async () => {
@@ -86,8 +108,8 @@ export default class CrudList<
         if (data.length > 0) {
           if (this.props.id) {
             this.setCurrent(this.props.id);
-          } else {
-            this.setCurrent(data[0].id);
+          } else if (data.length > 0) {
+            router.push(this.props.baseRoute + '/' + data[0].id);
           }
         }
       });
@@ -97,9 +119,7 @@ export default class CrudList<
     }
   };
 
-  async saveModel(e: Event) {
-    e.preventDefault();
-
+  saveModel = async () => {
     this.setState({
       saving: true,
       savingError: null,
@@ -118,12 +138,13 @@ export default class CrudList<
     try {
       if (!isNaN(this.state.current.id)) {
         await this.props.update(this.state.current);
+        this.updateCurrentAndList(this.state.current);
       } else {
         const withId = await this.props.create(this.state.current);
 
-        this.setState({
-          current: withId,
-        });
+        this.updateCurrentAndList(withId);
+
+        router.push(this.props.baseRoute + '/' + withId.id);
       }
       this.setState({
         saving: false,
@@ -135,14 +156,14 @@ export default class CrudList<
         savingError: e,
       });
     }
-  }
+  };
 
   find(id: number): Model | undefined {
     return this.state.list.find((c) => c.id === id);
   }
 
   newModel() {
-    this.setState({ current: this.props.blankModel });
+    router.push(this.props.baseRoute + '/new');
   }
 
   updateCurrentAndList(model: Model) {
@@ -158,6 +179,8 @@ export default class CrudList<
     list.sort(clientSort);
 
     this.setState({ list, current: model });
+
+    this.props.onSelected(model);
   }
 
   deleteCurrent = async (event: React.FormEvent) => {
@@ -210,6 +233,10 @@ export default class CrudList<
     }
   };
 
+  updateCurrent = (model: Model) => {
+    this.setState({ current: model });
+  };
+
   render() {
     if (this.state.loading) {
       return <img alt="loader" className="loader" src="/loader.svg" />;
@@ -224,9 +251,7 @@ export default class CrudList<
     }
 
     return (
-      <div className="container">
-        <h1>Clients</h1>
-
+      <>
         <div className="row">
           <div className="col-12">
             <div className="btn-group">
@@ -261,9 +286,16 @@ export default class CrudList<
               })}
             </ul>
           </div>
-          <div className="col-9">{this.props.children(this.state.current)}</div>
+          <div className="col-9">
+            {this.props.children(
+              this.state.current,
+              this.buttons,
+              this.updateCurrent,
+              this.saveModel
+            )}
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 }
