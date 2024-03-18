@@ -1,3 +1,3 @@
-import Client from './[clientId]';
+import Driver from './[driverId]';
 
-export default Client;
+export default Driver;

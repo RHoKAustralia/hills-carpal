@@ -1,7 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';;
+import { NextApiRequest, NextApiResponse } from 'next';
+import { Driver } from '../../../src/common/model';
+
+import DriverRepository from '../../../src/server/api/driver-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
 import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
-import DriverRepository from '../../../src/server/api/driver-repository';
 
 const databaseManager = new DatabaseManager();
 const driverRepository = new DriverRepository(databaseManager);
@@ -14,25 +16,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'GET':
+          // const inactive =
+          //   typeof req.query.inactive !== 'undefined'
+          //     ? req.query.inactive === 'true'
+          //       ? true
+          //       : false
+          //     : undefined;
+
           const drivers = await driverRepository.list(connection);
           res.status(200).json(drivers);
 
           break;
-        // case 'POST':
-        //   const client: Client = {
-        //     ...body,
-        //     preferredDriverGender: body.preferredDriverGender || 'any',
-        //     preferredCarType: body.preferredCarType || 'All',
-        //   };
+        case 'POST':
+          const driver: Driver = {
+            ...body,
+            preferredDriverGender: body.preferredDriverGender || 'any',
+            preferredCarType: body.preferredCarType || 'All',
+          };
 
-        //   const result = await clientRepository.create(client, connection);
+          const result = await driverRepository.create(driver, connection);
 
-        //   res.status(200).json({
-        //     ...body,
-        //     id: result,
-        //   });
+          res.status(200).json({
+            ...body,
+            id: result,
+          });
 
-        //   break;
+          break;
 
         // case 'PUT':
         //   // Update or create data in your database
@@ -47,6 +56,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(e);
     res.status(500).json({ status: 'Error' });
   } finally {
-    await connection.end();
+    await await connection.end();
   }
 };
