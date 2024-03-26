@@ -1,4 +1,4 @@
-export type Gender = 'male' | 'female' | 'any';
+export type GenderPreference = 'male' | 'female' | 'any';
 export type CarType = 'All' | 'suv' | 'noSUV';
 export type RideStatus = 'OPEN' | 'CONFIRMED' | 'ENDED' | 'CANCELLED';
 
@@ -39,7 +39,7 @@ export interface OptionalClient {
   name?: string;
   clientDescription?: string;
   phoneNumber?: string;
-  preferredDriverGender?: Gender;
+  preferredDriverGender?: GenderPreference;
   preferredCarType?: CarType;
   homeLocation?: Location;
   hasMps?: boolean;

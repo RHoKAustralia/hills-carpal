@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
-import { Gender, CarType } from '../../common/model';
+import { GenderPreference, CarType } from '../../common/model';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
@@ -17,7 +17,7 @@ interface Claims {
   email: string;
   roles: Role[];
   name: string;
-  driverGender?: Gender;
+  driverGender?: GenderPreference;
   carType?: CarType;
 }
 
@@ -105,7 +105,10 @@ export async function decodeJwt(
     let decodedToken: any = await new Promise((resolve, reject) =>
       jsonwebtoken.verify(
         tokenValue,
-        (header: jsonwebtoken.JwtHeader, callback: (error?: Error, value?: string) => void) => {
+        (
+          header: jsonwebtoken.JwtHeader,
+          callback: (error?: Error, value?: string) => void
+        ) => {
           client.getSigningKey(header.kid, (err: Error, key: any) => {
             if (err) {
               callback(err);

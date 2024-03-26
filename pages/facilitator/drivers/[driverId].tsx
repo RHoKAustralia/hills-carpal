@@ -6,7 +6,7 @@ import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 import {
   Driver,
   OptionalDriver,
-  Gender,
+  GenderPreference,
   CarType,
 } from '../../../src/common/model';
 import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
@@ -19,27 +19,21 @@ const defaultDriver: OptionalDriver = {
   mobile: '',
   driverGender: null,
   hasSuv: false,
-  driverRego: 'string',
-  mpsPermit: false,
+  driverRego: '',
+  mpsPermit: '',
 };
 
 interface Props {
   id: number;
 }
 
-interface State {
-  driverImages: any[] | null;
-  driverImagesLoadingError: Error | null;
-}
+interface State {}
 
 class Drivers extends Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
-  state: State = {
-    driverImages: null,
-    driverImagesLoadingError: null,
-  };
+  state: State = {};
 
   static getInitialProps({ query }) {
     return {
@@ -66,7 +60,8 @@ class Drivers extends Component<Props, State> {
   };
 
   validate = (driver: OptionalDriver) => {
-    return !!driver.homeLocation;
+    // return !!driver.homeLocation;
+    return true;
   };
 
   create = async (driver: OptionalDriver) => {
@@ -97,35 +92,6 @@ class Drivers extends Component<Props, State> {
     });
   };
 
-  onDriverSelected = async (driver: OptionalDriver) => {
-    this.setState({
-      driverImages: null,
-      driverImagesLoadingError: null,
-    });
-
-    const imagesRes = await fetch(`/api/drivers/${driver.id}/images`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
-      },
-    });
-
-    if (imagesRes.status !== 200) {
-      this.setState({
-        driverImages: null,
-        driverImagesLoadingError: new Error('Could not load driver images'),
-      });
-    }
-
-    this.setState({ driverImages: await imagesRes.json() });
-  };
-
-  onImagesChanged = (images) => {
-    this.setState({
-      driverImages: images,
-    });
-  };
-
   delete = async (id: number) => {
     await fetch('/api/drivers/' + id, {
       method: 'delete',
@@ -147,83 +113,78 @@ class Drivers extends Component<Props, State> {
         <h1>Drivers</h1>
 
         <CrudList<OptionalDriver>
-          id={this.props.id}
+          id={this.props.id.toString()}
           blankModel={defaultDriver}
           create={this.create}
           delete={this.delete}
           getData={this.fetchDrivers}
           update={this.update}
-          onSelected={this.onDriverSelected}
           validate={this.validate}
           baseRoute="/facilitator/drivers"
           children={(driver, buttons, update, save) => {
             return (
               <div className="col-9">
-                {driver.inactive && (
-                  <div className="p-3 mb-2 bg-danger text-white">
-                    This Driver is now deactivated
-                  </div>
-                )}
                 <section className="driver-form-section">
                   <form onSubmit={(event) => this.onSubmit(event, save)}>
                     <h5>Details</h5>
                     <div className="form-group">
-                      <div className="form-check">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          id="aflag"
-                          checked={driver.inactive}
-                          onChange={(e) => {
-                            const curr = { ...driver };
-                            curr.inactive = e.currentTarget.checked;
-                            update(curr);
-                          }}
-                        />
-                        <label className="form-check-label" htmlFor="aflag">
-                          Inactive Status
-                        </label>
-                      </div>
-
                       <label>Name</label>
                       <input
-                        value={driver.name}
+                        value={driver.givenName}
                         required
                         onChange={(e) => {
                           let curr = { ...driver };
-                          curr.name = e.currentTarget.value;
+                          curr.givenName = e.currentTarget.value;
                           update(curr);
                         }}
                         type="text"
-                        name="driver"
+                        name="given-name"
                         className="form-control"
                       />
                     </div>
                     <div className="form-group">
-                      <label>Phone Number</label>
+                      <label>Name</label>
                       <input
-                        value={driver.phoneNumber}
+                        value={driver.familyName}
                         required
                         onChange={(e) => {
                           let curr = { ...driver };
-                          curr.phoneNumber = e.currentTarget.value;
+                          curr.familyName = e.currentTarget.value;
+                          update(curr);
+                        }}
+                        type="text"
+                        name="family-name"
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        value={driver.email}
+                        required
+                        onChange={(e) => {
+                          let curr = { ...driver };
+                          curr.email = e.currentTarget.value;
+                          update(curr);
+                        }}
+                        type="text"
+                        name="email"
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Mobile Number</label>
+                      <input
+                        value={driver.mobile}
+                        required
+                        onChange={(e) => {
+                          let curr = { ...driver };
+                          curr.mobile = e.currentTarget.value;
                           update(curr);
                         }}
                         type="text"
                         name="driver"
                         className="form-control"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Home Address</label>
-                      <LocationInput
-                        required
-                        value={driver.homeLocation}
-                        onChange={(value) => {
-                          let curr = { ...driver };
-                          curr.homeLocation = value;
-                          update(curr);
-                        }}
                       />
                     </div>
                     <div className="form-group">
@@ -233,12 +194,12 @@ class Drivers extends Component<Props, State> {
                         onChange={(e) => {
                           let currentDriver = {
                             ...driver,
-                            preferredDriverGender: e.currentTarget
-                              .value as Gender,
+                            driverGender: e.currentTarget
+                              .value as GenderPreference,
                           };
                           update(currentDriver);
                         }}
-                        value={driver.preferredDriverGender}
+                        value={driver.driverGender}
                         className="custom-select"
                       >
                         <option value="any">Any</option>

@@ -7,7 +7,7 @@ import {
   decodeJwt,
   requireDriverPermissions,
 } from '../../../src/server/api/jwt';
-import { CarType, Gender } from '../../../src/common/model';
+import { CarType, GenderPreference } from '../../../src/common/model';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -30,8 +30,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 carType: ['All' as CarType].concat(
                   jwt.carType ? [jwt.carType as CarType] : []
                 ),
-                gender: ['any' as Gender].concat(
-                  jwt.driverGender ? [jwt.driverGender as Gender] : []
+                gender: ['any' as GenderPreference].concat(
+                  jwt.driverGender ? [jwt.driverGender as GenderPreference] : []
                 ),
               },
               sort: ['pickupTimeAndDateInUTC'],

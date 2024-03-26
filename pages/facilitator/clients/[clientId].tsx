@@ -8,7 +8,7 @@ import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 import {
   Client,
   OptionalClient,
-  Gender,
+  GenderPreference,
   CarType,
 } from '../../../src/common/model';
 import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
@@ -236,7 +236,7 @@ class Clients extends Component<Props, State> {
                           let currentClient = {
                             ...client,
                             preferredDriverGender: e.currentTarget
-                              .value as Gender,
+                              .value as GenderPreference,
                           };
                           update(currentClient);
                         }}

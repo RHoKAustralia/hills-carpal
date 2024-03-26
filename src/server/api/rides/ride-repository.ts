@@ -4,7 +4,7 @@ import { Connection } from 'mysql2/promise';
 
 import DatabaseManager from '../database/database-manager';
 import {
-  Gender,
+  GenderPreference,
   CarType,
   RideStatus,
   Ride,
@@ -18,7 +18,7 @@ interface ListQuery {
   filters?: {
     fromNow?: boolean;
     driverId?: string;
-    gender?: Gender[];
+    gender?: GenderPreference[];
     carType?: CarType[];
     status?: RideStatus;
     date?: {
@@ -117,7 +117,7 @@ export default class RideRepository {
 
       return id;
     } catch (e) {
-      await connection.rollback()
+      await connection.rollback();
       throw e;
     }
   }
@@ -193,9 +193,9 @@ export default class RideRepository {
 
       await this.databaseManager.query(query, connection);
       extraQuery && (await this.databaseManager.query(extraQuery, connection));
-      await connection.commit()
+      await connection.commit();
     } catch (e) {
-      await connection.rollback()
+      await connection.rollback();
       throw e;
     }
   }
@@ -261,7 +261,7 @@ export default class RideRepository {
 
       return this.get(id, connection);
     } catch (e) {
-      await connection.rollback()
+      await connection.rollback();
       throw e;
     }
   }

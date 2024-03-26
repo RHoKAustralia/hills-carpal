@@ -6,7 +6,7 @@ import router from 'next/router';
 import {
   Client,
   OptionalClient,
-  Gender,
+  GenderPreference,
   CarType,
   Complete,
 } from '../../../src/common/model';
@@ -37,7 +37,7 @@ interface Props<Model> {
     update: (model: Model) => void,
     save: () => void
   ) => ReactNode;
-  onSelected: (data: Model) => void;
+  onSelected?: (data: Model) => void;
   baseRoute: string;
 }
 
@@ -96,7 +96,7 @@ export default class CrudList<
     this.setState({
       current,
     });
-    this.props.onSelected(current);
+    this.props.onSelected ?? this.props.onSelected(current);
   }
 
   fetchData = async () => {

@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import ClientRepository from '../../../../src/server/api/clients/client-repository';
-import DatabaseManager from '../../../../src/server/api/database/database-manager';
-import { Client } from '../../../../src/common/model';
-import { requireFacilitatorPermissions } from '../../../../src/server/api/jwt';
+import DriverRepository from '../../../src/server/api/driver-repository';
+import DatabaseManager from '../../../src/server/api/database/database-manager';
+import { Driver } from '../../../src/common/model';
+import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
-const clientRepository = new ClientRepository(databaseManager);
+const driverRepository = new DriverRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
@@ -16,23 +16,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'PUT':
-          const client: Client = {
-            ...body,
-            preferredDriverGender: body.preferredDriverGender || 'any',
-            preferredCarType: body.preferredCarType || 'All',
-          };
+          const driver: Driver = body;
 
-          await clientRepository.update(
-            parseInt(req.query.clientId as string),
-            client,
+          await driverRepository.update(
+            parseInt(req.query.driverId as string),
+            driver,
             connection
           );
           res.status(200).json(body);
 
           break;
         case 'DELETE':
-          await clientRepository.delete(
-            parseInt(req.query.clientId as string),
+          await driverRepository.delete(
+            parseInt(req.query.driverId as string),
             connection
           );
           res.status(200).json(body);

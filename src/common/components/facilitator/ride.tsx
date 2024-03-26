@@ -12,7 +12,7 @@ import {
   Location,
   RideDriver,
   Ride as ModelRide,
-  Gender,
+  GenderPreference,
   CarType,
   Client,
   RideStatus,

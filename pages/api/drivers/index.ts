@@ -28,11 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           break;
         case 'POST':
-          const driver: Driver = {
-            ...body,
-            preferredDriverGender: body.preferredDriverGender || 'any',
-            preferredCarType: body.preferredCarType || 'All',
-          };
+          const driver: Driver = body;
 
           const result = await driverRepository.create(driver, connection);
 
@@ -43,10 +39,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           break;
 
-        // case 'PUT':
-        //   // Update or create data in your database
-        //   res.status(200).json({ id, name: name || `User ${id}` });
-        //   break;
         default:
           res.setHeader('Allow', ['GET', 'POST', 'PUT']);
           res.status(405).end(`Method ${method} Not Allowed`);
