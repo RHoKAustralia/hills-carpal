@@ -6,7 +6,7 @@ import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 import {
   Driver,
   OptionalDriver,
-  GenderPreference,
+  Gender,
   CarType,
 } from '../../../src/common/model';
 import isAuthedWithRole from '../../../src/common/redirect-if-no-role';
@@ -37,7 +37,7 @@ class Drivers extends Component<Props, State> {
 
   static getInitialProps({ query }) {
     return {
-      id: query.driverId,
+      id: query.id,
     };
   }
 
@@ -56,7 +56,11 @@ class Drivers extends Component<Props, State> {
       },
     });
 
-    return (await data.json()) as Driver[];
+    const drivers = (await data.json()) as Driver[];
+
+    return drivers.map((driver) => ({
+      ...driver,
+    }));
   };
 
   validate = (driver: OptionalDriver) => {
@@ -82,7 +86,7 @@ class Drivers extends Component<Props, State> {
   };
 
   update = async (driver: OptionalDriver) => {
-    await fetch('/api/drivers/' + driver.id, {
+    const result = await fetch('/api/drivers/' + driver.id, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
@@ -90,6 +94,10 @@ class Drivers extends Component<Props, State> {
       },
       body: JSON.stringify(driver),
     });
+
+    if (result.status < 200 || result.status >= 300) {
+      throw new Error('Bad status: ' + result.status);
+    }
   };
 
   delete = async (id: number) => {
@@ -113,7 +121,7 @@ class Drivers extends Component<Props, State> {
         <h1>Drivers</h1>
 
         <CrudList<OptionalDriver>
-          id={this.props.id.toString()}
+          id={this.props.id?.toString()}
           blankModel={defaultDriver}
           create={this.create}
           delete={this.delete}
@@ -121,6 +129,7 @@ class Drivers extends Component<Props, State> {
           update={this.update}
           validate={this.validate}
           baseRoute="/facilitator/drivers"
+          getName={(driver) => `${driver.givenName} ${driver.familyName}`}
           children={(driver, buttons, update, save) => {
             return (
               <div className="col-9">
@@ -128,7 +137,7 @@ class Drivers extends Component<Props, State> {
                   <form onSubmit={(event) => this.onSubmit(event, save)}>
                     <h5>Details</h5>
                     <div className="form-group">
-                      <label>Name</label>
+                      <label>Given Name</label>
                       <input
                         value={driver.givenName}
                         required
@@ -143,7 +152,7 @@ class Drivers extends Component<Props, State> {
                       />
                     </div>
                     <div className="form-group">
-                      <label>Name</label>
+                      <label>Family Name</label>
                       <input
                         value={driver.familyName}
                         required
@@ -194,85 +203,70 @@ class Drivers extends Component<Props, State> {
                         onChange={(e) => {
                           let currentDriver = {
                             ...driver,
-                            driverGender: e.currentTarget
-                              .value as GenderPreference,
+                            driverGender: e.currentTarget.value as Gender,
                           };
                           update(currentDriver);
                         }}
-                        value={driver.driverGender}
+                        value={driver.driverGender ?? ''}
                         className="custom-select"
                       >
-                        <option value="any">Any</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
-                    <div className="form-group">
-                      <label>Car Type</label>
-                      <select
-                        required
-                        onChange={(e) => {
-                          const currentDriver: OptionalDriver = {
-                            ...driver,
-                            preferredCarType: e.currentTarget.value as CarType,
-                          };
 
-                          update(currentDriver);
-                        }}
-                        value={driver.preferredCarType}
-                        className="custom-select"
-                      >
-                        <option>Car Type</option>
-                        <option value="All">All</option>
-                        <option value="noSUV">No SUV</option>
-                      </select>
-                    </div>
                     <div className="form-check">
                       <input
                         type="checkbox"
                         className="form-check-input"
-                        id="mps"
-                        checked={driver.hasMps}
+                        id="suv"
+                        checked={driver.hasSuv}
                         onChange={(e) => {
                           let curr = { ...driver };
-                          curr.hasMps = e.currentTarget.checked;
+                          curr.hasSuv = e.currentTarget.checked;
                           update(curr);
                         }}
                       />
-                      <label className="form-check-label" htmlFor="mps">
-                        Has Mobility Parking Sticker
+                      <label className="form-check-label" htmlFor="suv">
+                        Has SUV
                       </label>
                     </div>
 
                     <div className="form-group">
-                      <label>Driver Description</label>
-                      <textarea
-                        rows={5}
-                        maxLength={1024}
+                      <label>Rego</label>
+                      <input
+                        value={driver.driverRego}
+                        required
                         onChange={(e) => {
                           let curr = { ...driver };
-                          curr.driverDescription = e.currentTarget.value;
+                          curr.driverRego = e.currentTarget.value;
                           update(curr);
                         }}
+                        type="text"
+                        name="driver-rego"
                         className="form-control"
-                        value={driver.driverDescription}
                       />
                     </div>
+
+                    <div className="form-group">
+                      <label>MPS Permit #</label>
+                      <input
+                        value={driver.mpsPermit}
+                        required
+                        onChange={(e) => {
+                          let curr = { ...driver };
+                          curr.mpsPermit = e.currentTarget.value;
+                          update(curr);
+                        }}
+                        type="text"
+                        name="mps-permit"
+                        className="form-control"
+                      />
+                    </div>
+
                     {buttons()}
                   </form>
-                </section>
-
-                <section className="driver-form-section">
-                  <h5>Images</h5>
-                  {!isNaN(driver.id) ? (
-                    <DriverImages
-                      driverId={driver.id}
-                      images={this.state.driverImages}
-                      onChange={this.onImagesChanged}
-                    />
-                  ) : (
-                    <div>Hit "Save" to add images</div>
-                  )}
                 </section>
               </div>
             );

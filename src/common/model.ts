@@ -83,15 +83,16 @@ export interface CompletePayload {
   anythingElse?: string;
 }
 
+export type Gender = 'Male' | 'Female' | 'Other';
+
 export interface OptionalDriver {
   id?: number;
   givenName?: string;
   familyName?: string;
   email?: string;
   mobile?: string;
-  driverGender?: 'Male' | 'Female' | 'Other';
+  driverGender?: Gender;
   hasSuv?: boolean;
-  driverName?: string;
   driverRego?: string;
   mpsPermit?: string;
 }

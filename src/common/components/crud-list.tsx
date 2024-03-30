@@ -39,6 +39,7 @@ interface Props<Model> {
   ) => ReactNode;
   onSelected?: (data: Model) => void;
   baseRoute: string;
+  getName: (model: Model) => string;
 }
 
 interface State<Model> {
@@ -50,9 +51,10 @@ interface State<Model> {
   savingError: Error | null;
 }
 
-export default class CrudList<
-  Model extends { id?: number; name?: string }
-> extends Component<Props<Model>, State<Model>> {
+export default class CrudList<Model extends { id?: number }> extends Component<
+  Props<Model>,
+  State<Model>
+> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
@@ -96,7 +98,7 @@ export default class CrudList<
     this.setState({
       current,
     });
-    this.props.onSelected ?? this.props.onSelected(current);
+    this.props.onSelected && this.props.onSelected(current);
   }
 
   fetchData = async () => {
@@ -111,6 +113,8 @@ export default class CrudList<
           } else if (data.length > 0) {
             router.push(this.props.baseRoute + '/' + data[0].id);
           }
+        } else {
+          router.push(this.props.baseRoute + '/new');
         }
       });
     } catch (e) {
@@ -180,7 +184,7 @@ export default class CrudList<
 
     this.setState({ list, current: model });
 
-    this.props.onSelected(model);
+    this.props.onSelected && this.props.onSelected(model);
   }
 
   deleteCurrent = async (event: React.FormEvent) => {
@@ -273,13 +277,13 @@ export default class CrudList<
                   <li key={c.id} className={`nav-item`}>
                     <Link
                       scroll={false}
-                      href={`/facilitator/clients/[clientId]`}
-                      as={`/facilitator/clients/${c.id}`}
+                      href={`${this.props.baseRoute}/[id]`}
+                      as={`${this.props.baseRoute}/${c.id}`}
                       className={`nav-link ${
                         c.id === this.state.current.id ? 'active' : ''
                       }`}
                     >
-                      {c.name}
+                      {this.props.getName(c)}
                     </Link>
                   </li>
                 );

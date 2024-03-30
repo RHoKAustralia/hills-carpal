@@ -1,3 +1,3 @@
-import Driver from './[driverId]';
+import Driver from './[id]';
 
 export default Driver;

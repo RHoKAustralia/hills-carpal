@@ -45,7 +45,7 @@ class Clients extends Component<Props, State> {
 
   static getInitialProps({ query }) {
     return {
-      id: query.clientId,
+      id: query.id,
     };
   }
 
@@ -149,7 +149,7 @@ class Clients extends Component<Props, State> {
         <h1>Clients</h1>
 
         <CrudList<OptionalClient>
-          id={this.props.id}
+          id={this.props.id?.toString()}
           blankModel={defaultClient}
           create={this.create}
           delete={this.delete}
@@ -158,6 +158,7 @@ class Clients extends Component<Props, State> {
           onSelected={this.onClientSelected}
           validate={this.validate}
           baseRoute="/facilitator/clients"
+          getName={(model) => model.name}
           children={(client, buttons, update, save) => {
             return (
               <div className="col-9">
@@ -268,6 +269,7 @@ class Clients extends Component<Props, State> {
                         <option value="noSUV">No SUV</option>
                       </select>
                     </div>
+
                     <div className="form-check">
                       <input
                         type="checkbox"

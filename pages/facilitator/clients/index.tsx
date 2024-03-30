@@ -1,3 +1,3 @@
-import Client from './[clientId]';
+import Client from './[id]';
 
 export default Client;

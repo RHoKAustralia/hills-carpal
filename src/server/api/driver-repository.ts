@@ -17,7 +17,7 @@ export default class DriverRepository {
       await connection.beginTransaction();
 
       let query = `
-        INSERT INTO ${this.dbName}.drivers(
+        INSERT INTO ${this.dbName}.driver(
           givenName,
           familyName,
           email,
@@ -35,7 +35,7 @@ export default class DriverRepository {
           escape(driver.mobile),
           escape(driver.driverGender),
           escape(driver.hasSuv ? 'Yes' : 'No'),
-          escape(driver.driverName),
+          escape(driver.givenName + ' ' + driver.familyName),
           escape(driver.driverRego),
           escape(driver.mpsPermit),
         ].join(',')})`;
@@ -64,17 +64,19 @@ export default class DriverRepository {
     const escape = (data) => connection.escape(data);
 
     let query = `
-      UPDATE ${this.dbName}.drivers AS drivers
+      UPDATE ${this.dbName}.driver AS drivers
       SET
         drivers.givenName = ${escape(driver.givenName)},
         drivers.familyName = ${escape(driver.familyName)},
         drivers.email = ${escape(driver.email)},
         drivers.mobile = ${escape(driver.mobile)},
         drivers.driverGender = ${escape(driver.driverGender)},
-        drivers.hasSuv = ${escape(driver.hasSuv)},
-        drivers.driverName = ${escape(driver.driverName)},
+        drivers.hasSuv = ${escape(driver.hasSuv ? 'Yes' : 'No')},
+        drivers.driverName = ${escape(
+          driver.givenName + ' ' + driver.familyName
+        )},
         drivers.driverRego = ${escape(driver.driverRego)},
-        drivers.mpsPermit = ${escape(driver.mpsPermit)},
+        drivers.mpsPermit = ${escape(driver.mpsPermit)}
       WHERE
         drivers.id = ${escape(id)};
     `;
