@@ -88,11 +88,7 @@ export default class CrudList<Model extends { id?: number }> extends Component<
         : this.find(Number.parseInt(id));
 
     if (!current) {
-      throw new Error(
-        `Tried to find model with id ${id} but it wasn't in list with ids ${this.state.list.map(
-          (x) => x.id
-        )}`
-      );
+      router.push(this.props.baseRoute + '/new');
     }
 
     this.setState({

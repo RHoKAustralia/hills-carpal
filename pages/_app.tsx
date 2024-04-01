@@ -128,6 +128,12 @@ const loggedInLinks: LinkData[] = [
     caption: 'edit clients',
     role: 'facilitator',
   },
+  {
+    type: 'internal',
+    route: '/facilitator/drivers',
+    caption: 'edit drivers',
+    role: 'facilitator',
+  },
 ];
 
 function getLinksForRoles(roles) {

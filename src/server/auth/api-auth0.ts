@@ -54,3 +54,7 @@ export async function getUser(
 ): Promise<auth0.User<auth0.AppMetadata, auth0.UserMetadata>> {
   return managementClient.getUser({ id: userId });
 }
+
+export async function getUsers() {
+  return managementClient.getUsers();
+}

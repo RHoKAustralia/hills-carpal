@@ -26,7 +26,8 @@ export default class DriverRepository {
           hasSuv,
           driverName,
           driverRego,
-          mpsPermit
+          mpsPermit,
+          auth0Id
         ) VALUES (
         ${[
           escape(driver.givenName),
@@ -38,6 +39,7 @@ export default class DriverRepository {
           escape(driver.givenName + ' ' + driver.familyName),
           escape(driver.driverRego),
           escape(driver.mpsPermit),
+          escape(driver.auth0Id),
         ].join(',')})`;
 
       await this.databaseManager.query(query, connection);
@@ -76,7 +78,8 @@ export default class DriverRepository {
           driver.givenName + ' ' + driver.familyName
         )},
         drivers.driverRego = ${escape(driver.driverRego)},
-        drivers.mpsPermit = ${escape(driver.mpsPermit)}
+        drivers.mpsPermit = ${escape(driver.mpsPermit)},
+        drivers.auth0Id = ${escape(driver.auth0Id)}
       WHERE
         drivers.id = ${escape(id)};
     `;

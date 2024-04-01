@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import type { User, AppMetadata, UserMetadata } from 'auth0';
 
 import { AuthContext, hasFacilitatorPrivilege } from '../../../src/client/auth';
 
@@ -27,13 +28,17 @@ interface Props {
   id: number;
 }
 
-interface State {}
+interface State {
+  users: User<AppMetadata, UserMetadata>[];
+}
 
 class Drivers extends Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
-  state: State = {};
+  state: State = {
+    users: [],
+  };
 
   static getInitialProps({ query }) {
     return {
@@ -46,7 +51,7 @@ class Drivers extends Component<Props, State> {
       return;
     }
 
-    this.fetchDrivers();
+    this.fetchUsers();
   }
 
   fetchDrivers = async (): Promise<Driver[]> => {
@@ -61,6 +66,18 @@ class Drivers extends Component<Props, State> {
     return drivers.map((driver) => ({
       ...driver,
     }));
+  };
+
+  fetchUsers = async () => {
+    const data = await fetch('/api/users', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+      },
+    });
+
+    const users = (await data.json()) as User<AppMetadata, UserMetadata>[];
+
+    this.setState({ users });
   };
 
   validate = (driver: OptionalDriver) => {
@@ -136,6 +153,33 @@ class Drivers extends Component<Props, State> {
                 <section className="driver-form-section">
                   <form onSubmit={(event) => this.onSubmit(event, save)}>
                     <h5>Details</h5>
+
+                    <div className="form-group">
+                      <label>Auth0 User</label>
+                      <select
+                        required
+                        onChange={(e) => {
+                          let currentDriver = {
+                            ...driver,
+                            auth0Id: e.currentTarget.value,
+                          };
+                          update(currentDriver);
+                        }}
+                        value={driver.auth0Id ?? ''}
+                        className="custom-select"
+                      >
+                        <option disabled selected value="">
+                          {' '}
+                          -- select an option --{' '}
+                        </option>
+                        {this.state.users.map((user) => (
+                          <option value={user.user_id}>
+                            {user.user_id} - {user.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
                     <div className="form-group">
                       <label>Given Name</label>
                       <input
@@ -196,6 +240,7 @@ class Drivers extends Component<Props, State> {
                         className="form-control"
                       />
                     </div>
+
                     <div className="form-group">
                       <label>Driver Gender</label>
                       <select
@@ -210,6 +255,10 @@ class Drivers extends Component<Props, State> {
                         value={driver.driverGender ?? ''}
                         className="custom-select"
                       >
+                        <option disabled selected value="">
+                          {' '}
+                          -- select an option --{' '}
+                        </option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
