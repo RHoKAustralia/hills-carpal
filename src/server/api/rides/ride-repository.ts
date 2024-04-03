@@ -407,7 +407,7 @@ export default class RideRepository {
       SELECT 
         rides.id, rides.facilitatorEmail, rides.pickupTimeAndDateInUTC AS pickupTimeAndDate, rides.description, clients.hasMps AS clientHasMps,
         clients.driverGender AS clientDriverGender, clients.carType AS clientCarType, rides.status,
-        dr.driver_auth0_id AS driver_auth0_id, dr.confirmed AS driverConfirmed, dr.updated_at AS updatedAt, dr.driver_name AS driverName,
+        dr.driver_auth0_id AS driverId, dr.confirmed AS driverConfirmed, dr.updated_at AS updatedAt, dr.driver_name AS driverName,
         rides.clientId, clients.name AS clientName, clients.phoneNumber AS clientPhoneNumber, clients.description AS clientDescription,
         locationFrom.id AS locationIdFrom, locationFrom.name AS placeNameFrom, locationFrom.postCode AS postCodeFrom, locationFrom.point AS locationFrom, locationFrom.suburb AS suburbFrom,
         locationTo.id AS locationIdTo, locationTo.name AS placeNameTo, locationTo.postCode AS postCodeTo, locationTo.point AS locationTo, locationTo.suburb AS suburbTo

@@ -174,7 +174,7 @@ class Drivers extends Component<Props, State> {
                         </option>
                         {this.state.users.map((user) => (
                           <option value={user.user_id}>
-                            {user.user_id} - {user.name}
+                            {user.name} - {user.user_id}
                           </option>
                         ))}
                       </select>
