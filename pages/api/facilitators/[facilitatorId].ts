@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import DriverRepository from '../../../src/server/api/rides/driver-repository';
+import FacilitatorRepository from '../../../src/server/api/facilitator-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
-import { Driver } from '../../../src/common/model';
+import { Facilitator } from '../../../src/common/model';
 import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
-const driverRepository = new DriverRepository(databaseManager);
+const facilitatorRepository = new FacilitatorRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
@@ -16,19 +16,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (await requireFacilitatorPermissions(req, res)) {
       switch (method) {
         case 'PUT':
-          const driver: Driver = body;
+          const facilitator: Facilitator = body;
 
-          await driverRepository.update(
-            parseInt(req.query.driverId as string),
-            driver,
+          await facilitatorRepository.update(
+            parseInt(req.query.facilitatorId as string),
+            facilitator,
             connection
           );
           res.status(200).json(body);
 
           break;
         case 'DELETE':
-          await driverRepository.delete(
-            parseInt(req.query.driverId as string),
+          await facilitatorRepository.delete(
+            parseInt(req.query.facilitatorId as string),
             connection
           );
           res.status(200).json(body);

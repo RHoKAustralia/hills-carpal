@@ -99,3 +99,14 @@ export interface OptionalDriver {
 }
 
 export type Driver = Complete<OptionalDriver>;
+
+export interface OptionalFacilitator {
+  id?: number;
+  givenName?: string;
+  familyName?: string;
+  email?: string;
+  mobile?: string;
+  auth0Id?: string;
+}
+
+export type Facilitator = Complete<OptionalFacilitator>;
