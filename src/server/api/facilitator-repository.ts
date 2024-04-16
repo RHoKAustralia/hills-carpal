@@ -79,7 +79,7 @@ export default class FacilitatorRepository {
       SELECT 
         *
       FROM ${this.dbName}.facilitator
-      ORDER BY facilitatorName ASC;
+      ORDER BY facilitator.givenName, facilitator.familyName ASC;
     `;
 
     // console.log(query);

@@ -259,7 +259,7 @@ export default class CrudList<Model extends { id?: number }> extends Component<
                 className="btn btn-primary"
                 onClick={() => this.newModel()}
               >
-                Create Client
+                Create
               </button>
             </div>
           </div>

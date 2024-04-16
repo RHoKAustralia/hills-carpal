@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Driver } from '../../../src/common/model';
 
-import DriverRepository from '../../../src/server/api/rides/driver-repository';
+import DriverRepository from '../../../src/server/api/driver-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
 import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
 

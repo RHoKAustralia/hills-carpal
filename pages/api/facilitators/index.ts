@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Driver } from '../../../src/common/model';
+import { Facilitator } from '../../../src/common/model';
 
-import DriverRepository from '../../../src/server/api/rides/driver-repository';
+import FacilitatorRepository from '../../../src/server/api/facilitator-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
 import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
 
 const databaseManager = new DatabaseManager();
-const driverRepository = new DriverRepository(databaseManager);
+const facilitatorRepository = new FacilitatorRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
@@ -23,14 +23,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           //       : false
           //     : undefined;
 
-          const drivers = await driverRepository.list(connection);
-          res.status(200).json(drivers);
+          const facilitators = await facilitatorRepository.list(connection);
+          res.status(200).json(facilitators);
 
           break;
         case 'POST':
-          const driver: Driver = body;
+          const facilitator: Facilitator = body;
 
-          const result = await driverRepository.create(driver, connection);
+          const result = await facilitatorRepository.create(
+            facilitator,
+            connection
+          );
 
           res.status(200).json({
             ...body,
