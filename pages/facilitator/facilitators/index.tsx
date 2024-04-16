@@ -1,3 +1,3 @@
-import Driver from './[id]';
+import Facilitator from './[id]';
 
-export default Driver;
+export default Facilitator;

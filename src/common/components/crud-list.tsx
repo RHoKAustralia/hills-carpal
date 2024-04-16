@@ -88,7 +88,7 @@ export default class CrudList<Model extends { id?: number }> extends Component<
         : this.find(Number.parseInt(id));
 
     if (!current) {
-      router.push(this.props.baseRoute + '/new');
+      router.replace(this.props.baseRoute + '/new');
     }
 
     this.setState({
@@ -107,10 +107,10 @@ export default class CrudList<Model extends { id?: number }> extends Component<
           if (this.props.id) {
             this.setCurrent(this.props.id);
           } else if (data.length > 0) {
-            router.push(this.props.baseRoute + '/' + data[0].id);
+            router.replace(this.props.baseRoute + '/' + data[0].id);
           }
         } else {
-          router.push(this.props.baseRoute + '/new');
+          router.replace(this.props.baseRoute + '/new');
         }
       });
     } catch (e) {
