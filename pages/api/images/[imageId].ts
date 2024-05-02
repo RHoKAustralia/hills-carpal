@@ -4,9 +4,9 @@ import ImageRepository from '../../../src/server/api/clients/image-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
 import {
   requireDriverPermissions,
-  decodeJwt,
+  verifyJwt,
   requireFacilitatorPermissions,
-} from '../../../src/server/api/jwt';
+} from '../../../src/server/api/authz';
 
 const databaseManager = new DatabaseManager();
 const imageRepository = new ImageRepository(databaseManager);
@@ -18,8 +18,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'GET':
-        const claims = await decodeJwt(req);
-        if (requireDriverPermissions(claims, req, res)) {
+        const claims = await verifyJwt(req);
+        if (requireDriverPermissions(req, res, connection, claims)) {
           const image = await imageRepository.get(
             connection,
             req.query.imageId as string
@@ -33,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         break;
       case 'PUT':
-        if (await requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res, connection)) {
           await imageRepository.update(
             req.query.imageId as string,
             req.body,
@@ -45,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         break;
       case 'DELETE':
-        if (await requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res, connection)) {
           await imageRepository.delete(req.query.imageId as string, connection);
 
           res.status(200).send({

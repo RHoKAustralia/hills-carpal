@@ -3,9 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import RideRepository from '../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
 import {
-  decodeJwt,
+  verifyJwt,
   requireDriverPermissions,
-} from '../../../src/server/api/jwt';
+} from '../../../src/server/api/authz';
 
 const databaseManager = new DatabaseManager();
 const rideRepository = new RideRepository(databaseManager);
@@ -18,9 +18,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const connection = await databaseManager.createConnection();
 
       try {
-        const jwt = await decodeJwt(req);
+        const jwt = await verifyJwt(req);
 
-        if (requireDriverPermissions(jwt, req, res)) {
+        if (requireDriverPermissions(req, res, connection, jwt)) {
           const rides = await rideRepository.listForDriver(
             jwt.userId,
             'CONFIRMED',

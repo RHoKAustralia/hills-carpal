@@ -3,7 +3,7 @@ import { Facilitator } from '../../../src/common/model';
 
 import FacilitatorRepository from '../../../src/server/api/facilitator-repository';
 import DatabaseManager from '../../../src/server/api/database/database-manager';
-import { requireFacilitatorPermissions } from '../../../src/server/api/jwt';
+import { requireFacilitatorPermissions } from '../../../src/server/api/authz';
 
 const databaseManager = new DatabaseManager();
 const facilitatorRepository = new FacilitatorRepository(databaseManager);
@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const connection = await databaseManager.createConnection();
   try {
-    if (await requireFacilitatorPermissions(req, res)) {
+    if (await requireFacilitatorPermissions(req, res, connection)) {
       switch (method) {
         case 'GET':
           // const inactive =

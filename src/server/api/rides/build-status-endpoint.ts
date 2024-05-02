@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import RideRepository from './ride-repository';
 import DatabaseManager from '../database/database-manager';
-import { requireDriverPermissions, decodeJwt } from '../jwt';
+import { requireDriverPermissions, verifyJwt } from '../authz';
 import { Ride, RideStatus } from '../../../common/model';
 import notifyDeclined from '../../notifications/notify-declined';
 import isRideInPast from '../../../common/util';
@@ -24,9 +24,9 @@ export default (statusToChangeTo: RideStatus) =>
     await connection.beginTransaction();
 
     try {
-      const jwt = await decodeJwt(req);
+      const jwt = await verifyJwt(req);
 
-      if (requireDriverPermissions(jwt, req, res)) {
+      if (requireDriverPermissions(req, res, connection, jwt)) {
         switch (method) {
           case 'PUT':
             const id = Number.parseInt(req.query.id as string);

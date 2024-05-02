@@ -5,6 +5,7 @@ import getConfig from 'next/config';
 
 import AuthProvider, {
   AuthContext,
+  AuthState,
   hasDriverPrivilege,
   hasFacilitatorPrivilege,
 } from '../src/client/auth';
@@ -134,12 +135,23 @@ const loggedInLinks: LinkData[] = [
     caption: 'edit drivers',
     role: 'facilitator',
   },
+  {
+    type: 'internal',
+    route: '/facilitator/facilitators',
+    caption: 'edit facilitators',
+    role: 'facilitator',
+  },
 ];
 
-function getLinksForRoles(roles) {
-  return loggedInLinks.filter((link) =>
-    roles.some((role) => link.role === role)
-  );
+function getLinksForRoles(authState: AuthState) {
+  return loggedInLinks.filter((link) => {
+    if (link.role === 'facilitator') {
+      return hasFacilitatorPrivilege(authState);
+    } else if (link.role === 'driver') {
+      return hasDriverPrivilege(authState);
+    }
+    return true;
+  });
 }
 
 const Nav = () => {
@@ -182,7 +194,7 @@ const Nav = () => {
           {!authState && <Links links={loggedOutLinks} />}
           {authState && (
             <React.Fragment>
-              <Links links={getLinksForRoles(authState.roles)} />
+              <Links links={getLinksForRoles(authState)} />
               <div>
                 <button
                   className="btn btn-success"

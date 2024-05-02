@@ -5,9 +5,9 @@ import busboyParse from '../../../../../src/server/api/clients/busboy-parse';
 import DatabaseManager from '../../../../../src/server/api/database/database-manager';
 import {
   hasRole,
-  decodeJwt,
+  verifyJwt,
   requireFacilitatorPermissions,
-} from '../../../../../src/server/api/jwt';
+} from '../../../../../src/server/api/authz';
 
 export const config = {
   api: {
@@ -24,7 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'POST':
-        if (await requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res, connection)) {
           const busboyResult = await busboyParse(req);
           const content = busboyResult.chunk.toString('base64');
 

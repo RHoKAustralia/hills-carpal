@@ -89,6 +89,7 @@ export default class CrudList<Model extends { id?: number }> extends Component<
 
     if (!current) {
       router.replace(this.props.baseRoute + '/new');
+      return;
     }
 
     this.setState({

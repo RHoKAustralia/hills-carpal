@@ -1,5 +1,10 @@
 import router from 'next/router';
-import { AuthState, login } from '../client/auth';
+import {
+  AuthState,
+  hasDriverPrivilege,
+  hasFacilitatorPrivilege,
+  login,
+} from '../client/auth';
 
 export default function isAuthedWithRole(
   authState: AuthState,
@@ -10,7 +15,10 @@ export default function isAuthedWithRole(
     return false;
   }
 
-  if (!authState.roles.includes(role)) {
+  if (
+    (role === 'driver' && !hasDriverPrivilege(authState)) ||
+    (role === 'facilitator' && !hasFacilitatorPrivilege(authState))
+  ) {
     router.replace('/');
     return false;
   }

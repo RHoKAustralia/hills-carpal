@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import ClientRepository from '../../../../src/server/api/clients/client-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
 import { Client } from '../../../../src/common/model';
-import { requireFacilitatorPermissions } from '../../../../src/server/api/jwt';
+import { requireFacilitatorPermissions } from '../../../../src/server/api/authz';
 
 const databaseManager = new DatabaseManager();
 const clientRepository = new ClientRepository(databaseManager);
@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const connection = await databaseManager.createConnection();
   try {
-    if (await requireFacilitatorPermissions(req, res)) {
+    if (await requireFacilitatorPermissions(req, res, connection)) {
       switch (method) {
         case 'PUT':
           const client: Client = {

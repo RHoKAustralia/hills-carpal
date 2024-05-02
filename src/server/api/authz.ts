@@ -3,10 +3,18 @@ import jsonwebtoken from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { GenderPreference, CarType } from '../../common/model';
 import getConfig from 'next/config';
+import DatabaseManager from './database/database-manager';
+import DriverRepository from './driver-repository';
+import FacilitatorRepository from './facilitator-repository';
+import { Connection } from 'mysql2/promise';
 
 const { publicRuntimeConfig } = getConfig();
 
 type Role = 'admin' | 'driver' | 'facilitator';
+
+const databaseManager = new DatabaseManager();
+const driverRepository = new DriverRepository(databaseManager);
+const facilitatorRepository = new FacilitatorRepository(databaseManager);
 
 const client = jwksClient({
   jwksUri: 'https://hills-carpal.au.auth0.com/.well-known/jwks.json',
@@ -17,20 +25,27 @@ interface Claims {
   email: string;
   roles: Role[];
   name: string;
-  driverGender?: GenderPreference;
+  driverGender?: 'male' | 'female';
   carType?: CarType;
 }
 
-export function requireDriverPermissions(
-  claims: Claims,
+export async function requireDriverPermissions(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
+  connection: Connection,
+  claims?: Claims
 ) {
-  const isDriver = hasRole('driver', claims);
-  const isAdmin = hasRole('admin', claims);
-  const isFacilitator = hasRole('facilitator', claims);
+  if (!claims) {
+    claims = await verifyJwt(req);
+  }
 
-  if (!hasRequiredRole(claims) || (!isDriver && !isAdmin && !isFacilitator)) {
+  const isAdmin = hasRole('admin', claims);
+
+  if (
+    !(await isDriver(claims, connection)) &&
+    !isAdmin &&
+    !(await isFacilitator(claims, connection))
+  ) {
     console.log(
       'WARNING: unauthorised attempt to access driver-only api: ' +
         req.method +
@@ -47,35 +62,42 @@ export function requireDriverPermissions(
 export async function requireFacilitatorPermissions(
   req: NextApiRequest,
   res: NextApiResponse,
+  connection: Connection,
   claims?: Claims
 ) {
   if (!claims) {
-    claims = await decodeJwt(req);
+    claims = await verifyJwt(req);
   }
 
   const isAdmin = hasRole('admin', claims);
-  const isFacilitator = hasRole('facilitator', claims);
 
-  if (!hasRequiredRole(claims) || (!isAdmin && !isFacilitator)) {
+  if (!isAdmin && !isFacilitator(claims, connection)) {
     console.log(
       'WARNING: unauthorised attempt to access facilitator-only api: ' +
         req.method +
         ' ' +
         req.url
     );
-    res.status(403).send('Unauthorized');
+    res.status(401).send('Unauthorized');
     return false;
   }
 
   return true;
 }
 
-function hasRequiredRole(claims?: Claims) {
+const isDriver = async (claims: Claims, connection: Connection) => {
   return (
-    !publicRuntimeConfig.requireUserRole ||
-    hasRole(publicRuntimeConfig.requireUserRole, claims)
+    hasRole('driver', claims) ||
+    (await driverRepository.isDriver(claims.userId, connection))
   );
-}
+};
+
+const isFacilitator = async (claims: Claims, connection: Connection) => {
+  return (
+    hasRole('driver', claims) ||
+    (await facilitatorRepository.isFacilitator(claims.userId, connection))
+  );
+};
 
 export function hasRole(role: Role, claims?: Claims) {
   if (!claims?.roles) {
@@ -85,7 +107,7 @@ export function hasRole(role: Role, claims?: Claims) {
   return claims.roles.indexOf(role) >= 0;
 }
 
-export async function decodeJwt(
+export async function verifyJwt(
   req: NextApiRequest
 ): Promise<Claims | undefined> {
   try {
@@ -132,14 +154,14 @@ export async function decodeJwt(
     if (process.env.REACT_APP_UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,
-        [`https://${domain}/gender`]: 'male',
+        // [`https://${domain}/gender`]: 'male',
         [`https://${domain}/roles`]: [
-          'driver',
-          'admin',
+          // 'driver',
+          // 'admin',
           'facilitator',
-          'test',
-          'prod',
-          'training',
+          // 'test',
+          // 'prod',
+          // 'training',
         ],
       };
     }
@@ -157,6 +179,7 @@ export async function decodeJwt(
 
     return claims;
   } catch (err) {
-    console.log('catch error. Invalid token', err);
+    console.error('catch error. Invalid token', err);
+    throw err;
   }
 }

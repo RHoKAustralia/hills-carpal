@@ -100,6 +100,37 @@ export default class FacilitatorRepository {
 
     return this.databaseManager.query(query, connection);
   }
+
+  async getByAuth0Id(
+    auth0Id: string,
+    connection: Connection
+  ): Promise<Facilitator | undefined> {
+    const query = `
+      SELECT 
+        *
+      FROM ${this.dbName}.facilitator
+      WHERE id = ${connection.escape(auth0Id)}
+      LIMIT 1;
+    `;
+
+    // console.log(query);
+
+    const results = await this.databaseManager.query(query, connection);
+
+    const facilitators = results.map((result) => result as Facilitator);
+
+    return facilitators.length >= 1 ? facilitators[0] : undefined;
+  }
+
+  async isFacilitator(auth0Id: string, connection: Connection) {
+    const query = `SELECT 1 FROM ${
+      this.dbName
+    }.facilitator WHERE auth0Id = ${connection.escape(auth0Id)}`;
+
+    const results = await this.databaseManager.query(query, connection);
+
+    return results.length > 0;
+  }
 }
 
 module.exports = FacilitatorRepository;

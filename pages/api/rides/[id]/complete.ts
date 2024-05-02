@@ -5,8 +5,8 @@ import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
 import {
   requireDriverPermissions,
-  decodeJwt,
-} from '../../../../src/server/api/jwt';
+  verifyJwt,
+} from '../../../../src/server/api/authz';
 import { CompletePayload } from '../../../../src/common/model';
 import isRideInPast from '../../../../src/common/util';
 import writeSurvey from '../../../../src/server/google/sheets';
@@ -25,9 +25,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connection.beginTransaction();
 
   try {
-    const jwt = await decodeJwt(req);
+    const jwt = await verifyJwt(req);
 
-    if (requireDriverPermissions(jwt, req, res)) {
+    if (requireDriverPermissions(req, res, connection, jwt)) {
       switch (method) {
         case 'PUT':
           const id = Number.parseInt(req.query.id as string);

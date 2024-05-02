@@ -3,10 +3,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import ImageRepository from '../../../../../src/server/api/clients/image-repository';
 import DatabaseManager from '../../../../../src/server/api/database/database-manager';
 import {
-  decodeJwt,
+  verifyJwt,
   requireDriverPermissions,
   requireFacilitatorPermissions,
-} from '../../../../../src/server/api/jwt';
+} from '../../../../../src/server/api/authz';
 
 const databaseManager = new DatabaseManager();
 const imageRepository = new ImageRepository(databaseManager);
@@ -18,8 +18,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'GET':
-        const claims = await decodeJwt(req);
-        if (requireDriverPermissions(claims, req, res)) {
+        const claims = await verifyJwt(req);
+        if (requireDriverPermissions(req, res, connection, claims)) {
           const images = await imageRepository.list(
             connection,
             req.query.clientId as string

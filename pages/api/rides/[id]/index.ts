@@ -5,10 +5,10 @@ import moment from 'moment';
 import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
 import {
-  decodeJwt,
+  verifyJwt,
   requireDriverPermissions,
   requireFacilitatorPermissions,
-} from '../../../../src/server/api/jwt';
+} from '../../../../src/server/api/authz';
 import notifyCancelled from '../../../../src/server/notifications/notify-cancelled';
 import { Ride, RideInput } from '../../../../src/common/model';
 
@@ -22,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (method) {
       case 'PUT':
-        if (await requireFacilitatorPermissions(req, res)) {
+        if (await requireFacilitatorPermissions(req, res, connection)) {
           const existingRide = await rideRepository.get(
             Number.parseInt(req.query.id as string),
             connection
@@ -79,8 +79,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
         break;
       case 'GET':
-        const claims = await decodeJwt(req);
-        if (requireDriverPermissions(claims, req, res)) {
+        const claims = await verifyJwt(req);
+        if (requireDriverPermissions(req, res, connection, claims)) {
           const ride = await rideRepository.get(
             Number.parseInt(req.query.id as string),
             connection

@@ -110,3 +110,12 @@ export interface OptionalFacilitator {
 }
 
 export type Facilitator = Complete<OptionalFacilitator>;
+
+export type WhoAmI = {
+  auth0Id: string;
+  driver?: {
+    hasSuv: boolean;
+    gender: Gender;
+  };
+  facilitator?: {};
+};

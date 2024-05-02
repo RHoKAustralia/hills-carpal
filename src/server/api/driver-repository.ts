@@ -119,6 +119,43 @@ export default class DriverRepository {
 
     return this.databaseManager.query(query, connection);
   }
+
+  async getByAuth0Id(
+    auth0Id: string,
+    connection: Connection
+  ): Promise<Driver | undefined> {
+    const query = `
+      SELECT 
+        *
+      FROM ${this.dbName}.driver
+      WHERE auth0Id = ${connection.escape(auth0Id)}
+      LIMIT 1;
+    `;
+
+    // console.log(query);
+
+    const results = await this.databaseManager.query(query, connection);
+
+    const driverResults = results.map(
+      (result) =>
+        ({
+          ...result,
+          hasSuv: result.hasSuv === 'Yes',
+        } as Driver)
+    );
+
+    return driverResults.length >= 1 ? driverResults[0] : undefined;
+  }
+
+  async isDriver(auth0Id: string, connection: Connection) {
+    const query = `SELECT 1 FROM ${
+      this.dbName
+    }.driver WHERE auth0Id = ${connection.escape(auth0Id)}`;
+
+    const results = await this.databaseManager.query(query, connection);
+
+    return results.length > 0;
+  }
 }
 
 module.exports = DriverRepository;

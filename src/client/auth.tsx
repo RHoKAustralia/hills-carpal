@@ -1,6 +1,8 @@
 import auth0 from 'auth0-js';
 import React, { FunctionComponent } from 'react';
 import { useState } from 'react';
+import type { WhoAmI } from '../common/model';
+import { isUndefined } from 'lodash';
 
 export const KEY_USER_ROLE = 'user_role';
 
@@ -21,34 +23,55 @@ const metadataKeyUserRole =
   process.env.REACT_APP_AUTH_METADATA_ROLE;
 
 async function handleAuthentication(requireUserRole?: string) {
-  return new Promise<auth0.Auth0DecodedHash>((resolve, reject) => {
-    webAuth.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        setSession(authResult)
-          .then((profile) => {
-            const roles: string[] | undefined = profile[metadataKeyUserRole];
-            if (
-              requireUserRole &&
-              (roles || []).indexOf(requireUserRole) === -1
-            ) {
-              reject(
-                new Error('User does not have the ' + requireUserRole + ' role')
-              );
-            }
+  const authResult = await new Promise<auth0.Auth0DecodedHash>(
+    (resolve, reject) => {
+      webAuth.parseHash((err, authResult) => {
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          setSession(authResult)
+            .then((profile) => {
+              const roles: string[] | undefined = profile[metadataKeyUserRole];
+              if (
+                requireUserRole &&
+                (roles || []).indexOf(requireUserRole) === -1
+              ) {
+                reject(
+                  new Error(
+                    'User does not have the ' + requireUserRole + ' role'
+                  )
+                );
+              }
 
-            resolve(authResult);
-          })
-          .catch(reject);
-      } else if (err) {
-        console.error(err);
-        reject(err);
-      }
-      webAuth.client.userInfo(authResult.accessToken, function (err, user) {
-        localStorage.setItem('user_email', user.email);
+              resolve(authResult);
+            })
+            .catch(reject);
+        } else if (err) {
+          console.error(err);
+          reject(err);
+        }
+        webAuth.client.userInfo(authResult.accessToken, function (err, user) {
+          localStorage.setItem('user_email', user.email);
+        });
       });
-    });
-  });
+    }
+  );
+  await refreshWhoAmI();
+  return authResult;
 }
+
+const refreshWhoAmI = async () => {
+  const res = await fetch('/api/users/whoami', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+    },
+  });
+
+  if (res.ok) {
+    const data: WhoAmI = await res.json();
+    localStorage.setItem('whoami', JSON.stringify(data));
+  } else {
+    throw new Error('Got response code ' + res.status);
+  }
+};
 
 function setSession(authResult) {
   // Set the time that the Access Token will expire at
@@ -65,7 +88,7 @@ function setSession(authResult) {
 }
 
 function getProfile(accessToken: string): Promise<auth0.Auth0UserProfile> {
-  return new Promise<auth0.Auth0UserProfile>((resolve, reject) => {
+  return new Promise<auth0.Auth0UserProfile>(async (resolve, reject) => {
     webAuth.client.userInfo(accessToken, (err, profile) => {
       if (err) {
         reject(err);
@@ -85,13 +108,14 @@ function getFromStorage(): AuthState | undefined {
         accessToken: localStorage.getItem('access_token'),
         roles: localStorage.getItem(KEY_USER_ROLE)?.split(',') || [],
         expiresAt: JSON.parse(localStorage.getItem('expires_at')),
+        whoami: JSON.parse(localStorage.getItem('whoami')),
       };
 }
 
 function setProfile(profile) {
   let userRoles = profile[metadataKeyUserRole];
   if (process.env.REACT_APP_UNSAFE_GOD_MODE) {
-    userRoles = ['driver', 'admin', 'facilitator'];
+    userRoles = ['facilitator'];
   }
 
   localStorage.setItem(KEY_USER_ROLE, userRoles || ['']);
@@ -126,11 +150,16 @@ function isAuthenticated(authState: AuthState) {
 }
 
 export function hasFacilitatorPrivilege(auth: AuthState | undefined) {
-  return auth?.roles.indexOf('facilitator') > -1;
+  return (
+    auth?.roles.indexOf('facilitator') > -1 ||
+    !isUndefined(auth?.whoami.facilitator)
+  );
 }
 
 export function hasDriverPrivilege(auth: AuthState | undefined) {
-  return auth?.roles.indexOf('driver') > -1;
+  return (
+    auth?.roles.indexOf('driver') > -1 || !isUndefined(auth?.whoami.driver)
+  );
 }
 
 export function hasAdminPrivilege(auth: AuthState | undefined) {
@@ -144,6 +173,7 @@ export type AuthState = {
   accessToken: string;
   expiresAt: number;
   roles: string[];
+  whoami: WhoAmI;
 };
 
 export type Auth = {
@@ -172,10 +202,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
 
   const value = {
     onClient,
-    authState:
-      authState && isAuthenticated(authState)
-        ? authState
-        : undefined,
+    authState: authState && isAuthenticated(authState) ? authState : undefined,
     logout: () => {
       setAuthState(undefined);
       logout();
@@ -184,7 +211,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
       try {
         const authResult = await handleAuthentication(requireUserRole);
         setAuthState(getFromStorage());
-        console.log('set auth state');
+
         window.location.href = authResult.appState.redirectTo;
       } catch (e) {
         console.error(e);
