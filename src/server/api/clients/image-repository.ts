@@ -55,7 +55,7 @@ class ImageRepository {
         connection
       );
 
-      return images[0];
+      return images[0] as Image;
     } catch (e) {
       console.error(e);
       await connection.rollback();
@@ -63,7 +63,7 @@ class ImageRepository {
     }
   }
 
-  list(connection: Connection, clientId: string): Promise<Image[]> {
+  async list(connection: Connection, clientId: string): Promise<Image[]> {
     const escape = (data) => connection.escape(data);
 
     let query = `
@@ -79,7 +79,7 @@ class ImageRepository {
 
     // console.log(query);
 
-    return this.databaseManager.query(query, connection);
+    return (await this.databaseManager.query(query, connection)) as Image[];
   }
 
   async get(
@@ -100,7 +100,7 @@ class ImageRepository {
     const images = await this.databaseManager.query(query, connection);
 
     if (images.length > 0) {
-      return images[0];
+      return images[0] as Image;
     } else {
       return;
     }
