@@ -178,7 +178,7 @@ export default class RideRepository {
         extraQuery = `
             INSERT INTO ${
               this.dbName
-            }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
+            }.driver_ride(driver_auth0_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
           escape(driverId),
           escape(id),
           escape(driverName),
@@ -240,7 +240,7 @@ export default class RideRepository {
         extraQuery = `
               ;insert into ${
                 this.dbName
-              }.driver_ride(driver_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
+              }.driver_ride(driver_auth0_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
           escape(ride.driver.id),
           escape(id),
           escape(ride.driver.name),
@@ -343,7 +343,7 @@ export default class RideRepository {
     connection: Connection,
     forUpdate: boolean = false
   ): Promise<Ride[]> {
-    const escape = connection.escape;
+    const escape = (str: string) => connection.escape(str);
     let where = [];
 
     if (fromNow) {
@@ -358,7 +358,7 @@ export default class RideRepository {
       where.push(
         '(' +
           carType
-            .map((thisCarType) => `clients.carType = '${escape(thisCarType)}'`)
+            .map((thisCarType) => `clients.carType = ${escape(thisCarType)}`)
             .join(' OR ') +
           ')'
       );
@@ -368,16 +368,14 @@ export default class RideRepository {
       where.push(
         '(' +
           gender
-            .map(
-              (thisGender) => `clients.driverGender = '${escape(thisGender)}'`
-            )
+            .map((thisGender) => `clients.driverGender = ${escape(thisGender)}`)
             .join(' OR ') +
           ')'
       );
     }
 
     if (status) {
-      where.push(`( rides.status = '${escape(status)}' )`);
+      where.push(`( rides.status = ${escape(status)} )`);
     }
 
     if (driverId) {
@@ -401,7 +399,7 @@ export default class RideRepository {
     }
 
     if (facilitatorEmail) {
-      where.push(`( rides.facilitatorEmail = '${escape(facilitatorEmail)}' )`);
+      where.push(`( rides.facilitatorEmail = ${escape(facilitatorEmail)} )`);
     }
 
     const query = `
