@@ -1,13 +1,35 @@
 import { AppMetadata, User, UserMetadata } from 'auth0';
-import _ from 'lodash';
+import _, { unionBy } from 'lodash';
 
 import { Ride } from '../../common/model';
 import { getUserRoles, getUsersInRole } from '../auth/api-auth0';
+import DatabaseManager from '../api/database/database-manager';
+import DriverRepository from '../api/driver-repository';
 
-export default async function getDrivers(ride: Ride) {
-  const allDrivers = await getUsersInRole('driver');
+const databaseManager = new DatabaseManager();
+const driverRepository = new DriverRepository(databaseManager);
 
-  console.log(`${allDrivers.length} users in Auth0 have role driver`);
+interface NotificationDriver {
+  email: string;
+  name: string;
+}
+export const getDrivers = async (ride: Ride) => {
+  const auth0Drivers = (await getDriversFromAuth0(ride)).map((driver) => ({
+    email: driver.email,
+    name: driver.given_name || driver.nickname || driver.name || '',
+  }));
+  const dbDrivers = (await getDriversFromDb(ride)).map((driver) => ({
+    email: driver.email,
+    name: driver.givenName,
+  }));
+
+  return unionBy(dbDrivers, auth0Drivers, (driver) => driver.email);
+};
+
+async function getDriversFromAuth0(ride: Ride) {
+  const allDriversFromAuth0 = await getUsersInRole('driver');
+
+  console.log(`${allDriversFromAuth0.length} users in Auth0 have role driver`);
 
   const requiredRole = process.env.REQUIRE_USER_ROLE;
 
@@ -19,17 +41,18 @@ export default async function getDrivers(ride: Ride) {
 
   const validDrivers = requiredRole
     ? _.intersectionBy(
-        allDrivers,
+        allDriversFromAuth0,
         await getUsersInRole(requiredRole),
         (driver1) => driver1.user_id
       )
-    : allDrivers;
+    : allDriversFromAuth0;
 
   console.log(
     `${validDrivers.length} have both role driver and the environment required role`
   );
 
   let filteredDrivers: User<AppMetadata, UserMetadata>[] = [];
+
   for (let driver of validDrivers) {
     const driverRoles = await getUserRoles(driver.user_id);
     const roleLookup = _.keyBy(driverRoles, (role) => role.name);
@@ -58,3 +81,15 @@ export default async function getDrivers(ride: Ride) {
 
   return filteredDrivers;
 }
+
+const getDriversFromDb = async (ride: Ride) => {
+  const connection = await databaseManager.createConnection();
+  const allDriversFromDb = await driverRepository.list(connection, {
+    gender: ride.client.preferredDriverGender,
+    hasSuv: ride.client.preferredCarType,
+  });
+
+  console.log(`${allDriversFromDb.length} valid drivers from DB`);
+
+  return allDriversFromDb;
+};

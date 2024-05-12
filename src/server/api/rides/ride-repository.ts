@@ -343,6 +343,7 @@ export default class RideRepository {
     connection: Connection,
     forUpdate: boolean = false
   ): Promise<Ride[]> {
+    const escape = connection.escape;
     let where = [];
 
     if (fromNow) {

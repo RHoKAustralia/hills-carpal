@@ -3,7 +3,7 @@ import { Ride } from '../../common/model';
 import sendEmail from './send-email';
 import moment from 'moment-timezone';
 
-import getDrivers from './get-drivers';
+import { getDrivers } from './get-drivers';
 
 export default async function notifyAvailableRide(
   ride: Ride,
@@ -24,9 +24,7 @@ export default async function notifyAvailableRide(
       to: driver.email,
       subject: `Carpal: Driver needed for ${ride.client.name} at ${formattedDate}`,
       html: `
-          <p>Hi ${
-            driver.given_name || driver.nickname || driver.name || ''
-          },</p>
+          <p>Hi ${driver.name},</p>
 
           <p>${
             type === 'new'

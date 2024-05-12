@@ -1,8 +1,13 @@
 import DatabaseManager from './database/database-manager';
-import { Client, Driver } from '../../common/model';
+import { CarType, Client, Driver, GenderPreference } from '../../common/model';
 import { Connection } from 'mysql2/promise';
 import LocationRepository from './location-repository';
+import { isUndefined } from 'lodash';
 
+interface QueryFilter {
+  hasSuv?: CarType;
+  gender?: GenderPreference;
+}
 export default class DriverRepository {
   private dbName: string;
 
@@ -89,11 +94,29 @@ export default class DriverRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  async list(connection: Connection): Promise<Driver[]> {
+  async list(
+    connection: Connection,
+    filter: QueryFilter = {}
+  ): Promise<Driver[]> {
+    const where = [];
+
+    if (!isUndefined(filter.gender) && filter.gender !== 'any') {
+      where.push(
+        `( drivers.driverGender = ${connection.escape(filter.gender)} )`
+      );
+    }
+
+    if (!isUndefined(filter.hasSuv) && filter.hasSuv !== 'All') {
+      where.push(
+        `( drivers.hasSuv = ${filter.hasSuv === 'noSUV' ? 'No' : 'Yes'} )`
+      );
+    }
+
     const query = `
       SELECT 
         *
       FROM ${this.dbName}.driver
+      ${where.length ? ' WHERE ' + where.join(' AND ') : ''}
       ORDER BY driverName ASC;
     `;
 
