@@ -96,6 +96,7 @@ export interface OptionalDriver {
   driverRego?: string;
   mpsPermit?: string;
   auth0Id?: string;
+  inactive?: boolean;
 }
 
 export type Driver = Complete<OptionalDriver>;

@@ -1,0 +1,1 @@
+ALTER TABLE carpal.driver ADD inactive TINYINT DEFAULT 0 NOT NULL;

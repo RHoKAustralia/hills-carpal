@@ -155,6 +155,25 @@ class Drivers extends Component<Props, State> {
                     <h5>Details</h5>
 
                     <div className="form-group">
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="aflag"
+                          checked={driver.inactive}
+                          onChange={(e) => {
+                            const curr = { ...driver };
+                            curr.inactive = e.currentTarget.checked;
+                            update(curr);
+                          }}
+                        />
+                        <label className="form-check-label" htmlFor="aflag">
+                          Inactive Status
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
                       <label>Auth0 User</label>
                       <select
                         required

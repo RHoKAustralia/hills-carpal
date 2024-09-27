@@ -32,7 +32,8 @@ export default class DriverRepository {
           driverName,
           driverRego,
           mpsPermit,
-          auth0Id
+          auth0Id,
+          inactive
         ) VALUES (
         ${[
           escape(driver.givenName),
@@ -45,6 +46,7 @@ export default class DriverRepository {
           escape(driver.driverRego),
           escape(driver.mpsPermit),
           escape(driver.auth0Id),
+          driver.inactive ? 'true' : 'false',
         ].join(',')})`;
 
       await this.databaseManager.query(query, connection);
@@ -84,7 +86,8 @@ export default class DriverRepository {
         )},
         drivers.driverRego = ${escape(driver.driverRego)},
         drivers.mpsPermit = ${escape(driver.mpsPermit)},
-        drivers.auth0Id = ${escape(driver.auth0Id)}
+        drivers.auth0Id = ${escape(driver.auth0Id)},
+        drivers.inactive = ${escape(driver.inactive)}
       WHERE
         drivers.id = ${escape(id)};
     `;
@@ -129,6 +132,7 @@ export default class DriverRepository {
         ({
           ...result,
           hasSuv: result.hasSuv === 'Yes',
+          inactive: result.inactive ? true : false,
         } as Driver)
     );
   }
@@ -164,6 +168,7 @@ export default class DriverRepository {
         ({
           ...result,
           hasSuv: result.hasSuv === 'Yes',
+          inactive: result.inactive ? true : false,
         } as Driver)
     );
 
