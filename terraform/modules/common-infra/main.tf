@@ -112,7 +112,7 @@ resource "aws_cloudwatch_log_group" "awslogs-hills-carpal" {
 resource "aws_ecs_service" "hills-carpal-service" {
   name                               = "hills-carpal-service-${var.environment_id}"  # Naming our first service
   cluster                            = aws_ecs_cluster.hills-carpal-cluster.id       # Referencing our created Cluster
-  task_definition                    = aws_ecs_task_definition.hills-carpal-task.arn_without_revision # Referencing the task our service will spin up. No revision so we always take the latest ACTIVE
+  task_definition                    = "${aws_ecs_task_definition.hills-carpal-task.arn_without_revision}:${var.ecs_task_revision}" # Referencing the task our service will spin up. No revision so we always take the latest ACTIVE
   launch_type                        = "FARGATE"
   desired_count                      = 1
   deployment_minimum_healthy_percent = 0

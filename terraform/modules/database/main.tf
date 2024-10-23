@@ -24,7 +24,7 @@ resource "aws_db_instance" "hills-carpal-db" {
   identifier              = "hillscarpal-db-${var.database_id}"
   allocated_storage       = 20
   engine                  = "mysql"
-  engine_version          = "8.0.35"
+  engine_version          = "8.0"
   instance_class          = "db.t3.micro"
   username                = "foo"
   password                = "foobarbaz" # Change this to a password of your choice!

@@ -1,4 +1,4 @@
-resource "aws_default_vpc" "default" {}
+# resource "aws_default_vpc" "default" {}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -22,12 +22,12 @@ resource "aws_instance" "bastion" {
   security_groups             = ["${aws_security_group.bastion-sg.name}"]
   associate_public_ip_address = true
 
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = "ami-024918da7f397bd33"#data.aws_ami.ubuntu.id
 }
 
 resource "aws_security_group" "bastion-sg" {
   name   = "bastion-security-group"
-  vpc_id = "${aws_default_vpc.default.id}"
+  vpc_id = "${var.vpc.id}"
 
   ingress {
     protocol    = "tcp"
