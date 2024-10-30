@@ -25,7 +25,7 @@ resource "aws_db_instance" "hills-carpal-db" {
   allocated_storage       = 20
   engine                  = "mysql"
   engine_version          = "8.0"
-  instance_class          = "db.t3.micro"
+  instance_class          = "db.t4g.micro"
   username                = "foo"
   password                = "foobarbaz" # Change this to a password of your choice!
   backup_retention_period = 3
