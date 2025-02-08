@@ -41,22 +41,29 @@ export async function requireDriverPermissions(
 
   const isAdmin = hasRole('admin', claims);
 
+  console.log({
+    claims,
+    activeDriver: await isActiveDriver(claims, connection),
+    isAdmin,
+    isFacilitator: await isFacilitator(claims, connection),
+  });
+
   if (
-    !(await isDriver(claims, connection)) &&
-    !isAdmin &&
-    !(await isFacilitator(claims, connection))
+    isAdmin ||
+    (await isActiveDriver(claims, connection)) ||
+    (await isFacilitator(claims, connection))
   ) {
-    console.log(
-      'WARNING: unauthorised attempt to access driver-only api: ' +
-        req.method +
-        ' ' +
-        req.url
-    );
-    res.status(403).send('Unauthorized');
-    return false;
+    return true;
   }
 
-  return true;
+  console.log(
+    'WARNING: unauthorised attempt to access driver-only api: ' +
+      req.method +
+      ' ' +
+      req.url
+  );
+  res.status(403).send('Unauthorized');
+  return false;
 }
 
 export async function requireFacilitatorPermissions(
@@ -78,23 +85,23 @@ export async function requireFacilitatorPermissions(
         ' ' +
         req.url
     );
-    res.status(401).send('Unauthorized');
+    res.status(403).send('Unauthorized');
     return false;
   }
 
   return true;
 }
 
-const isDriver = async (claims: Claims, connection: Connection) => {
+const isActiveDriver = async (claims: Claims, connection: Connection) => {
   return (
     hasRole('driver', claims) ||
-    (await driverRepository.isDriver(claims.userId, connection))
+    (await driverRepository.isActiveDriver(claims.userId, connection))
   );
 };
 
 const isFacilitator = async (claims: Claims, connection: Connection) => {
   return (
-    hasRole('driver', claims) ||
+    hasRole('facilitator', claims) ||
     (await facilitatorRepository.isFacilitator(claims.userId, connection))
   );
 };
@@ -154,11 +161,11 @@ export async function verifyJwt(
     if (process.env.REACT_APP_UNSAFE_GOD_MODE === 'true') {
       decodedToken = {
         ...decodedToken,
-        // [`https://${domain}/gender`]: 'male',
+        [`https://${domain}/gender`]: 'male',
         [`https://${domain}/roles`]: [
           // 'driver',
           // 'admin',
-          'facilitator',
+          // 'facilitator',
           // 'test',
           // 'prod',
           // 'training',

@@ -26,7 +26,7 @@ export default (statusToChangeTo: RideStatus) =>
     try {
       const jwt = await verifyJwt(req);
 
-      if (requireDriverPermissions(req, res, connection, jwt)) {
+      if (await requireDriverPermissions(req, res, connection, jwt)) {
         switch (method) {
           case 'PUT':
             const id = Number.parseInt(req.query.id as string);

@@ -175,10 +175,10 @@ export default class DriverRepository {
     return driverResults.length >= 1 ? driverResults[0] : undefined;
   }
 
-  async isDriver(auth0Id: string, connection: Connection) {
+  async isActiveDriver(auth0Id: string, connection: Connection) {
     const query = `SELECT 1 FROM ${
       this.dbName
-    }.driver WHERE auth0Id = ${connection.escape(auth0Id)}`;
+    }.driver WHERE auth0Id = ${connection.escape(auth0Id)} AND inactive = 0`;
 
     const results = await this.databaseManager.query(query, connection);
 

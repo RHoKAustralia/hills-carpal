@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const jwt = await verifyJwt(req);
 
-        if (requireDriverPermissions(req, res, connection, jwt)) {
+        if (await requireDriverPermissions(req, res, connection, jwt)) {
           const rides = await rideRepository.listForDriver(
             jwt.userId,
             'CONFIRMED',
@@ -29,6 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           res.status(200).json(rides);
         }
       } catch (e) {
+        console.error(e);
         res.status(500).json({ status: 'Error' });
       } finally {
         await connection.end();

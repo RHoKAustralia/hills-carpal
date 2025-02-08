@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const jwt = await verifyJwt(req);
 
-    if (requireDriverPermissions(req, res, connection, jwt)) {
+    if (await requireDriverPermissions(req, res, connection, jwt)) {
       switch (method) {
         case 'GET':
           const driver = await driverRepository.getByAuth0Id(
