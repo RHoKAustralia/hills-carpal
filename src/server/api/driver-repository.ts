@@ -7,6 +7,7 @@ import { isUndefined } from 'lodash';
 interface QueryFilter {
   hasSuv?: CarType;
   gender?: GenderPreference;
+  excludeInactive?: boolean;
 }
 export default class DriverRepository {
   private dbName: string;
@@ -105,14 +106,18 @@ export default class DriverRepository {
 
     if (!isUndefined(filter.gender) && filter.gender !== 'any') {
       where.push(
-        `( drivers.driverGender = ${connection.escape(filter.gender)} )`
+        `( driver.driverGender = ${connection.escape(filter.gender)} )`
       );
     }
 
     if (!isUndefined(filter.hasSuv) && filter.hasSuv !== 'All') {
       where.push(
-        `( drivers.hasSuv = ${filter.hasSuv === 'noSUV' ? 'No' : 'Yes'} )`
+        `( driver.hasSuv = ${filter.hasSuv === 'noSUV' ? "'No'" : "'Yes'"} )`
       );
+    }
+
+    if (filter.excludeInactive) {
+      where.push(`( driver.inactive = 0 )`);
     }
 
     const query = `

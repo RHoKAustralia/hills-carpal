@@ -87,6 +87,7 @@ const getDriversFromDb = async (ride: Ride) => {
   const allDriversFromDb = await driverRepository.list(connection, {
     gender: ride.client.preferredDriverGender,
     hasSuv: ride.client.preferredCarType,
+    excludeInactive: true,
   });
 
   console.log(`${allDriversFromDb.length} valid drivers from DB`);
