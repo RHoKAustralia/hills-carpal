@@ -18,11 +18,12 @@ workflows:
   build-and-deploy:
     jobs:
       - aws-ecr/build-and-push-image:
+          image: default
           filters:
             tags:
               only: /^v.*/
-          repo: "hills-carpal-repo"
-          tag: "${CIRCLE_SHA1}"
+          repo: 'hills-carpal-repo'
+          tag: '${CIRCLE_SHA1}'
 
       - aws-ecs/deploy-service-update:
           filters:
@@ -31,10 +32,10 @@ workflows:
                 - master
           requires:
             - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
-          family: "hills-carpal-task-training"
-          cluster-name: "hills-carpal-cluster-training"
-          container-image-name-updates: "container=hills-carpal-task-training,tag=${CIRCLE_SHA1}"
-          service-name: "hills-carpal-service-training"
+          family: 'hills-carpal-task-training'
+          cluster-name: 'hills-carpal-cluster-training'
+          container-image-name-updates: 'container=hills-carpal-task-training,tag=${CIRCLE_SHA1}'
+          service-name: 'hills-carpal-service-training'
 
       - aws-ecs/deploy-service-update:
           filters:
@@ -44,10 +45,7 @@ workflows:
               ignore: /.*/
           requires:
             - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
-          family: "hills-carpal-task-prod"
-          cluster-name: "hills-carpal-cluster-prod"
-          container-image-name-updates: "container=hills-carpal-task-prod,tag=${CIRCLE_SHA1}"
-          service-name: "hills-carpal-service-prod"
-
-
-
+          family: 'hills-carpal-task-prod'
+          cluster-name: 'hills-carpal-cluster-prod'
+          container-image-name-updates: 'container=hills-carpal-task-prod,tag=${CIRCLE_SHA1}'
+          service-name: 'hills-carpal-service-prod'
