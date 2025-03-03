@@ -108,6 +108,7 @@ export interface OptionalFacilitator {
   email?: string;
   mobile?: string;
   auth0Id?: string;
+  inactive?: boolean;
 }
 
 export type Facilitator = Complete<OptionalFacilitator>;

@@ -24,7 +24,8 @@ export default class FacilitatorRepository {
           familyName,
           email,
           mobile,
-          auth0Id
+          auth0Id,
+          inactive
         ) VALUES (
         ${[
           escape(facilitator.givenName),
@@ -32,6 +33,7 @@ export default class FacilitatorRepository {
           escape(facilitator.email),
           escape(facilitator.mobile),
           escape(facilitator.auth0Id),
+          escape(facilitator.inactive || false),
         ].join(',')})`;
 
       await this.databaseManager.query(query, connection);
@@ -64,7 +66,8 @@ export default class FacilitatorRepository {
         facilitators.familyName = ${escape(facilitator.familyName)},
         facilitators.email = ${escape(facilitator.email)},
         facilitators.mobile = ${escape(facilitator.mobile)},
-        facilitators.auth0Id = ${escape(facilitator.auth0Id)}
+        facilitators.auth0Id = ${escape(facilitator.auth0Id)},
+        facilitators.inactive = ${escape(facilitator.inactive || false)}
       WHERE
         facilitators.id = ${escape(id)};
     `;
@@ -76,7 +79,7 @@ export default class FacilitatorRepository {
 
   async list(connection: Connection): Promise<Facilitator[]> {
     const query = `
-      SELECT 
+      SELECT
         *
       FROM ${this.dbName}.facilitator
       ORDER BY facilitator.givenName, facilitator.familyName ASC;
@@ -106,10 +109,10 @@ export default class FacilitatorRepository {
     connection: Connection
   ): Promise<Facilitator | undefined> {
     const query = `
-      SELECT 
+      SELECT
         *
       FROM ${this.dbName}.facilitator
-      WHERE id = ${connection.escape(auth0Id)}
+      WHERE auth0Id = ${connection.escape(auth0Id)}
       LIMIT 1;
     `;
 
@@ -125,7 +128,7 @@ export default class FacilitatorRepository {
   async isFacilitator(auth0Id: string, connection: Connection) {
     const query = `SELECT 1 FROM ${
       this.dbName
-    }.facilitator WHERE auth0Id = ${connection.escape(auth0Id)}`;
+    }.facilitator WHERE auth0Id = ${connection.escape(auth0Id)} AND inactive=0`;
 
     const results = await this.databaseManager.query(query, connection);
 

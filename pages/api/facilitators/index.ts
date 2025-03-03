@@ -16,13 +16,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (await requireFacilitatorPermissions(req, res, connection)) {
       switch (method) {
         case 'GET':
-          // const inactive =
-          //   typeof req.query.inactive !== 'undefined'
-          //     ? req.query.inactive === 'true'
-          //       ? true
-          //       : false
-          //     : undefined;
-
           const facilitators = await facilitatorRepository.list(connection);
           res.status(200).json(facilitators);
 
@@ -51,6 +44,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(e);
     res.status(500).json({ status: 'Error' });
   } finally {
-    await await connection.end();
+    await connection.end();
   }
 };
