@@ -118,6 +118,9 @@ export type WhoAmI = {
   driver?: {
     hasSuv: boolean;
     gender: Gender;
+    inactive: boolean;
   };
-  facilitator?: {};
+  facilitator?: {
+    inactive: boolean;
+  };
 };

@@ -26,7 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           driverRepo.getByAuth0Id(claims.userId, connection),
           facilitatorRepo.getByAuth0Id(claims.userId, connection),
         ]);
-        // console.log(driver);
+
         const isDriver = !isUndefined(driver) || hasRole('driver', claims);
         const isFacilitator =
           !isUndefined(facilitator) || hasRole('facilitator', claims);
@@ -37,9 +37,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             ? {
                 hasSuv: driver?.hasSuv ?? claims.carType === 'suv',
                 gender: driver?.driverGender ?? claims.driverGender,
+                inactive: driver?.inactive ?? false,
               }
             : undefined,
-          facilitator: isFacilitator ? {} : undefined,
+          facilitator: isFacilitator
+            ? {
+                inactive: facilitator?.inactive ?? false,
+              }
+            : undefined,
         };
 
         res.status(200).json(data);

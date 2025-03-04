@@ -120,7 +120,10 @@ export default class FacilitatorRepository {
 
     const results = await this.databaseManager.query(query, connection);
 
-    const facilitators = results.map((result) => result as Facilitator);
+    const facilitators = results.map(
+      (result) =>
+        ({ ...result, inactive: result.inactive ? true : false } as Facilitator)
+    );
 
     return facilitators.length >= 1 ? facilitators[0] : undefined;
   }

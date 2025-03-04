@@ -166,6 +166,28 @@ export function hasAdminPrivilege(auth: AuthState | undefined) {
   return auth?.roles.indexOf('admin') > -1;
 }
 
+/** Returns true if the user is inactive in all their roles - i.e. if they're only a driver and inactive as a driver,
+or only a facilitator and inactive as a facilitator, or both driver and facilitator and inactive as both */
+function isInactive(auth: AuthState | undefined) {
+  if (!auth) {
+    return false;
+  }
+
+  if (hasDriverPrivilege(auth) && hasFacilitatorPrivilege(auth)) {
+    return auth.whoami.driver.inactive && auth.whoami.facilitator.inactive;
+  }
+
+  if (hasDriverPrivilege(auth)) {
+    return auth.whoami.driver.inactive;
+  }
+
+  if (hasFacilitatorPrivilege(auth)) {
+    return auth.whoami.facilitator.inactive;
+  }
+
+  return false;
+}
+
 export const AuthContext = React.createContext<Auth | undefined>(undefined);
 
 export type AuthState = {
@@ -181,6 +203,7 @@ export type Auth = {
   authState: AuthState;
   logout: () => void;
   handleAuthentication: (requireUserRole?: string) => Promise<void>;
+  isInactive: typeof isInactive;
 };
 
 export type WrappedComponentProps = {
@@ -200,7 +223,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
     setOnClient(true);
   }, []);
 
-  const value = {
+  const value: Auth = {
     onClient,
     authState: authState && isAuthenticated(authState) ? authState : undefined,
     logout: () => {
@@ -218,6 +241,7 @@ const AuthProvider: FunctionComponent<{ children: React.ReactElement }> = ({
         alert('Failed to log in: ' + e.message);
       }
     },
+    isInactive,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

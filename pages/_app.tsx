@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import Link from 'next/link';
 import { AppProps } from 'next/app';
 import getConfig from 'next/config';
+import Link from 'next/link';
+import React, { Component } from 'react';
 
 import AuthProvider, {
+  Auth,
   AuthContext,
   AuthState,
   hasDriverPrivilege,
@@ -15,18 +16,18 @@ import 'react-data-grid/lib/styles.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
-import './app.css';
-import './document.css';
-import './login.css';
-import './facilitator/clients/clients.css';
-import './facilitator/index.css';
-import './driver/rides/[rideId]/poll.css';
+import '../src/common/components/driver//leaflet/leaflet.css';
 import '../src/common/components/driver/driver-list.css';
-import '../src/common/components/driver/ride-detail.css';
 import '../src/common/components/driver/driver-map.css';
+import '../src/common/components/driver/ride-detail.css';
 import '../src/common/components/facilitator/client-images.css';
 import '../src/common/components/facilitator/ride.css';
-import '../src/common/components/driver//leaflet/leaflet.css';
+import './app.css';
+import './document.css';
+import './driver/rides/[rideId]/poll.css';
+import './facilitator/clients/clients.css';
+import './facilitator/index.css';
+import './login.css';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -154,14 +155,19 @@ function getLinksForRoles(authState: AuthState) {
   });
 }
 
-const Nav = () => {
-  const { authState, logout } = React.useContext(AuthContext);
-
+// Custom hook to handle client-side rendering state
+const useOnClient = () => {
   const [onClient, setOnClient] = React.useState(false);
 
   React.useEffect(() => {
     setOnClient(true);
   }, []);
+
+  return onClient;
+};
+
+const Nav = ({ authState, logout }: Pick<Auth, 'authState' | 'logout'>) => {
+  const onClient = useOnClient();
 
   const getLogoHref = () => {
     if (!onClient || !authState) {
@@ -223,13 +229,30 @@ class App extends Component<AppProps> {
   render() {
     return (
       <AuthProvider>
-        <div className="hcp-app">
-          <Nav />
-          <this.props.Component {...this.props.pageProps} />
-        </div>
+        <AppView {...this.props} />
       </AuthProvider>
     );
   }
+}
+
+function AppView({ Component, pageProps }: AppProps) {
+  const { authState, logout, isInactive } = React.useContext(AuthContext);
+  const onClient = useOnClient();
+
+  return (
+    <div className="hcp-app">
+      <Nav authState={authState} logout={logout} />
+
+      {onClient && isInactive(authState) ? (
+        <div>
+          You are Inactive, Please contact the support Team if you want to
+          access Carpal.
+        </div>
+      ) : (
+        <Component {...pageProps} />
+      )}
+    </div>
+  );
 }
 
 export default App;
