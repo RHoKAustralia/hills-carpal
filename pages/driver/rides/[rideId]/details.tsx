@@ -50,6 +50,16 @@ export default class RideDetail extends React.Component<Props, State> {
       return;
     }
 
+    await this.fetchRideDetails();
+  }
+
+  setDriverState = (data: Ride) => {
+    this.setState({
+      ride: data,
+    });
+  };
+
+  private async fetchRideDetails() {
     if (this.props.rideId) {
       this.setState({
         loading: true,
@@ -98,12 +108,6 @@ export default class RideDetail extends React.Component<Props, State> {
     }
   }
 
-  setDriverState = (data: Ride) => {
-    this.setState({
-      ride: data,
-    });
-  };
-
   async acceptRide() {
     if (!confirm('Are you sure you want to provide this ride?')) {
       return;
@@ -132,11 +136,17 @@ export default class RideDetail extends React.Component<Props, State> {
       if (!res.ok) {
         const { message } = await res.json();
 
-        throw new Error(
+        const error = new Error(
           `PUT /api/rides/${this.props.rideId}/accept got status ${
             res.status
           }. ${message ?? ''}`
         );
+
+        alert(error.message);
+
+        this.fetchRideDetails();
+
+        throw error;
       }
 
       this.setDriverState(await res.json());
@@ -178,18 +188,29 @@ export default class RideDetail extends React.Component<Props, State> {
   offerRideButton() {
     return (
       <div className="btn-group" role="group">
-        {isRideInPast(this.state.ride) ? (
-          <div>
-            A ride can't be offered because this ride's date was in the past.
-          </div>
-        ) : (
-          <button
-            onClick={this.acceptRide.bind(this)}
-            className="btn btn-outline btn-primary"
-          >
-            Offer a ride
-          </button>
-        )}
+        {(() => {
+          if (isRideInPast(this.state.ride)) {
+            return (
+              <div>
+                A ride can't be offered because this ride's date was in the
+                past.
+              </div>
+            );
+          } else if (this.state.ride.status === 'LOCKED') {
+            return (
+              <div>A ride can't be offered because this ride is locked.</div>
+            );
+          } else {
+            return (
+              <button
+                onClick={this.acceptRide.bind(this)}
+                className="btn btn-outline btn-primary"
+              >
+                Offer a ride
+              </button>
+            );
+          }
+        })()}
       </div>
     );
   }

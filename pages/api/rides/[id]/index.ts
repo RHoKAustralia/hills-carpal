@@ -30,15 +30,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           const input = req.body as Partial<RideInput>;
 
+          const rideIsInPast = moment(input.pickupTimeAndDate).isBefore(
+            moment.now()
+          );
+
           // If the ride is being reopened, it needs to be in the future
           if (
             existingRide.status === 'CANCELLED' &&
             (input.status === 'OPEN' || input.status === 'CONFIRMED') &&
-            moment(input.pickupTimeAndDate).isBefore(moment.now())
+            rideIsInPast
           ) {
             res.status(409).json({
               status: 'Error',
               message: 'Cannot open a cancelled ride after the ride date',
+            });
+            return;
+          }
+
+          if (rideIsInPast && input.status === 'LOCKED') {
+            res.status(409).json({
+              status: 'Error',
+              message: 'Cannot lock a ride after the ride date',
             });
             return;
           }

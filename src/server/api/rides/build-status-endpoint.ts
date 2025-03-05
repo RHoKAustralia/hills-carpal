@@ -42,7 +42,7 @@ export default (statusToChangeTo: RideStatus) =>
 
             if (confirmingClosedRide(statusToChangeTo, oldRide)) {
               res.status(400).json({
-                message: "Cannot confirm ride that isn't currently open",
+                message: `Cannot confirm ride that's ${oldRide.status} - someone probably accepted or locked the ride while you were reading the details.`,
               });
               return;
             }

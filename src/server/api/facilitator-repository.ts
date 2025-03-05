@@ -128,7 +128,7 @@ export default class FacilitatorRepository {
     return facilitators.length >= 1 ? facilitators[0] : undefined;
   }
 
-  async isFacilitator(auth0Id: string, connection: Connection) {
+  async isActiveFacilitator(auth0Id: string, connection: Connection) {
     const query = `SELECT 1 FROM ${
       this.dbName
     }.facilitator WHERE auth0Id = ${connection.escape(auth0Id)} AND inactive=0`;

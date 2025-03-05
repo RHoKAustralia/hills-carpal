@@ -41,18 +41,7 @@ export async function requireDriverPermissions(
 
   const isAdmin = hasRole('admin', claims);
 
-  console.log({
-    claims,
-    activeDriver: await isActiveDriver(claims, connection),
-    isAdmin,
-    isFacilitator: await isFacilitator(claims, connection),
-  });
-
-  if (
-    isAdmin ||
-    (await isActiveDriver(claims, connection)) ||
-    (await isFacilitator(claims, connection))
-  ) {
+  if (isAdmin || (await isActiveDriver(claims, connection))) {
     return true;
   }
 
@@ -62,7 +51,9 @@ export async function requireDriverPermissions(
       ' ' +
       req.url
   );
+
   res.status(403).send('Unauthorized');
+
   return false;
 }
 
@@ -78,7 +69,7 @@ export async function requireFacilitatorPermissions(
 
   const isAdmin = hasRole('admin', claims);
 
-  if (!isAdmin && !isFacilitator(claims, connection)) {
+  if (!isAdmin && !isActiveFacilitator(claims, connection)) {
     console.log(
       'WARNING: unauthorised attempt to access facilitator-only api: ' +
         req.method +
@@ -99,10 +90,10 @@ const isActiveDriver = async (claims: Claims, connection: Connection) => {
   );
 };
 
-const isFacilitator = async (claims: Claims, connection: Connection) => {
+const isActiveFacilitator = async (claims: Claims, connection: Connection) => {
   return (
     hasRole('facilitator', claims) ||
-    (await facilitatorRepository.isFacilitator(claims.userId, connection))
+    (await facilitatorRepository.isActiveFacilitator(claims.userId, connection))
   );
 };
 

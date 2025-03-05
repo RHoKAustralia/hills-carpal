@@ -62,6 +62,9 @@ const blankState: State = {
   rideCreatedTimeAndDate: moment().tz(process.env.TIMEZONE).toDate(),
   isSaved: false,
 };
+
+const editableStates: RideStatus[] = ['OPEN', 'LOCKED'];
+
 class Ride extends Component<Props, State> {
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
@@ -404,9 +407,10 @@ class Ride extends Component<Props, State> {
       !dateInFuture &&
       (this.state.originalRideState?.status === 'CANCELLED' ||
         this.state.originalRideState?.status === 'CONFIRMED');
+
     const disabled =
       this.state.originalRideState &&
-      this.state.originalRideState.status !== 'OPEN';
+      !editableStates.includes(this.state.originalRideState.status);
 
     return (
       <div className="container">
@@ -547,6 +551,14 @@ class Ride extends Component<Props, State> {
                         Ended
                       </option>
                       <option value="CANCELLED">Cancelled</option>
+                      {/* Locked = it's effectively open but no one can take it, for the case that it's too late
+                        for the client to accept a ride but we don't want to cancel it and muddy the stats */}
+                      <option
+                        value="LOCKED"
+                        disabled={!!this.state.driver || !dateInFuture}
+                      >
+                        Locked
+                      </option>
                     </select>
                   </div>
                   {this.state.driver && (

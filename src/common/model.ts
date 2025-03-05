@@ -1,6 +1,11 @@
 export type GenderPreference = 'male' | 'female' | 'any';
 export type CarType = 'All' | 'suv' | 'noSUV';
-export type RideStatus = 'OPEN' | 'CONFIRMED' | 'ENDED' | 'CANCELLED';
+export type RideStatus =
+  | 'OPEN'
+  | 'CONFIRMED'
+  | 'ENDED'
+  | 'CANCELLED'
+  | 'LOCKED';
 
 export interface Location {
   id?: number;
