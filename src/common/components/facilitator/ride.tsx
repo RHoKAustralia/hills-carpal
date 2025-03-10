@@ -550,6 +550,12 @@ class Ride extends Component<Props, State> {
                       >
                         Ended
                       </option>
+                      <option
+                        value="NOT_READY"
+                        disabled={!this.state.driver || cannotReopen}
+                      >
+                        Not Ready
+                      </option>
                       <option value="CANCELLED">Cancelled</option>
                       {/* Locked = it's effectively open but no one can take it, for the case that it's too late
                         for the client to accept a ride but we don't want to cancel it and muddy the stats */}

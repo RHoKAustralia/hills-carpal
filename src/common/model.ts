@@ -5,7 +5,8 @@ export type RideStatus =
   | 'CONFIRMED'
   | 'ENDED'
   | 'CANCELLED'
-  | 'LOCKED';
+  | 'LOCKED'
+  | 'NOT_READY';
 
 export interface Location {
   id?: number;
