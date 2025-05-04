@@ -56,5 +56,5 @@ export async function getUser(
 }
 
 export async function getUsers() {
-  return managementClient.getUsers();
+  return managementClient.getUsers({ page: 0, per_page: 100 });
 }
