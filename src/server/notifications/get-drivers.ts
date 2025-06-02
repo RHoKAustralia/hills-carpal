@@ -83,14 +83,15 @@ async function getDriversFromAuth0(ride: Ride) {
 }
 
 const getDriversFromDb = async (ride: Ride) => {
-  const connection = await databaseManager.createConnection();
-  const allDriversFromDb = await driverRepository.list(connection, {
-    gender: ride.client.preferredDriverGender,
-    hasSuv: ride.client.preferredCarType,
-    excludeInactive: true,
+  return await databaseManager.withConnection(async (connection) => {
+    const allDriversFromDb = await driverRepository.list(connection, {
+      gender: ride.client.preferredDriverGender,
+      hasSuv: ride.client.preferredCarType,
+      excludeInactive: true,
+    });
+
+    console.log(`${allDriversFromDb.length} valid drivers from DB`);
+
+    return allDriversFromDb;
   });
-
-  console.log(`${allDriversFromDb.length} valid drivers from DB`);
-
-  return allDriversFromDb;
 };

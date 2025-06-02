@@ -1,6 +1,6 @@
 import DatabaseManager from '../database/database-manager';
 import { Client } from '../../../common/model';
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 import LocationRepository from '../location-repository';
 
 export default class ClientRepository {
@@ -12,7 +12,7 @@ export default class ClientRepository {
     this.locationRepository = new LocationRepository(databaseManager);
   }
 
-  async create(client: Client, connection: Connection): Promise<number> {
+  async create(client: Client, connection: PoolConnection): Promise<number> {
     const escape = (data) => connection.escape(data);
 
     try {
@@ -62,7 +62,7 @@ export default class ClientRepository {
     }
   }
 
-  async update(id: number, client: Client, connection: Connection) {
+  async update(id: number, client: Client, connection: PoolConnection) {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }
@@ -97,7 +97,10 @@ export default class ClientRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  async list(connection, inactive?: boolean): Promise<Client[]> {
+  async list(
+    connection: PoolConnection,
+    inactive?: boolean
+  ): Promise<Client[]> {
     // const escape = (data) => connection.escape(data);
 
     const query = `
@@ -151,7 +154,7 @@ export default class ClientRepository {
     );
   }
 
-  delete(id, connection) {
+  delete(id: number, connection: PoolConnection) {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }

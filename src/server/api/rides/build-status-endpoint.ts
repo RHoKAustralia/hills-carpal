@@ -16,69 +16,69 @@ const rideRepository = new RideRepository(databaseManager);
 export default (statusToChangeTo: RideStatus) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
-    const connection = await databaseManager.createConnection();
-    await databaseManager.query(
-      'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
-      connection
-    );
-    await connection.beginTransaction();
 
     try {
       const jwt = await verifyJwt(req);
 
-      if (await requireDriverPermissions(req, res, connection, jwt)) {
-        switch (method) {
-          case 'PUT':
-            const id = Number.parseInt(req.query.id as string);
+      const result = await databaseManager.withReadCommitted(
+        async (connection) => {
+          if (!(await requireDriverPermissions(req, res, connection, jwt))) {
+            return null;
+          }
 
-            const oldRide = await rideRepository.get(id, connection, true);
+          switch (method) {
+            case 'PUT':
+              const id = Number.parseInt(req.query.id as string);
 
-            if (acceptingOrDecliningRideInPast(statusToChangeTo, oldRide)) {
-              res
-                .status(400)
-                .json({ message: 'Cannot change status of ride in past' });
-              return;
-            }
+              const oldRide = await rideRepository.get(id, connection, true);
 
-            if (confirmingClosedRide(statusToChangeTo, oldRide)) {
-              res.status(400).json({
-                message: `Cannot confirm ride that's ${oldRide.status} - someone probably accepted or locked the ride while you were reading the details.`,
-              });
-              return;
-            }
+              if (acceptingOrDecliningRideInPast(statusToChangeTo, oldRide)) {
+                res
+                  .status(400)
+                  .json({ message: 'Cannot change status of ride in past' });
+                return null;
+              }
 
-            await rideRepository.setStatus(
-              id,
-              statusToChangeTo,
-              statusToChangeTo !== 'OPEN' ? jwt.userId : null,
-              statusToChangeTo !== 'OPEN' ? jwt.name : null,
-              connection
-            );
+              if (confirmingClosedRide(statusToChangeTo, oldRide)) {
+                res.status(400).json({
+                  message: `Cannot confirm ride that's ${oldRide.status} - someone probably accepted or locked the ride while you were reading the details.`,
+                });
+                return null;
+              }
 
-            const newRide = await rideRepository.get(id, connection);
+              await rideRepository.setStatus(
+                id,
+                statusToChangeTo,
+                statusToChangeTo !== 'OPEN' ? jwt.userId : null,
+                statusToChangeTo !== 'OPEN' ? jwt.name : null,
+                connection
+              );
 
-            if (statusToChangeTo === 'OPEN') {
-              await notifyDeclined(oldRide);
-              await notifyAvailableRide(oldRide, 'declined');
-            } else if (statusToChangeTo === 'CONFIRMED') {
-              await notifyOffered(newRide);
-            }
+              const newRide = await rideRepository.get(id, connection);
 
-            await connection.commit();
-            res.status(200).json(newRide);
-            break;
-          default:
-            res.setHeader('Allow', ['PUT']);
-            res.status(405).end(`Method ${method} Not Allowed`);
-        }
+              if (statusToChangeTo === 'OPEN') {
+                await notifyDeclined(oldRide);
+                await notifyAvailableRide(oldRide, 'declined');
+              } else if (statusToChangeTo === 'CONFIRMED') {
+                await notifyOffered(newRide);
+              }
+
+              return newRide;
+            default:
+              res.setHeader('Allow', ['PUT']);
+              res.status(405).end(`Method ${method} Not Allowed`);
+              return null;
+          }
+        },
+        true
+      );
+
+      if (result) {
+        res.status(200).json(result);
       }
     } catch (e) {
       console.error(e);
-
-      await connection.rollback();
       res.status(500).json({ status: 'Error' });
-    } finally {
-      await connection.end();
     }
   };
 

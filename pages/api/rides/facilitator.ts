@@ -12,10 +12,12 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
-  const connection = await databaseManager.createConnection();
 
   try {
-    if (await requireFacilitatorPermissions(req, res, connection)) {
+    await databaseManager.withConnection(async (connection) => {
+      if (!(await requireFacilitatorPermissions(req, res, connection))) {
+        return;
+      }
       switch (method) {
         case 'GET':
           const {
@@ -67,11 +69,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           res.setHeader('Allow', ['GET']);
           res.status(405).end(`Method ${method} Not Allowed`);
       }
-    }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ status: 'Error' });
-  } finally {
-    await connection.end();
   }
 };

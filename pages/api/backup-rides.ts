@@ -12,47 +12,45 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default snsValidatorEndpoint(
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const connection = await databaseManager.createConnection();
-
     try {
-      console.log(`Dumping open rides to google sheets`);
+      await databaseManager.withConnection(async (connection) => {
+        console.log(`Dumping open rides to google sheets`);
 
-      const openRides = await rideRepository.list(
-        {
-          filters: {
-            status: 'OPEN',
-            fromNow: true,
+        const openRides = await rideRepository.list(
+          {
+            filters: {
+              status: 'OPEN',
+              fromNow: true,
+            },
+            sort: ['pickupTimeAndDate'],
           },
-          sort: ['pickupTimeAndDate'],
-        },
-        connection
-      );
+          connection
+        );
 
-      const confirmedRides = await rideRepository.list(
-        {
-          filters: {
-            status: 'CONFIRMED',
-            fromNow: true,
+        const confirmedRides = await rideRepository.list(
+          {
+            filters: {
+              status: 'CONFIRMED',
+              fromNow: true,
+            },
+            sort: ['pickupTimeAndDate'],
           },
-          sort: ['pickupTimeAndDate'],
-        },
-        connection
-      );
+          connection
+        );
 
-      const allRides = [...openRides, ...confirmedRides];
+        const allRides = [...openRides, ...confirmedRides];
 
-      await dumpBackupRides(allRides);
+        await dumpBackupRides(allRides);
 
-      console.log(`Successfully dumped ${allRides.length} rides`);
+        console.log(`Successfully dumped ${allRides.length} rides`);
 
-      res.status(200).send({
-        message: 'Complete',
+        res.status(200).send({
+          message: 'Complete',
+        });
       });
     } catch (e) {
       console.error(e);
       res.status(500).json({ status: 'Error' });
-    } finally {
-      await connection.end();
     }
   }
 );

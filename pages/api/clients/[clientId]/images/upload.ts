@@ -20,29 +20,28 @@ const imageRepository = new ImageRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
-  const connection = await databaseManager.createConnection();
   try {
-    switch (method) {
-      case 'POST':
-        if (await requireFacilitatorPermissions(req, res, connection)) {
-          const busboyResult = await busboyParse(req);
-          const content = busboyResult.chunk.toString('base64');
+    await databaseManager.withConnection(async (connection) => {
+      switch (method) {
+        case 'POST':
+          if (await requireFacilitatorPermissions(req, res, connection)) {
+            const busboyResult = await busboyParse(req);
+            const content = busboyResult.chunk.toString('base64');
 
-          const image = await imageRepository.upload(
-            content,
-            busboyResult.contentType,
-            req.query.clientId as string,
-            connection
-          );
+            const image = await imageRepository.upload(
+              content,
+              busboyResult.contentType,
+              req.query.clientId as string,
+              connection
+            );
 
-          res.status(200).send(image);
-        }
-        break;
-    }
+            res.status(200).send(image);
+          }
+          break;
+      }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).send({ status: 'Error', message: 'Could not parse form' });
-  } finally {
-    await connection.end();
   }
 };

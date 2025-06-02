@@ -17,12 +17,14 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
-  const connection = await databaseManager.createConnection();
 
   try {
     switch (method) {
       case 'PUT':
-        if (await requireFacilitatorPermissions(req, res, connection)) {
+        await databaseManager.withConnection(async (connection) => {
+          if (!(await requireFacilitatorPermissions(req, res, connection))) {
+            return;
+          }
           const existingRide = await rideRepository.get(
             Number.parseInt(req.query.id as string),
             connection
@@ -88,17 +90,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           }
 
           res.status(200).json(updatedRide);
-        }
+        });
         break;
       case 'GET':
-        const claims = await verifyJwt(req);
-        if (requireDriverPermissions(req, res, connection, claims)) {
+        await databaseManager.withConnection(async (connection) => {
+          const claims = await verifyJwt(req);
+          if (!(await requireDriverPermissions(req, res, connection, claims))) {
+            return;
+          }
           const ride = await rideRepository.get(
             Number.parseInt(req.query.id as string),
             connection
           );
           res.status(200).json(ride);
-        }
+        });
         break;
       default:
         res.setHeader('Allow', ['PUT', 'GET']);
@@ -107,8 +112,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ status: 'Error' });
-  } finally {
-    await connection.end();
   }
 };
 

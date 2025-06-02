@@ -11,42 +11,41 @@ const clientRepository = new ClientRepository(databaseManager);
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
 
-  const connection = await databaseManager.createConnection();
   try {
-    if (await requireFacilitatorPermissions(req, res, connection)) {
-      switch (method) {
-        case 'PUT':
-          const client: Client = {
-            ...body,
-            preferredDriverGender: body.preferredDriverGender || 'any',
-            preferredCarType: body.preferredCarType || 'All',
-          };
+    await databaseManager.withConnection(async (connection) => {
+      if (await requireFacilitatorPermissions(req, res, connection)) {
+        switch (method) {
+          case 'PUT':
+            const client: Client = {
+              ...body,
+              preferredDriverGender: body.preferredDriverGender || 'any',
+              preferredCarType: body.preferredCarType || 'All',
+            };
 
-          await clientRepository.update(
-            parseInt(req.query.clientId as string),
-            client,
-            connection
-          );
-          res.status(200).json(body);
+            await clientRepository.update(
+              parseInt(req.query.clientId as string),
+              client,
+              connection
+            );
+            res.status(200).json(body);
 
-          break;
-        case 'DELETE':
-          await clientRepository.delete(
-            parseInt(req.query.clientId as string),
-            connection
-          );
-          res.status(200).json(body);
+            break;
+          case 'DELETE':
+            await clientRepository.delete(
+              parseInt(req.query.clientId as string),
+              connection
+            );
+            res.status(200).json(body);
 
-          break;
-        default:
-          res.setHeader('Allow', ['PUT', 'DELETE']);
-          res.status(405).end(`Method ${method} Not Allowed`);
+            break;
+          default:
+            res.setHeader('Allow', ['PUT', 'DELETE']);
+            res.status(405).end(`Method ${method} Not Allowed`);
+        }
       }
-    }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ status: 'Error' });
-  } finally {
-    await connection.end();
   }
 };

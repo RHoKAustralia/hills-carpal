@@ -1,4 +1,4 @@
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 
 import DatabaseManager from '../database/database-manager';
 import { Image } from '../../../common/model';
@@ -14,7 +14,7 @@ class ImageRepository {
     content: string,
     mimeType: string,
     clientId: string,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<Image> {
     try {
       await connection.beginTransaction();
@@ -63,7 +63,7 @@ class ImageRepository {
     }
   }
 
-  async list(connection: Connection, clientId: string): Promise<Image[]> {
+  async list(connection: PoolConnection, clientId: string): Promise<Image[]> {
     const escape = (data) => connection.escape(data);
 
     let query = `
@@ -83,7 +83,7 @@ class ImageRepository {
   }
 
   async get(
-    connection: Connection,
+    connection: PoolConnection,
     imageId: string
   ): Promise<Image | undefined> {
     const escape = (data) => connection.escape(data);
@@ -106,7 +106,7 @@ class ImageRepository {
     }
   }
 
-  update(id: string, image: Image, connection: Connection) {
+  update(id: string, image: Image, connection: PoolConnection) {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }
@@ -122,12 +122,14 @@ class ImageRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  delete(id: string, connection: Connection) {
-    if (!id) {
+  async delete(imageId: string, connection: PoolConnection) {
+    if (!imageId) {
       throw new Error('No id specified when deleting image.');
     }
     const escape = (data) => connection.escape(data);
-    let query = `DELETE FROM ${this.dbName}.images WHERE id = ${escape(id)};`;
+    let query = `DELETE FROM ${this.dbName}.images WHERE id = ${escape(
+      imageId
+    )};`;
 
     return this.databaseManager.query(query, connection);
   }

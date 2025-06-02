@@ -1,11 +1,12 @@
-import mysql, { Connection } from 'mysql2/promise';
 import fs from 'fs';
+import mysql, { Pool, PoolConnection, PoolOptions } from 'mysql2/promise';
 import path from 'path';
 
 export default class DatabaseManager {
-  databaseConfig: any;
+  databaseConfig: PoolOptions;
+  pool: Pool;
 
-  constructor(databaseConfig?) {
+  constructor(databaseConfig?: PoolOptions) {
     this.databaseConfig = databaseConfig || {
       host: process.env.MYSQL_HOST || 'localhost',
       port: process.env.MYSQL_PORT || 3306,
@@ -17,40 +18,112 @@ export default class DatabaseManager {
       ssl:
         process.env.MYSQL_USE_SSL === 'TRUE'
           ? {
-              ca: fs.readFileSync(path.join(process.cwd(), 'src', 'server', 'api', 'database', 'global-bundle.pem')),
+              ca: fs.readFileSync(
+                path.join(
+                  process.cwd(),
+                  'src',
+                  'server',
+                  'api',
+                  'database',
+                  'global-bundle.pem'
+                )
+              ),
             }
           : undefined,
+      // Connection pool settings
+      waitForConnections: true,
+      connectionLimit: parseInt(process.env.MYSQL_CONNECTION_LIMIT || '10'),
+      idleTimeout: parseInt(process.env.MYSQL_IDLE_TIMEOUT || '600000'),
       // debug: true
     };
+
+    this.pool = mysql.createPool(this.databaseConfig);
   }
 
-  createConnection(): Promise<mysql.Connection> {
-    return mysql.createConnection(this.databaseConfig);
+  async getConnection(): Promise<PoolConnection> {
+    return await this.pool.getConnection();
   }
 
-  async _setTimeZone(connection: Connection) {
+  async _setTimeZone(connection: PoolConnection) {
     await connection.query("SET time_zone='+00:00'");
   }
 
   async query(
     queryString: string,
-    connection: Connection,
+    connection?: PoolConnection
   ): Promise<mysql.RowDataPacket[]> {
-    let closeConnection = false;
-    if (!connection) {
-      connection = await this.createConnection();
-      closeConnection = true;
-    }
-
     await this._setTimeZone(connection);
-
-    const [results] = await connection.query(queryString);
-
-    if (closeConnection) {
-      await connection.end();
-    }
-
+    const [results] = await (connection ?? this.pool).query(queryString);
     return results as unknown as mysql.RowDataPacket[];
+  }
+
+  // Execute function with automatic connection management
+  async withConnection<T>(
+    fn: (connection: PoolConnection) => Promise<T>
+  ): Promise<T> {
+    const connection = await this.getConnection();
+    try {
+      await this._setTimeZone(connection);
+      return await fn(connection);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // Execute function within a transaction
+  async withTransaction<T>(
+    fn: (connection: PoolConnection) => Promise<T>
+  ): Promise<T> {
+    const connection = await this.getConnection();
+    try {
+      await this._setTimeZone(connection);
+      await connection.beginTransaction();
+
+      const result = await fn(connection);
+
+      await connection.commit();
+      return result;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  // Execute function with read committed isolation level and optional transaction
+  async withReadCommitted<T>(
+    fn: (connection: PoolConnection) => Promise<T>,
+    useTransaction = false
+  ): Promise<T> {
+    const connection = await this.getConnection();
+    try {
+      await this._setTimeZone(connection);
+      await connection.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+
+      if (useTransaction) {
+        await connection.beginTransaction();
+      }
+
+      const result = await fn(connection);
+
+      if (useTransaction) {
+        await connection.commit();
+      }
+
+      return result;
+    } catch (error) {
+      if (useTransaction) {
+        await connection.rollback();
+      }
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async closePool(): Promise<void> {
+    await this.pool.end();
   }
 }
 

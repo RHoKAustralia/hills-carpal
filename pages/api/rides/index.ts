@@ -16,13 +16,15 @@ const rideRepository = new RideRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
-  const connection = await databaseManager.createConnection();
 
   const claims = await verifyJwt(req);
   if (isRideInPast(req.body)) {
     res.status(400).json({ status: 'Error please make sure date is valid' });
-  } else {
-    try {
+    return;
+  }
+
+  try {
+    await databaseManager.withConnection(async (connection) => {
       if (await requireFacilitatorPermissions(req, res, connection, claims)) {
         switch (method) {
           case 'POST':
@@ -47,11 +49,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(405).end(`Method ${method} Not Allowed`);
         }
       }
-    } catch (e) {
-      console.error(e);
-      res.status(500).json({ status: 'Error' });
-    } finally {
-      await connection.end();
-    }
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ status: 'Error' });
   }
 };

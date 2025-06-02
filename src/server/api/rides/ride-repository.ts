@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
 import _ from 'lodash';
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 
 import DatabaseManager from '../database/database-manager';
 import {
@@ -60,18 +60,21 @@ export default class RideRepository {
     this.locationRepository = new LocationRepository(databaseManager);
   }
 
-  async create(ride: RideInput, connection: Connection): Promise<number> {
+  async create(
+    rideInput: RideInput,
+    connection: PoolConnection
+  ): Promise<number> {
     const escape = (data) => connection.escape(data);
 
     try {
       await connection.beginTransaction();
 
       const locationFromId = await this.locationRepository.create(
-        ride.locationFrom,
+        rideInput.locationFrom,
         connection
       );
       const locationToId = await this.locationRepository.create(
-        ride.locationTo,
+        rideInput.locationTo,
         connection
       );
 
@@ -85,19 +88,19 @@ export default class RideRepository {
                                   rideCreatedTimeAndDateInUTC) 
                          VALUES 
                                   (${[
-                                    escape(ride.clientId),
-                                    escape(ride.facilitatorEmail),
+                                    escape(rideInput.clientId),
+                                    escape(rideInput.facilitatorEmail),
                                     escape(
-                                      moment(ride.pickupTimeAndDate)
+                                      moment(rideInput.pickupTimeAndDate)
                                         .utc()
                                         .format('YYYY-MM-DD HH:mm:ss')
                                     ),
                                     locationFromId,
                                     locationToId,
-                                    escape(ride.status),
-                                    escape(ride.description),
+                                    escape(rideInput.status),
+                                    escape(rideInput.description),
                                     escape(
-                                      moment(ride.rideCreatedTimeAndDate)
+                                      moment(rideInput.rideCreatedTimeAndDate)
                                         .utc()
                                         .format('YYYY-MM-DD HH:mm:ss')
                                     ),
@@ -122,7 +125,11 @@ export default class RideRepository {
     }
   }
 
-  async setSurvey(id: number, result: CompletePayload, connection: Connection) {
+  async setSurvey(
+    id: number,
+    result: CompletePayload,
+    connection: PoolConnection
+  ) {
     const escape = (data) => connection.escape(data);
 
     const query = `
@@ -155,9 +162,9 @@ export default class RideRepository {
   async setStatus(
     id: number,
     status: RideStatus,
-    driverId: string,
+    driverAuth0Id: string,
     driverName: string,
-    connection: Connection
+    connection: PoolConnection
   ) {
     if (!id) {
       throw new Error('No id specified when updating ride.');
@@ -179,7 +186,7 @@ export default class RideRepository {
             INSERT INTO ${
               this.dbName
             }.driver_ride(driver_auth0_id, ride_id, driver_name, confirmed, updated_at) VALUES (${[
-          escape(driverId),
+          escape(driverAuth0Id),
           escape(id),
           escape(driverName),
           escape(1),
@@ -200,7 +207,11 @@ export default class RideRepository {
     }
   }
 
-  async update(id: number, ride: Partial<RideInput>, connection: Connection) {
+  async update(
+    id: number,
+    ride: Partial<RideInput>,
+    connection: PoolConnection
+  ) {
     if (!id) {
       throw new Error('No id specified when updating ride.');
     }
@@ -269,7 +280,7 @@ export default class RideRepository {
   listForDriver(
     driverId: string,
     status: RideStatus,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<Ride[]> {
     return this.list(
       {
@@ -282,7 +293,7 @@ export default class RideRepository {
   }
 
   listForFacilitator(
-    connection: Connection,
+    connection: PoolConnection,
     sort?: string[],
     sortDirection?: 'asc' | 'desc',
     facilitatorEmail?: string,
@@ -302,7 +313,7 @@ export default class RideRepository {
   }
 
   countForFacilitator(
-    connection: Connection,
+    connection: PoolConnection,
     facilitatorEmail: string
   ): Promise<number> {
     return this.count(
@@ -313,7 +324,7 @@ export default class RideRepository {
 
   async get(
     rideId: number,
-    connection: Connection,
+    connection: PoolConnection,
     forUpdate: boolean = false
   ): Promise<Ride | undefined> {
     const rides = await this.list({ rideId }, connection, forUpdate);
@@ -340,7 +351,7 @@ export default class RideRepository {
         fromNow: false,
       },
     }: ListQuery,
-    connection: Connection,
+    connection: PoolConnection,
     forUpdate: boolean = false
   ): Promise<Ride[]> {
     const escape = (str: string) => connection.escape(str);
@@ -485,7 +496,7 @@ export default class RideRepository {
 
   async count(
     { filters: { fromNow = false, facilitatorEmail } }: ListQuery,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<number> {
     let where = [];
 

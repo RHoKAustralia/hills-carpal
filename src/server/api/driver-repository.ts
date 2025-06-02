@@ -1,6 +1,6 @@
 import DatabaseManager from './database/database-manager';
 import { CarType, Client, Driver, GenderPreference } from '../../common/model';
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 import LocationRepository from './location-repository';
 import { isUndefined } from 'lodash';
 
@@ -16,7 +16,7 @@ export default class DriverRepository {
     this.dbName = databaseManager.databaseConfig.database;
   }
 
-  async create(driver: Driver, connection: Connection): Promise<number> {
+  async create(driver: Driver, connection: PoolConnection): Promise<number> {
     const escape = (data) => connection.escape(data);
 
     try {
@@ -67,7 +67,7 @@ export default class DriverRepository {
     }
   }
 
-  async update(id: number, driver: Driver, connection: Connection) {
+  async update(id: number, driver: Driver, connection: PoolConnection) {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }
@@ -99,7 +99,7 @@ export default class DriverRepository {
   }
 
   async list(
-    connection: Connection,
+    connection: PoolConnection,
     filter: QueryFilter = {}
   ): Promise<Driver[]> {
     const where = [];
@@ -142,7 +142,7 @@ export default class DriverRepository {
     );
   }
 
-  delete(id: number, connection: Connection) {
+  delete(id: number, connection: PoolConnection) {
     if (!id) {
       throw new Error('No id specified when updating driver.');
     }
@@ -154,7 +154,7 @@ export default class DriverRepository {
 
   async getByAuth0Id(
     auth0Id: string,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<Driver | undefined> {
     const query = `
       SELECT 
@@ -180,7 +180,7 @@ export default class DriverRepository {
     return driverResults.length >= 1 ? driverResults[0] : undefined;
   }
 
-  async isActiveDriver(auth0Id: string, connection: Connection) {
+  async isActiveDriver(auth0Id: string, connection: PoolConnection) {
     const query = `SELECT 1 FROM ${
       this.dbName
     }.driver WHERE auth0Id = ${connection.escape(auth0Id)} AND inactive = 0`;

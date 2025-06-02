@@ -1,6 +1,6 @@
 import DatabaseManager from './database/database-manager';
 import { Client, Facilitator } from '../../common/model';
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 
 export default class FacilitatorRepository {
   private dbName: string;
@@ -11,7 +11,7 @@ export default class FacilitatorRepository {
 
   async create(
     facilitator: Facilitator,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<number> {
     const escape = (data) => connection.escape(data);
 
@@ -53,7 +53,11 @@ export default class FacilitatorRepository {
     }
   }
 
-  async update(id: number, facilitator: Facilitator, connection: Connection) {
+  async update(
+    id: number,
+    facilitator: Facilitator,
+    connection: PoolConnection
+  ) {
     if (!id) {
       throw new Error('No id specified when updating client.');
     }
@@ -77,7 +81,7 @@ export default class FacilitatorRepository {
     return this.databaseManager.query(query, connection);
   }
 
-  async list(connection: Connection): Promise<Facilitator[]> {
+  async list(connection: PoolConnection): Promise<Facilitator[]> {
     const query = `
       SELECT
         *
@@ -92,7 +96,7 @@ export default class FacilitatorRepository {
     return results as Facilitator[];
   }
 
-  delete(id: number, connection: Connection) {
+  delete(id: number, connection: PoolConnection) {
     if (!id) {
       throw new Error('No id specified when updating facilitator.');
     }
@@ -106,7 +110,7 @@ export default class FacilitatorRepository {
 
   async getByAuth0Id(
     auth0Id: string,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<Facilitator | undefined> {
     const query = `
       SELECT
@@ -128,7 +132,7 @@ export default class FacilitatorRepository {
     return facilitators.length >= 1 ? facilitators[0] : undefined;
   }
 
-  async isActiveFacilitator(auth0Id: string, connection: Connection) {
+  async isActiveFacilitator(auth0Id: string, connection: PoolConnection) {
     const query = `SELECT 1 FROM ${
       this.dbName
     }.facilitator WHERE auth0Id = ${connection.escape(auth0Id)} AND inactive=0`;

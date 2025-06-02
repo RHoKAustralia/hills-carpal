@@ -13,30 +13,28 @@ const rideRepository = new RideRepository(databaseManager);
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 
-  switch (method) {
-    case 'GET':
-      const connection = await databaseManager.createConnection();
+  try {
+    switch (method) {
+      case 'GET':
+        await databaseManager.withConnection(async (connection) => {
+          const jwt = await verifyJwt(req);
 
-      try {
-        const jwt = await verifyJwt(req);
-
-        if (await requireDriverPermissions(req, res, connection, jwt)) {
-          const rides = await rideRepository.listForDriver(
-            jwt.userId,
-            'CONFIRMED',
-            connection
-          );
-          res.status(200).json(rides);
-        }
-      } catch (e) {
-        console.error(e);
-        res.status(500).json({ status: 'Error' });
-      } finally {
-        await connection.end();
-      }
-      break;
-    default:
-      res.setHeader('Allow', ['GET']);
-      res.status(405).end(`Method ${method} Not Allowed`);
+          if (await requireDriverPermissions(req, res, connection, jwt)) {
+            const rides = await rideRepository.listForDriver(
+              jwt.userId,
+              'CONFIRMED',
+              connection
+            );
+            res.status(200).json(rides);
+          }
+        });
+        break;
+      default:
+        res.setHeader('Allow', ['GET']);
+        res.status(405).end(`Method ${method} Not Allowed`);
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ status: 'Error' });
   }
 };

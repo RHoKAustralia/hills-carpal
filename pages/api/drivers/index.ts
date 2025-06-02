@@ -11,43 +11,42 @@ const driverRepository = new DriverRepository(databaseManager);
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
 
-  const connection = await databaseManager.createConnection();
   try {
-    if (await requireFacilitatorPermissions(req, res, connection)) {
-      switch (method) {
-        case 'GET':
-          // const inactive =
-          //   typeof req.query.inactive !== 'undefined'
-          //     ? req.query.inactive === 'true'
-          //       ? true
-          //       : false
-          //     : undefined;
+    await databaseManager.withConnection(async (connection) => {
+      if (await requireFacilitatorPermissions(req, res, connection)) {
+        switch (method) {
+          case 'GET':
+            // const inactive =
+            //   typeof req.query.inactive !== 'undefined'
+            //     ? req.query.inactive === 'true'
+            //       ? true
+            //       : false
+            //     : undefined;
 
-          const drivers = await driverRepository.list(connection);
-          res.status(200).json(drivers);
+            const drivers = await driverRepository.list(connection);
+            res.status(200).json(drivers);
 
-          break;
-        case 'POST':
-          const driver: Driver = body;
+            break;
+          case 'POST':
+            const driver: Driver = body;
 
-          const result = await driverRepository.create(driver, connection);
+            const result = await driverRepository.create(driver, connection);
 
-          res.status(200).json({
-            ...body,
-            id: result,
-          });
+            res.status(200).json({
+              ...body,
+              id: result,
+            });
 
-          break;
+            break;
 
-        default:
-          res.setHeader('Allow', ['GET', 'POST', 'PUT']);
-          res.status(405).end(`Method ${method} Not Allowed`);
+          default:
+            res.setHeader('Allow', ['GET', 'POST', 'PUT']);
+            res.status(405).end(`Method ${method} Not Allowed`);
+        }
       }
-    }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ status: 'Error' });
-  } finally {
-    await await connection.end();
   }
 };

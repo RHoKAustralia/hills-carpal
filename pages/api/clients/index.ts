@@ -11,51 +11,50 @@ const clientRepository = new ClientRepository(databaseManager);
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
 
-  const connection = await databaseManager.createConnection();
   try {
-    if (await requireFacilitatorPermissions(req, res, connection)) {
-      switch (method) {
-        case 'GET':
-          const inactive =
-            typeof req.query.inactive !== 'undefined'
-              ? req.query.inactive === 'true'
-                ? true
-                : false
-              : undefined;
+    await databaseManager.withConnection(async (connection) => {
+      if (await requireFacilitatorPermissions(req, res, connection)) {
+        switch (method) {
+          case 'GET':
+            const inactive =
+              typeof req.query.inactive !== 'undefined'
+                ? req.query.inactive === 'true'
+                  ? true
+                  : false
+                : undefined;
 
-          const clients = await clientRepository.list(connection, inactive);
-          res.status(200).json(clients);
+            const clients = await clientRepository.list(connection, inactive);
+            res.status(200).json(clients);
 
-          break;
-        case 'POST':
-          const client: Client = {
-            ...body,
-            preferredDriverGender: body.preferredDriverGender || 'any',
-            preferredCarType: body.preferredCarType || 'All',
-          };
+            break;
+          case 'POST':
+            const client: Client = {
+              ...body,
+              preferredDriverGender: body.preferredDriverGender || 'any',
+              preferredCarType: body.preferredCarType || 'All',
+            };
 
-          const result = await clientRepository.create(client, connection);
+            const result = await clientRepository.create(client, connection);
 
-          res.status(200).json({
-            ...body,
-            id: result,
-          });
+            res.status(200).json({
+              ...body,
+              id: result,
+            });
 
-          break;
+            break;
 
-        // case 'PUT':
-        //   // Update or create data in your database
-        //   res.status(200).json({ id, name: name || `User ${id}` });
-        //   break;
-        default:
-          res.setHeader('Allow', ['GET', 'POST', 'PUT']);
-          res.status(405).end(`Method ${method} Not Allowed`);
+          // case 'PUT':
+          //   // Update or create data in your database
+          //   res.status(200).json({ id, name: name || `User ${id}` });
+          //   break;
+          default:
+            res.setHeader('Allow', ['GET', 'POST', 'PUT']);
+            res.status(405).end(`Method ${method} Not Allowed`);
+        }
       }
-    }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ status: 'Error' });
-  } finally {
-    await await connection.end();
   }
 };

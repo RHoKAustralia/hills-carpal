@@ -1,6 +1,6 @@
 import DatabaseManager from './database/database-manager';
 import { Location } from '../../common/model';
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 
 export default class LocationRepository {
   private dbName: string;
@@ -9,7 +9,10 @@ export default class LocationRepository {
     this.dbName = databaseManager.databaseConfig.database;
   }
 
-  async create(location: Location, connection: Connection): Promise<number> {
+  async create(
+    location: Location,
+    connection: PoolConnection
+  ): Promise<number> {
     const escape = (data) => connection.escape(data);
 
     const point = `POINT(${escape(location.longitude)}, ${escape(
@@ -40,7 +43,7 @@ export default class LocationRepository {
   async update(
     id: number,
     location: Location,
-    connection: Connection
+    connection: PoolConnection
   ): Promise<void> {
     const escape = (data) => connection.escape(data);
 

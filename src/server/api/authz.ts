@@ -6,7 +6,7 @@ import getConfig from 'next/config';
 import DatabaseManager from './database/database-manager';
 import DriverRepository from './driver-repository';
 import FacilitatorRepository from './facilitator-repository';
-import { Connection } from 'mysql2/promise';
+import { PoolConnection } from 'mysql2/promise';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -32,7 +32,7 @@ interface Claims {
 export async function requireDriverPermissions(
   req: NextApiRequest,
   res: NextApiResponse,
-  connection: Connection,
+  connection: PoolConnection,
   claims?: Claims
 ) {
   if (!claims) {
@@ -60,7 +60,7 @@ export async function requireDriverPermissions(
 export async function requireFacilitatorPermissions(
   req: NextApiRequest,
   res: NextApiResponse,
-  connection: Connection,
+  connection: PoolConnection,
   claims?: Claims
 ) {
   if (!claims) {
@@ -83,14 +83,17 @@ export async function requireFacilitatorPermissions(
   return true;
 }
 
-const isActiveDriver = async (claims: Claims, connection: Connection) => {
+const isActiveDriver = async (claims: Claims, connection: PoolConnection) => {
   return (
     hasRole('driver', claims) ||
     (await driverRepository.isActiveDriver(claims.userId, connection))
   );
 };
 
-const isActiveFacilitator = async (claims: Claims, connection: Connection) => {
+const isActiveFacilitator = async (
+  claims: Claims,
+  connection: PoolConnection
+) => {
   return (
     hasRole('facilitator', claims) ||
     (await facilitatorRepository.isActiveFacilitator(claims.userId, connection))

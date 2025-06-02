@@ -16,12 +16,15 @@ const driverRepository = new DriverRepository(databaseManager);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
-  const connection = await databaseManager.createConnection();
 
   try {
     const jwt = await verifyJwt(req);
 
-    if (await requireDriverPermissions(req, res, connection, jwt)) {
+    await databaseManager.withConnection(async (connection) => {
+      if (!(await requireDriverPermissions(req, res, connection, jwt))) {
+        return;
+      }
+
       switch (method) {
         case 'GET':
           const driver = await driverRepository.getByAuth0Id(
@@ -61,11 +64,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           res.setHeader('Allow', ['GET']);
           res.status(405).end(`Method ${method} Not Allowed`);
       }
-    }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ status: 'Error' });
-  } finally {
-    await connection.end();
   }
 };
