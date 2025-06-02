@@ -9,7 +9,7 @@ export default class DatabaseManager {
   constructor(databaseConfig?: PoolOptions) {
     this.databaseConfig = databaseConfig || {
       host: process.env.MYSQL_HOST || 'localhost',
-      port: process.env.MYSQL_PORT || 3306,
+      port: parseInt(process.env.MYSQL_PORT || '3306'),
       user: process.env.MYSQL_USER || 'root',
       password: process.env.MYSQL_PW || 'admin',
       database: process.env.MYSQL_DB || 'carpal',
