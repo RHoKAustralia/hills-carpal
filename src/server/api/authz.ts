@@ -69,18 +69,50 @@ export async function requireFacilitatorPermissions(
 
   const isAdmin = hasRole('admin', claims);
 
-  if (!isAdmin && !isActiveFacilitator(claims, connection)) {
-    console.log(
-      'WARNING: unauthorised attempt to access facilitator-only api: ' +
-        req.method +
-        ' ' +
-        req.url
-    );
-    res.status(403).send('Unauthorized');
-    return false;
+  if (isAdmin || (await isActiveFacilitator(claims, connection))) {
+    return true;
   }
 
-  return true;
+  console.log(
+    'WARNING: unauthorised attempt to access facilitator-only api: ' +
+      req.method +
+      ' ' +
+      req.url
+  );
+  res.status(403).send('Unauthorized');
+  return false;
+}
+
+export async function requireDriverOrFacilitatorPermissions(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  connection: PoolConnection,
+  claims?: Claims
+) {
+  if (!claims) {
+    claims = await verifyJwt(req);
+  }
+
+  const isAdmin = hasRole('admin', claims);
+
+  if (
+    isAdmin ||
+    (await isActiveDriver(claims, connection)) ||
+    (await isActiveFacilitator(claims, connection))
+  ) {
+    return true;
+  }
+
+  console.log(
+    'WARNING: unauthorised attempt to access driver-or-facilitator-only api: ' +
+      req.method +
+      ' ' +
+      req.url
+  );
+
+  res.status(403).send('Unauthorized');
+
+  return false;
 }
 
 const isActiveDriver = async (claims: Claims, connection: PoolConnection) => {

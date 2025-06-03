@@ -57,6 +57,10 @@ class Facilitators extends Component<Props, State> {
       },
     });
 
+    if (!data.ok) {
+      throw new Error('Failed to fetch facilitators');
+    }
+
     const facilitators = (await data.json()) as Facilitator[];
 
     return facilitators.map((facilitator) => ({
@@ -70,6 +74,11 @@ class Facilitators extends Component<Props, State> {
         Authorization: `Bearer ${localStorage.getItem('id_token')}`,
       },
     });
+
+    if (!data.ok) {
+      console.error('Failed to fetch users', data);
+      return;
+    }
 
     const users = (await data.json()) as User<AppMetadata, UserMetadata>[];
 

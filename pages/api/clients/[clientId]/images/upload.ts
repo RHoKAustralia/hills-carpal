@@ -3,11 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import ImageRepository from '../../../../../src/server/api/clients/image-repository';
 import busboyParse from '../../../../../src/server/api/clients/busboy-parse';
 import DatabaseManager from '../../../../../src/server/api/database/database-manager';
-import {
-  hasRole,
-  verifyJwt,
-  requireFacilitatorPermissions,
-} from '../../../../../src/server/api/authz';
+import { requireFacilitatorPermissions } from '../../../../../src/server/api/authz';
 
 export const config = {
   api: {

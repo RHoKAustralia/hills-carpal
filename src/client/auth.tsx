@@ -152,13 +152,15 @@ function isAuthenticated(authState: AuthState) {
 export function hasFacilitatorPrivilege(auth: AuthState | undefined) {
   return (
     auth?.roles.indexOf('facilitator') > -1 ||
-    !isUndefined(auth?.whoami.facilitator)
+    (!isUndefined(auth?.whoami.facilitator) &&
+      !auth.whoami.facilitator.inactive)
   );
 }
 
 export function hasDriverPrivilege(auth: AuthState | undefined) {
   return (
-    auth?.roles.indexOf('driver') > -1 || !isUndefined(auth?.whoami.driver)
+    auth?.roles.indexOf('driver') > -1 ||
+    (!isUndefined(auth?.whoami.driver) && !auth.whoami.driver.inactive)
   );
 }
 
@@ -174,15 +176,15 @@ function isInactive(auth: AuthState | undefined) {
   }
 
   if (hasDriverPrivilege(auth) && hasFacilitatorPrivilege(auth)) {
-    return auth.whoami.driver.inactive && auth.whoami.facilitator.inactive;
+    return auth.whoami.driver?.inactive && auth.whoami.facilitator?.inactive;
   }
 
   if (hasDriverPrivilege(auth)) {
-    return auth.whoami.driver.inactive;
+    return auth.whoami.driver?.inactive;
   }
 
   if (hasFacilitatorPrivilege(auth)) {
-    return auth.whoami.facilitator.inactive;
+    return auth.whoami.facilitator?.inactive;
   }
 
   return false;

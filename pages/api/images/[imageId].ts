@@ -6,6 +6,7 @@ import {
   requireDriverPermissions,
   verifyJwt,
   requireFacilitatorPermissions,
+  requireDriverOrFacilitatorPermissions,
 } from '../../../src/server/api/authz';
 
 const databaseManager = new DatabaseManager();
@@ -19,7 +20,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       switch (method) {
         case 'GET':
           const claims = await verifyJwt(req);
-          if (requireDriverPermissions(req, res, connection, claims)) {
+          if (
+            requireDriverOrFacilitatorPermissions(req, res, connection, claims)
+          ) {
             const image = await imageRepository.get(
               connection,
               req.query.imageId as string

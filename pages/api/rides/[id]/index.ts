@@ -6,8 +6,8 @@ import RideRepository from '../../../../src/server/api/rides/ride-repository';
 import DatabaseManager from '../../../../src/server/api/database/database-manager';
 import {
   verifyJwt,
-  requireDriverPermissions,
   requireFacilitatorPermissions,
+  requireDriverOrFacilitatorPermissions,
 } from '../../../../src/server/api/authz';
 import notifyCancelled from '../../../../src/server/notifications/notify-cancelled';
 import { Ride, RideInput } from '../../../../src/common/model';
@@ -95,7 +95,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       case 'GET':
         await databaseManager.withConnection(async (connection) => {
           const claims = await verifyJwt(req);
-          if (!(await requireDriverPermissions(req, res, connection, claims))) {
+          if (
+            !(await requireDriverOrFacilitatorPermissions(
+              req,
+              res,
+              connection,
+              claims
+            ))
+          ) {
             return;
           }
           const ride = await rideRepository.get(
